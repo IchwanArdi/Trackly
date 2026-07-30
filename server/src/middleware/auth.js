@@ -31,8 +31,6 @@ export const authenticateToken = async (req, res, next) => {
         // 5. Simpan data user
         req.user = user;
 
-        console.log(`data user ${user}`)
-
         next();
     } catch (error) {
         console.error('Auth middleware error:', error.message);
