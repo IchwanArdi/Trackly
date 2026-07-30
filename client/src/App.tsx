@@ -8,6 +8,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LogEntryPage } from './pages/LogEntryPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { CategoriesPage } from './pages/CategoriesPage';
+import { LandingPage } from './pages/LandingPage';
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
       <ToastContainer position='top-right' autoClose={2000} theme='colored' />
       <BrowserRouter>
         <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<LandingPage />} />
+
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -28,7 +32,7 @@ function App() {
           </Route>
 
           {/* Fallback */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </DataProvider>

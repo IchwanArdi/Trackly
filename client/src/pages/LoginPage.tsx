@@ -139,13 +139,6 @@ export function LoginPage() {
               Create one
             </Link>
           </p>
-
-          {/* Demo hint */}
-          <div className="mt-6 p-3 bg-surface border border-border rounded-md">
-            <p className="text-[11px] text-muted text-center">
-              Demo mode — click <strong className="text-foreground">Sign in</strong> with any credentials
-            </p>
-          </div>
         </div>
       </div>
     </div>
