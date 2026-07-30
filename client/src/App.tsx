@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { DataProvider } from './store/dataStore';
 import { AppLayout } from './components/layout/AppLayout';
 import { LoginPage } from './pages/LoginPage';
@@ -11,6 +12,7 @@ import { CategoriesPage } from './pages/CategoriesPage';
 function App() {
   return (
     <DataProvider>
+      <ToastContainer position='top-right' autoClose={2000} theme='colored' />
       <BrowserRouter>
         <Routes>
           {/* Auth routes */}

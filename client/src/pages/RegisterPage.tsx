@@ -1,18 +1,51 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { api } from '../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { Activity, ArrowRight } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 
 export function RegisterPage() {
+  // 1. State untuk menyimpan input user
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 2. Fungsi handle submit
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/dashboard');
+    setLoading(true);
+    const idToast = toast.loading('Loading...');
+    try {
+      // 3. Kirim data ke backend via Axios
+      const response = await api.post('/api/auth/register', {
+        name,
+        email,
+        password
+      });
+      // 4. Notifikasi sukses + redirect
+      toast.update(idToast, {
+        render: `${response.data.message}`,
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000
+      });
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+    } catch (error: any) {
+      toast.update(idToast, {
+        render: `${error.response.data.message}`,
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,8 +105,9 @@ export function RegisterPage() {
             size="md"
             className="w-full"
             icon={<ArrowRight size={14} />}
+            disabled={loading}
           >
-            Create account
+            {loading ? 'Loading...' : 'Create account'}
           </Button>
         </form>
 
