@@ -1,9 +1,9 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { format, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
-import { Plus, Flame, Calendar, BarChart2, TrendingUp } from 'lucide-react';
+import { format, startOfMonth, endOfMonth, isWithinInterval, parseISO, subDays } from 'date-fns';
+import { Plus, Flame, Calendar, BarChart2, TrendingUp, CalendarDays, Grid, LineChart } from 'lucide-react';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area
 } from 'recharts';
 
 import { useData } from '../store/dataStore';
@@ -12,12 +12,15 @@ import { getIcon } from '../utils/icons';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ContributionHeatmap } from '../components/dashboard/ContributionHeatmap';
+import { MonthlyCalendar } from '../components/dashboard/MonthlyCalendar';
 import { StreakCounter } from '../components/dashboard/StreakCounter';
 import { isAuthenticated } from '../utils/auth';
 
 export function DashboardPage() {
   const { entries, categories } = useData();
   const navigate = useNavigate();
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'grid' | 'trend'>('calendar');
 
   // Cek apakah user sudah login, jika tidak maka redirect ke halaman login
   useEffect(() => {
@@ -59,6 +62,50 @@ export function DashboardPage() {
 
     return { streaks, monthEntries, topCategory, weeklyData, recentEntries };
   }, [entries, categories]);
+
+  // Filter entries for heatmap
+  const filteredEntriesForHeatmap = useMemo(() => {
+    if (selectedCategoryFilter === 'all') return entries;
+    return entries.filter(e => e.categoryId === selectedCategoryFilter);
+  }, [entries, selectedCategoryFilter]);
+
+  // Compute streaks for heatmap based on the filtered entries
+  const streaksForHeatmap = useMemo(() => {
+    return computeStreaks(filteredEntriesForHeatmap);
+  }, [filteredEntriesForHeatmap]);
+
+  // Determine heatmap color based on selected category
+  const heatmapColor = useMemo(() => {
+    if (selectedCategoryFilter === 'all') return 'var(--color-accent)';
+    const cat = categories.find(c => c.id === selectedCategoryFilter);
+    return cat?.color ?? 'var(--color-accent)';
+  }, [categories, selectedCategoryFilter]);
+
+  // Find selected category object
+  const selectedCategoryObj = useMemo(() => {
+    return categories.find(c => c.id === selectedCategoryFilter);
+  }, [categories, selectedCategoryFilter]);
+
+  // Compute trend data (last 30 days)
+  const trendData = useMemo(() => {
+    const data = [];
+    const isAll = selectedCategoryFilter === 'all';
+    for (let i = 29; i >= 0; i--) {
+      const d = subDays(new Date(), i);
+      const dateStr = format(d, 'yyyy-MM-dd');
+      const dayEntries = filteredEntriesForHeatmap.filter(e => e.date === dateStr);
+      
+      const value = isAll
+        ? dayEntries.length // Count for "All"
+        : dayEntries.reduce((sum, e) => sum + e.value, 0); // Value sum for specific category
+        
+      data.push({
+        date: format(d, 'MMM d'),
+        value
+      });
+    }
+    return data;
+  }, [filteredEntriesForHeatmap, selectedCategoryFilter]);
 
   return (
     <div className="space-y-7">
@@ -126,14 +173,133 @@ export function DashboardPage() {
 
       {/* Heatmap */}
       <Card>
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-sm font-semibold text-foreground">Activity overview</h2>
-            <p className="text-xs text-muted mt-0.5">Last 90 days</p>
+            <p className="text-xs text-muted mt-0.5">
+              {activeTab === 'calendar' ? 'Monthly tracking calendar' : activeTab === 'grid' ? 'Last 90 days grid' : 'Last 30 days trend'}
+            </p>
           </div>
-          <StreakCounter current={streaks.current} longest={streaks.longest} />
+          
+          <div className="flex flex-wrap items-center gap-3">
+            {/* View Switcher Tabs */}
+            <div className="flex bg-surface p-1 rounded-lg border border-border">
+              <button
+                onClick={() => setActiveTab('calendar')}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                  activeTab === 'calendar'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted hover:text-foreground'
+                }`}
+              >
+                <CalendarDays size={13} />
+                Calendar
+              </button>
+              <button
+                onClick={() => setActiveTab('grid')}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                  activeTab === 'grid'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted hover:text-foreground'
+                }`}
+              >
+                <Grid size={13} />
+                Grid
+              </button>
+              <button
+                onClick={() => setActiveTab('trend')}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                  activeTab === 'trend'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted hover:text-foreground'
+                }`}
+              >
+                <LineChart size={13} />
+                Trend
+              </button>
+            </div>
+
+            {/* Category Dropdown */}
+            <select
+              value={selectedCategoryFilter}
+              onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+              className="text-xs bg-surface border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer font-medium"
+            >
+              <option value="all">All Categories</option>
+              {categories.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            
+            <StreakCounter current={streaksForHeatmap.current} longest={streaksForHeatmap.longest} />
+          </div>
         </div>
-        <ContributionHeatmap entries={entries} />
+
+        {/* Conditional Content */}
+        {activeTab === 'calendar' && (
+          <MonthlyCalendar
+            entries={filteredEntriesForHeatmap}
+            category={selectedCategoryObj}
+            color={heatmapColor}
+          />
+        )}
+
+        {activeTab === 'grid' && (
+          <ContributionHeatmap entries={filteredEntriesForHeatmap} color={heatmapColor} />
+        )}
+
+        {activeTab === 'trend' && (
+          <div className="pt-2">
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={trendData} margin={{ left: -10, right: 10, top: 10, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={heatmapColor} stopOpacity={0.25}/>
+                    <stop offset="95%" stopColor={heatmapColor} stopOpacity={0.01}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 10, fill: 'var(--color-muted)' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fontSize: 10, fill: 'var(--color-muted)' }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={30}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--color-card)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 8,
+                    fontSize: 11,
+                    color: 'var(--color-foreground)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  }}
+                  formatter={(val: any) => [
+                    `${val} ${selectedCategoryFilter === 'all' ? 'entries' : (selectedCategoryObj?.unit ?? '')}`,
+                    selectedCategoryFilter === 'all' ? 'Volume' : 'Logged Amount'
+                  ]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke={heatmapColor}
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#trendGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </Card>
 
       {/* Weekly bar chart + Recent entries */}

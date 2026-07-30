@@ -1,32 +1,44 @@
 import { useMemo } from 'react';
 import {
-  eachDayOfInterval, subDays, format, startOfWeek, parseISO, getDay, getMonth, getYear
+  eachDayOfInterval, subDays, format, startOfWeek, getMonth
 } from 'date-fns';
-import { type Entry } from '../../data/mockData';
+import { type Entry } from '../../store/dataStore';
 import { buildDayMap, intensityLevel } from '../../utils/stats';
-import { useData } from '../../store/dataStore';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// Tailwind-compatible intensity classes (using CSS variables)
-const intensityStyle = (level: 0 | 1 | 2 | 3 | 4): string => {
-  switch (level) {
-    case 0: return 'bg-surface border border-border';
-    case 1: return 'bg-accent/20 border border-accent/10';
-    case 2: return 'bg-accent/40 border border-accent/20';
-    case 3: return 'bg-accent/65 border border-accent/30';
-    case 4: return 'bg-accent border border-accent';
-    default: return 'bg-surface border border-border';
-  }
-};
-
 interface HeatmapProps {
   entries: Entry[];
+  color?: string; // Optional custom color (HEX or CSS variable)
 }
 
-export function ContributionHeatmap({ entries }: HeatmapProps) {
-  const { categories } = useData();
+export function ContributionHeatmap({ entries, color = 'var(--color-accent)' }: HeatmapProps) {
+
+  // Dynamic inline styling for contribution cells
+  const getCellStyle = (count: number) => {
+    const lvl = intensityLevel(count);
+    if (lvl === 0) {
+      return {
+        backgroundColor: 'var(--color-surface)',
+        borderColor: 'var(--color-border)',
+      };
+    }
+    
+    // Opacity mapping based on activity level
+    const opacityMap = {
+      1: 0.2,
+      2: 0.4,
+      3: 0.65,
+      4: 1.0,
+    };
+    
+    const opacity = opacityMap[lvl as 1 | 2 | 3 | 4];
+    return {
+      backgroundColor: `color-mix(in srgb, ${color} ${opacity * 100}%, transparent)`,
+      borderColor: `color-mix(in srgb, ${color} ${Math.min(opacity + 0.15, 1) * 100}%, transparent)`,
+    };
+  };
 
   const { weeks, monthLabels } = useMemo(() => {
     const today = new Date();
@@ -107,7 +119,8 @@ export function ContributionHeatmap({ entries }: HeatmapProps) {
                     <div
                       key={di}
                       title={`${format(day.date, 'MMM d, yyyy')} — ${day.count} ${day.count === 1 ? 'entry' : 'entries'}`}
-                      className={`w-2.5 h-2.5 rounded-sm cursor-default transition-opacity hover:opacity-80 ${intensityStyle(intensityLevel(day.count))}`}
+                      style={getCellStyle(day.count)}
+                      className="w-2.5 h-2.5 rounded-full cursor-default transition-opacity hover:opacity-80 border"
                     />
                   )
                 )}
@@ -119,9 +132,23 @@ export function ContributionHeatmap({ entries }: HeatmapProps) {
         {/* Legend */}
         <div className="flex items-center gap-1.5 mt-3 justify-end">
           <span className="text-[10px] text-muted">Less</span>
-          {([0, 1, 2, 3, 4] as const).map(lvl => (
-            <div key={lvl} className={`w-2.5 h-2.5 rounded-sm ${intensityStyle(lvl)}`} />
-          ))}
+          {([0, 1, 2, 3, 4] as const).map(lvl => {
+            const opacityMap = { 0: 0, 1: 0.2, 2: 0.4, 3: 0.65, 4: 1.0 };
+            const isZero = lvl === 0;
+            const style = isZero
+              ? { backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }
+              : {
+                  backgroundColor: `color-mix(in srgb, ${color} ${opacityMap[lvl] * 100}%, transparent)`,
+                  borderColor: `color-mix(in srgb, ${color} ${Math.min(opacityMap[lvl] + 0.15, 1) * 100}%, transparent)`,
+                };
+            return (
+              <div
+                key={lvl}
+                style={style}
+                className="w-2.5 h-2.5 rounded-full border"
+              />
+            );
+          })}
           <span className="text-[10px] text-muted">More</span>
         </div>
       </div>

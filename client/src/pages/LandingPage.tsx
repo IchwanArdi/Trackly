@@ -363,7 +363,7 @@ function Features() {
               }}
             >
               {/* Text */}
-              <Reveal style={{ direction: 'ltr' } as React.CSSProperties}>
+              <Reveal>
                 <div style={{ direction: 'ltr' }}>
                   <h3
                     style={{
