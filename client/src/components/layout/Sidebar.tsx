@@ -3,6 +3,8 @@ import {
   LayoutDashboard, ListOrdered, Plus, FolderOpen, LogOut, Activity
 } from 'lucide-react';
 
+import { clearAuthToken } from '../../utils/auth';
+
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/history', icon: ListOrdered, label: 'History' },
@@ -31,10 +33,9 @@ export function Sidebar() {
             to={to}
             id={`nav-${label.toLowerCase().replace(' ', '-')}`}
             className={({ isActive }) =>
-              `flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors duration-100 ${
-                isActive
-                  ? 'bg-accent/10 text-accent font-medium'
-                  : 'text-muted hover:text-foreground hover:bg-surface'
+              `flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors duration-100 ${isActive
+                ? 'bg-accent/10 text-accent font-medium'
+                : 'text-muted hover:text-foreground hover:bg-surface'
               }`
             }
           >
@@ -57,8 +58,8 @@ export function Sidebar() {
         </div>
         <button
           id="btn-logout"
-          onClick={() => navigate('/login')}
-          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-muted hover:text-foreground hover:bg-surface rounded-md transition-colors duration-100"
+          onClick={() => { clearAuthToken(); navigate('/login'); }}
+          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-muted hover:text-foreground hover:bg-surface rounded-md transition-colors duration-100 cursor-pointer"
         >
           <LogOut size={13} />
           Sign out

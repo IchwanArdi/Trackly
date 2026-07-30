@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { api, setAuthToken } from '../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { Activity, ArrowRight } from 'lucide-react';
 import { Input } from '../components/ui/Input';
@@ -8,10 +10,38 @@ export function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/dashboard');
+    setLoading(true);
+    const idToast = toast.loading('Loading...');
+    try {
+      const response = await api.post('/api/auth/login', {
+        email,
+        password
+      });
+      setAuthToken(response.data.token);
+      toast.update(idToast, {
+        render: `${response.data.message}`,
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000
+      });
+
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (error: any) {
+      toast.update(idToast, {
+        render: `${error.response.data.message}`,
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -99,7 +129,7 @@ export function LoginPage() {
               className="w-full"
               icon={<ArrowRight size={14} />}
             >
-              Sign in
+              {loading ? 'Loading...' : 'Sign in'}
             </Button>
           </form>
 

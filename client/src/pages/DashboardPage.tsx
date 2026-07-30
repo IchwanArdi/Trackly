@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
 import { Plus, Flame, Calendar, BarChart2, TrendingUp } from 'lucide-react';
@@ -13,10 +13,18 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ContributionHeatmap } from '../components/dashboard/ContributionHeatmap';
 import { StreakCounter } from '../components/dashboard/StreakCounter';
+import { isAuthenticated } from '../utils/auth';
 
 export function DashboardPage() {
   const { entries, categories } = useData();
   const navigate = useNavigate();
+
+  // Cek apakah user sudah login, jika tidak maka redirect ke halaman login
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const today = new Date();
   const monthStart = startOfMonth(today);

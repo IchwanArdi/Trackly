@@ -6,5 +6,5 @@ dotenv.config()
 const port = process.env.PORT || 3000
 
 app.listen(port, () => {
-    console.log(`Server berjalan pada port ${port}`)
+    console.log(`Server berjalan pada http://localhost:${port}`)
 })
