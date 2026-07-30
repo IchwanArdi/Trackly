@@ -5,7 +5,10 @@ import 'dotenv/config'; // Memastikan file .env terbaca dengan baik
 
 // 1. Buat pool koneksi menggunakan driver 'pg' bawaan Node.js
 const pool = new pg.Pool({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false // Diperlukan untuk Vercel/Render agar SSL/TLS berjalan otomatis
+    }
 });
 
 // 2. Bungkus pool tersebut menggunakan Driver Adapter dari Prisma
