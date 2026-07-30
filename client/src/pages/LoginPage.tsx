@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { api, setAuthToken } from '../utils/auth';
+import { api, setAuthToken, saveUser } from '../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { Activity, ArrowRight } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
+import { useData } from '../store/dataStore';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { refreshAll } = useData();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,6 +24,9 @@ export function LoginPage() {
         password
       });
       setAuthToken(response.data.token);
+      saveUser(response.data.user);
+      await refreshAll();
+
       toast.update(idToast, {
         render: `${response.data.message}`,
         type: 'success',

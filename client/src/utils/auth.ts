@@ -42,3 +42,14 @@ export const isAuthenticated = (): boolean => {
     const token = localStorage.getItem('token');
     return !!token; // Mengembalikan true jika ada token, false jika null/kosong
 };
+
+// 4. Simpan User Ke Local Storage
+export const saveUser = (user: { id: string; name: string; email: string }): void => {
+    localStorage.setItem('user', JSON.stringify(user));
+};
+
+// 5. Ambil User Dari Local Storage
+export const getUser = (): { id: string; name: string; email: string } | null => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+};

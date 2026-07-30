@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { CheckCircle2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { useData } from '../store/dataStore';
 import { getIcon } from '../utils/icons';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { Select } from '../components/ui/Select';
 
 export function LogEntryPage() {
   const { categories, addEntry } = useData();
@@ -19,6 +19,7 @@ export function LogEntryPage() {
   const [date, setDate] = useState(today);
   const [note, setNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const selectedCategory = categories.find(c => c.id === categoryId);
@@ -32,25 +33,32 @@ export function LogEntryPage() {
     return errs;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
-    addEntry({
-      categoryId,
-      date,
-      value: Number(value),
-      note: note.trim() || undefined,
-    });
+    setSaving(true);
+    try {
+      await addEntry({
+        categoryId,
+        date,
+        value: Number(value),
+        note: note.trim() || undefined,
+      });
 
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setValue('');
-      setNote('');
-      setDate(today);
-    }, 2000);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setValue('');
+        setNote('');
+        setDate(today);
+      }, 2000);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? 'Gagal menyimpan entry');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -92,11 +100,10 @@ export function LogEntryPage() {
                           type="button"
                           id={`cat-btn-${cat.id}`}
                           onClick={() => { setCategoryId(cat.id); setErrors(prev => ({ ...prev, category: '' })); }}
-                          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-md border text-sm font-medium transition-all duration-100 ${
-                            isSelected
+                          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-md border text-sm font-medium transition-all duration-100 ${isSelected
                               ? 'border-accent/50 text-foreground'
                               : 'border-border text-muted hover:text-foreground hover:border-border/80 bg-surface'
-                          }`}
+                            }`}
                           style={isSelected ? { background: `${cat.color}1a`, borderColor: `${cat.color}60` } : {}}
                         >
                           <Icon size={14} style={{ color: isSelected ? cat.color : undefined }} />
@@ -146,8 +153,8 @@ export function LogEntryPage() {
                 </div>
 
                 <div className="flex gap-3 pt-1">
-                  <Button id="btn-submit-entry" type="submit" variant="primary" size="md">
-                    Save entry
+                  <Button id="btn-submit-entry" type="submit" variant="primary" size="md" disabled={saving}>
+                    {saving ? 'Menyimpan...' : 'Save entry'}
                   </Button>
                   <Button
                     id="btn-cancel-entry"

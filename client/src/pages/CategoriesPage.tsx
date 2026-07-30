@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Plus, Pencil, Trash2, Check, X } from 'lucide-react';
-import { useData } from '../store/dataStore';
+import { toast } from 'react-toastify';
+import { useData, type Category } from '../store/dataStore';
 import { getIcon, ICON_OPTIONS } from '../utils/icons';
-import { type Category } from '../data/mockData';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -49,24 +49,32 @@ export function CategoriesPage() {
     setErrors({});
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
-    if (editingId) {
-      updateCategory(editingId, form);
-      setEditingId(null);
-    } else {
-      addCategory(form);
-      setShowForm(false);
+    try {
+      if (editingId) {
+        await updateCategory(editingId, form);
+        setEditingId(null);
+      } else {
+        await addCategory(form);
+        setShowForm(false);
+      }
+      setForm(defaultForm());
+      setErrors({});
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? 'Gagal menyimpan kategori');
     }
-    setForm(defaultForm());
-    setErrors({});
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (deleteConfirm === id) {
-      deleteCategory(id);
+      try {
+        await deleteCategory(id);
+      } catch (err: any) {
+        toast.error(err?.response?.data?.message ?? 'Gagal menghapus kategori');
+      }
       setDeleteConfirm(null);
     } else {
       setDeleteConfirm(id);

@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { format, parseISO, subDays, isWithinInterval } from 'date-fns';
-import { Trash2, SlidersHorizontal, X } from 'lucide-react';
+import { Trash2, X } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { useData } from '../store/dataStore';
 import { getIcon } from '../utils/icons';
 import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 import { Select } from '../components/ui/Select';
 import { Input } from '../components/ui/Input';
 
@@ -41,9 +41,13 @@ export function HistoryPage() {
       .sort((a, b) => b.date.localeCompare(a.date));
   }, [entries, catFilter, dateRange, customFrom, customTo]);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (deleteConfirm === id) {
-      deleteEntry(id);
+      try {
+        await deleteEntry(id);
+      } catch (err: any) {
+        toast.error(err?.response?.data?.message ?? 'Gagal menghapus entry');
+      }
       setDeleteConfirm(null);
     } else {
       setDeleteConfirm(id);
@@ -166,11 +170,10 @@ export function HistoryPage() {
                         <button
                           id={`btn-delete-${entry.id}`}
                           onClick={() => handleDelete(entry.id)}
-                          className={`p-1.5 rounded transition-colors ${
-                            isDeleting
+                          className={`p-1.5 rounded transition-colors ${isDeleting
                               ? 'bg-red-500 text-white'
                               : 'text-muted hover:text-red-400 opacity-0 group-hover:opacity-100'
-                          }`}
+                            }`}
                           title={isDeleting ? 'Click again to confirm' : 'Delete entry'}
                         >
                           <Trash2 size={12} />

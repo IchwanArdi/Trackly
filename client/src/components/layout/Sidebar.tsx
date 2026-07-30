@@ -4,6 +4,8 @@ import {
 } from 'lucide-react';
 
 import { clearAuthToken } from '../../utils/auth';
+import { useData } from '../../store/dataStore';
+import { getUser } from '../../utils/auth';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -14,6 +16,14 @@ const navItems = [
 
 export function Sidebar() {
   const navigate = useNavigate();
+  const { clearData } = useData();
+  const user = getUser();
+
+  const handleLogout = () => {
+    clearData();
+    clearAuthToken();
+    navigate('/login');
+  };
 
   return (
     <aside className="w-56 shrink-0 h-screen sticky top-0 bg-card border-r border-border flex flex-col">
@@ -49,16 +59,16 @@ export function Sidebar() {
       <div className="px-3 py-4 border-t border-border">
         <div className="flex items-center gap-2.5 px-3 py-2 mb-1">
           <div className="w-6 h-6 rounded-full bg-surface border border-border flex items-center justify-center text-xs font-medium text-foreground">
-            J
+            {user?.name.substring(0, 2).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-foreground truncate">John Doe</p>
-            <p className="text-[10px] text-muted truncate">john@example.com</p>
+            <p className="text-xs font-medium text-foreground truncate">{user?.name}</p>
+            <p className="text-[10px] text-muted truncate">{user?.email}</p>
           </div>
         </div>
         <button
           id="btn-logout"
-          onClick={() => { clearAuthToken(); navigate('/login'); }}
+          onClick={handleLogout}
           className="w-full flex items-center gap-2 px-3 py-2 text-xs text-muted hover:text-foreground hover:bg-surface rounded-md transition-colors duration-100 cursor-pointer"
         >
           <LogOut size={13} />
