@@ -1,28 +1,51 @@
 import express from 'express'
 import cors from 'cors'
-
-import authRoutes       from './src/routes/auth.js'
+import session from 'express-session'
+import dotenv from 'dotenv'
+import authRoutes from './src/routes/auth.js'
 import categoriesRoutes from './src/routes/categories.js'
-import entriesRoutes    from './src/routes/entries.js'
+import entriesRoutes from './src/routes/entries.js'
 
 const app = express()
+dotenv.config()
 
-// 1. Middleware Global untuk CORS
+const isProduction = process.env.NODE_ENV === 'production'
+
+// Middleware untuk parsing JSON
+app.use(express.json())
+
+// Middleware untuk CORS
 app.use(cors({
-    origin: 'http://localhost:5173'
+    origin: ['http://localhost:5173', 'https://thetrackly.vercel.app'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }))
 
-// 2. Middleware untuk parsing JSON
-app.use(express.json())
+// Wajib diaktifkan jika backend dideploy di platform seperti Render, Railway, Vercel, atau Heroku
+app.set('trust proxy', 1)
+
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || 'supersecretkey',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: isProduction, // true jika di production (HTTPS), false jika di localhost (HTTP)
+            httpOnly: true,       // Mencegah akses cookie dari JavaScript client-side (XSS Protection)
+            sameSite: isProduction ? 'none' : 'lax' // 'none' wajib untuk cross-domain cookies di production
+        }
+    })
+)
 
 // Health Check
 app.get('/health', (req, res) => {
     res.status(200).json({ message: 'Trackly Backend Berjalan' })
 })
 
-// 3. API Routes
-app.use('/api/auth',       authRoutes)
+// API Routes
+app.use('/api/auth', authRoutes)
 app.use('/api/categories', categoriesRoutes)
-app.use('/api/entries',    entriesRoutes)
+app.use('/api/entries', entriesRoutes)
 
 export default app
