@@ -8,6 +8,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LogEntryPage } from './pages/LogEntryPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { CategoriesPage } from './pages/CategoriesPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { LandingPage } from './pages/LandingPage';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/log" element={<LogEntryPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
 
           {/* Fallback */}

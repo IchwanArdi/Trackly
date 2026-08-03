@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import {
   eachDayOfInterval, subDays, format, startOfWeek, getMonth
 } from 'date-fns';
@@ -14,6 +14,14 @@ interface HeatmapProps {
 }
 
 export function ContributionHeatmap({ entries, color = 'var(--color-accent)' }: HeatmapProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to most recent weeks (right side) on mobile/initial mount
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth;
+    }
+  }, [entries]);
 
   // Dynamic inline styling for contribution cells
   const getCellStyle = (count: number) => {
@@ -83,74 +91,79 @@ export function ContributionHeatmap({ entries, color = 'var(--color-accent)' }: 
   }, [entries]);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="min-w-max">
-        {/* Month labels */}
-        <div className="flex mb-1 ml-8">
-          {monthLabels.map(({ label, col }, i) => (
-            <div
-              key={i}
-              className="text-[10px] text-muted font-medium"
-              style={{ marginLeft: col === 0 ? 0 : (col - (monthLabels[i - 1]?.col ?? 0)) * 12 - (label.length * 3.5) }}
-            >
-              {label}
-            </div>
-          ))}
-        </div>
-
-        <div className="flex gap-1">
-          {/* Day labels */}
-          <div className="flex flex-col gap-0.5 pr-1">
-            {DAYS.map((d, i) => (
-              <div key={d} className={`text-[9px] text-muted h-2.5 leading-none flex items-center ${i % 2 === 0 ? 'invisible' : ''}`}>
-                {d}
-              </div>
-            ))}
-          </div>
-
-          {/* Grid */}
-          <div className="flex gap-0.5">
-            {weeks.map((week, wi) => (
-              <div key={wi} className="flex flex-col gap-0.5">
-                {week.map((day, di) =>
-                  day === null ? (
-                    <div key={di} className="w-2.5 h-2.5" />
-                  ) : (
-                    <div
-                      key={di}
-                      title={`${format(day.date, 'MMM d, yyyy')} — ${day.count} ${day.count === 1 ? 'entry' : 'entries'}`}
-                      style={getCellStyle(day.count)}
-                      className="w-2.5 h-2.5 rounded-full cursor-default transition-opacity hover:opacity-80 border"
-                    />
-                  )
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Legend */}
-        <div className="flex items-center gap-1.5 mt-3 justify-end">
-          <span className="text-[10px] text-muted">Less</span>
-          {([0, 1, 2, 3, 4] as const).map(lvl => {
-            const opacityMap = { 0: 0, 1: 0.2, 2: 0.4, 3: 0.65, 4: 1.0 };
-            const isZero = lvl === 0;
-            const style = isZero
-              ? { backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }
-              : {
-                  backgroundColor: `color-mix(in srgb, ${color} ${opacityMap[lvl] * 100}%, transparent)`,
-                  borderColor: `color-mix(in srgb, ${color} ${Math.min(opacityMap[lvl] + 0.15, 1) * 100}%, transparent)`,
-                };
-            return (
+    <div className="w-full">
+      <div 
+        ref={scrollContainerRef}
+        className="overflow-x-auto pb-2 scrollbar-thin touch-pan-x"
+      >
+        <div className="min-w-max">
+          {/* Month labels */}
+          <div className="flex mb-1 ml-8">
+            {monthLabels.map(({ label, col }, i) => (
               <div
-                key={lvl}
-                style={style}
-                className="w-2.5 h-2.5 rounded-full border"
-              />
-            );
-          })}
-          <span className="text-[10px] text-muted">More</span>
+                key={i}
+                className="text-[10px] text-muted font-medium"
+                style={{ marginLeft: col === 0 ? 0 : (col - (monthLabels[i - 1]?.col ?? 0)) * 12 - (label.length * 3.5) }}
+              >
+                {label}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-1">
+            {/* Day labels */}
+            <div className="flex flex-col gap-0.5 pr-1">
+              {DAYS.map((d, i) => (
+                <div key={d} className={`text-[9px] text-muted h-2.5 leading-none flex items-center ${i % 2 === 0 ? 'invisible' : ''}`}>
+                  {d}
+                </div>
+              ))}
+            </div>
+
+            {/* Grid */}
+            <div className="flex gap-0.5">
+              {weeks.map((week, wi) => (
+                <div key={wi} className="flex flex-col gap-0.5">
+                  {week.map((day, di) =>
+                    day === null ? (
+                      <div key={di} className="w-2.5 h-2.5" />
+                    ) : (
+                      <div
+                        key={di}
+                        title={`${format(day.date, 'MMM d, yyyy')} — ${day.count} ${day.count === 1 ? 'entry' : 'entries'}`}
+                        style={getCellStyle(day.count)}
+                        className="w-2.5 h-2.5 rounded-full cursor-default transition-opacity hover:opacity-80 border shrink-0"
+                      />
+                    )
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center gap-1.5 mt-3 justify-end">
+        <span className="text-[10px] text-muted">Less</span>
+        {([0, 1, 2, 3, 4] as const).map(lvl => {
+          const opacityMap = { 0: 0, 1: 0.2, 2: 0.4, 3: 0.65, 4: 1.0 };
+          const isZero = lvl === 0;
+          const style = isZero
+            ? { backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }
+            : {
+                backgroundColor: `color-mix(in srgb, ${color} ${opacityMap[lvl] * 100}%, transparent)`,
+                borderColor: `color-mix(in srgb, ${color} ${Math.min(opacityMap[lvl] + 0.15, 1) * 100}%, transparent)`,
+              };
+          return (
+            <div
+              key={lvl}
+              style={style}
+              className="w-2.5 h-2.5 rounded-full border shrink-0"
+            />
+          );
+        })}
+        <span className="text-[10px] text-muted">More</span>
       </div>
     </div>
   );

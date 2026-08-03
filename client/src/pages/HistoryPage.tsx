@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { format, parseISO, subDays, isWithinInterval } from 'date-fns';
-import { Trash2, X } from 'lucide-react';
+import { Trash2, X, Calendar, FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useData } from '../store/dataStore';
 import { getIcon } from '../utils/icons';
@@ -56,16 +56,16 @@ export function HistoryPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-foreground">History</h1>
-        <p className="text-sm text-muted mt-0.5">{filtered.length} entries found</p>
+        <h1 className="text-lg sm:text-xl font-semibold text-foreground">History</h1>
+        <p className="text-xs sm:text-sm text-muted mt-0.5">{filtered.length} entries found</p>
       </div>
 
       {/* Filters */}
       <Card className="!p-4">
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="w-44">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+          <div className="w-full sm:w-44">
             <Select
               id="filter-category"
               label="Category"
@@ -79,7 +79,7 @@ export function HistoryPage() {
             </Select>
           </div>
 
-          <div className="w-36">
+          <div className="w-full sm:w-36">
             <Select
               id="filter-date-range"
               label="Date range"
@@ -94,28 +94,97 @@ export function HistoryPage() {
           </div>
 
           {dateRange === 'custom' && (
-            <>
+            <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
               <Input id="filter-from" label="From" type="date" value={customFrom}
-                onChange={e => setCustomFrom(e.target.value)} className="w-36" />
+                onChange={e => setCustomFrom(e.target.value)} className="w-full sm:w-36" />
               <Input id="filter-to" label="To" type="date" value={customTo}
-                onChange={e => setCustomTo(e.target.value)} className="w-36" />
-            </>
+                onChange={e => setCustomTo(e.target.value)} className="w-full sm:w-36" />
+            </div>
           )}
 
           {(catFilter !== 'all' || dateRange !== '90d') && (
             <button
               id="btn-clear-filters"
-              className="flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors mt-5"
+              className="flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors py-2 sm:mt-5 min-h-[38px]"
               onClick={() => { setCatFilter('all'); setDateRange('90d'); }}
             >
-              <X size={12} /> Clear filters
+              <X size={14} /> Clear filters
             </button>
           )}
         </div>
       </Card>
 
-      {/* Table */}
-      <Card className="!p-0 overflow-hidden">
+      {/* MOBILE VIEW: Stacked Card List (visible on < md breakpoint) */}
+      <div className="space-y-2.5 md:hidden">
+        {filtered.length === 0 ? (
+          <Card className="!p-8 text-center text-sm text-muted">
+            No entries found for the selected filters.
+          </Card>
+        ) : (
+          filtered.map(entry => {
+            const cat = categories.find(c => c.id === entry.categoryId);
+            if (!cat) return null;
+            const Icon = getIcon(cat.icon);
+            const isDeleting = deleteConfirm === entry.id;
+            return (
+              <div
+                key={entry.id}
+                className={`bg-card border rounded-lg p-4 transition-colors ${
+                  isDeleting ? 'border-red-500/50 bg-red-500/5' : 'border-border'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ background: `${cat.color}1a` }}
+                    >
+                      <Icon size={18} style={{ color: cat.color }} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">{cat.name}</h3>
+                      <div className="flex items-center gap-1.5 text-xs text-muted mt-0.5">
+                        <Calendar size={12} />
+                        <span>{format(parseISO(entry.date), 'MMM d, yyyy')}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <span className="text-sm font-bold text-foreground tabular-nums">{entry.value}</span>
+                      <span className="text-xs text-muted ml-1">{cat.unit}</span>
+                    </div>
+
+                    <button
+                      id={`btn-delete-mobile-${entry.id}`}
+                      onClick={() => handleDelete(entry.id)}
+                      className={`p-2 rounded-md transition-colors min-w-[38px] min-h-[38px] flex items-center justify-center ${
+                        isDeleting
+                          ? 'bg-red-500 text-white'
+                          : 'text-muted hover:text-red-400 hover:bg-surface'
+                      }`}
+                      title={isDeleting ? 'Click again to confirm' : 'Delete entry'}
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+
+                {entry.note && (
+                  <div className="mt-3 pt-2.5 border-t border-border flex items-start gap-1.5 text-xs text-muted">
+                    <FileText size={13} className="shrink-0 mt-0.5" />
+                    <p className="line-clamp-2">{entry.note}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* DESKTOP VIEW: Table (visible on >= md breakpoint) */}
+      <Card className="!p-0 overflow-hidden hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

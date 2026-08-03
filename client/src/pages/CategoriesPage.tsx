@@ -90,8 +90,8 @@ export function CategoriesPage() {
   };
 
   const CategoryForm = ({ isInline = false }: { isInline?: boolean }) => (
-    <div className={`space-y-4 ${isInline ? 'bg-surface border border-border rounded-md p-4' : ''}`}>
-      <div className="grid grid-cols-2 gap-4">
+    <div className={`space-y-4 ${isInline ? 'bg-surface border border-border rounded-md p-4 mt-3' : ''}`}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           id={`input-cat-name${isInline ? '-edit' : ''}`}
           label="Category name"
@@ -111,16 +111,17 @@ export function CategoriesPage() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-foreground">Color</span>
-        <div className="flex gap-2 flex-wrap">
+        <span className="text-xs sm:text-sm font-medium text-foreground">Color</span>
+        <div className="flex gap-2.5 flex-wrap items-center">
           {PRESET_COLORS.map(color => (
             <button
               key={color}
               type="button"
               id={`color-btn-${color.replace('#', '')}`}
               onClick={() => setForm(f => ({ ...f, color }))}
-              className={`w-6 h-6 rounded-md border-2 transition-transform hover:scale-110 ${form.color === color ? 'border-foreground scale-110' : 'border-transparent'
-                }`}
+              className={`w-7 h-7 sm:w-6 sm:h-6 rounded-md border-2 transition-transform hover:scale-110 cursor-pointer min-w-[28px] min-h-[28px] ${
+                form.color === color ? 'border-foreground scale-110 ring-2 ring-accent/40' : 'border-transparent'
+              }`}
               style={{ background: color }}
               title={color}
             />
@@ -128,7 +129,7 @@ export function CategoriesPage() {
         </div>
       </div>
 
-      <div className="w-44">
+      <div className="w-full sm:w-44">
         <Select
           id={`select-cat-icon${isInline ? '-edit' : ''}`}
           label="Icon"
@@ -141,11 +142,11 @@ export function CategoriesPage() {
         </Select>
       </div>
 
-      <div className="flex gap-2">
-        <Button id="btn-save-category" variant="primary" size="sm" icon={<Check size={12} />} onClick={handleSave}>
+      <div className="flex gap-2 pt-1">
+        <Button id="btn-save-category" variant="primary" size="sm" icon={<Check size={14} />} onClick={handleSave}>
           Save
         </Button>
-        <Button id="btn-cancel-category" variant="ghost" size="sm" icon={<X size={12} />} onClick={handleCancel}>
+        <Button id="btn-cancel-category" variant="ghost" size="sm" icon={<X size={14} />} onClick={handleCancel}>
           Cancel
         </Button>
       </div>
@@ -153,18 +154,18 @@ export function CategoriesPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5 sm:space-y-6">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-foreground">Categories</h1>
-          <p className="text-sm text-muted mt-0.5">Define what you want to track and how.</p>
+          <h1 className="text-lg sm:text-xl font-semibold text-foreground">Categories</h1>
+          <p className="text-xs sm:text-sm text-muted mt-0.5">Define what you want to track and how.</p>
         </div>
         {!showForm && !editingId && (
           <Button
             id="btn-new-category"
             variant="primary"
             size="md"
-            icon={<Plus size={14} />}
+            icon={<Plus size={16} />}
             onClick={() => { setShowForm(true); setForm(defaultForm()); }}
           >
             New category
@@ -174,14 +175,14 @@ export function CategoriesPage() {
 
       {/* New category form */}
       {showForm && (
-        <Card>
+        <Card className="!p-4 sm:!p-5">
           <h2 className="text-sm font-semibold text-foreground mb-4">New category</h2>
           <CategoryForm />
         </Card>
       )}
 
       {/* Category list */}
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {categories.map(cat => {
           const Icon = getIcon(cat.icon);
           const isEditing = editingId === cat.id;
@@ -189,57 +190,57 @@ export function CategoriesPage() {
 
           return (
             <div key={cat.id}>
-              <Card className={`transition-colors ${isEditing ? 'border-accent/30 !bg-accent/5' : ''}`}>
-                <div className="flex items-center gap-4">
+              <Card className={`!p-3.5 sm:!p-4 transition-colors ${isEditing ? 'border-accent/30 !bg-accent/5' : ''}`}>
+                <div className="flex items-center gap-3 sm:gap-4">
                   {/* Icon preview */}
                   <div
                     className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
                     style={{ background: `${cat.color}1a` }}
                   >
-                    <Icon size={16} style={{ color: cat.color }} />
+                    <Icon size={18} style={{ color: cat.color }} />
                   </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground">{cat.name}</p>
-                    <p className="text-xs text-muted">{cat.unit}</p>
+                    <p className="text-sm font-medium text-foreground truncate">{cat.name}</p>
+                    <p className="text-xs text-muted truncate">{cat.unit}</p>
                   </div>
 
                   {/* Color swatch */}
                   <div
-                    className="w-3 h-3 rounded-full shrink-0"
+                    className="w-3.5 h-3.5 rounded-full shrink-0"
                     style={{ background: cat.color }}
                     title={cat.color}
                   />
 
                   {/* Actions */}
                   {!isEditing && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1">
                       <button
                         id={`btn-edit-cat-${cat.id}`}
                         onClick={() => startEdit(cat)}
-                        className="p-1.5 text-muted hover:text-foreground hover:bg-surface rounded transition-colors"
+                        className="p-2 text-muted hover:text-foreground hover:bg-surface rounded-md transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer"
                         title="Edit"
                       >
-                        <Pencil size={13} />
+                        <Pencil size={15} />
                       </button>
                       <button
                         id={`btn-delete-cat-${cat.id}`}
                         onClick={() => handleDelete(cat.id)}
-                        className={`p-1.5 rounded transition-colors ${isDeleting
+                        className={`p-2 rounded-md transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer ${isDeleting
                           ? 'bg-red-500 text-white'
                           : 'text-muted hover:text-red-400 hover:bg-surface'
                           }`}
                         title={isDeleting ? 'Click again to confirm delete' : 'Delete'}
                       >
-                        <Trash2 size={13} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   )}
                 </div>
 
                 {isEditing && (
-                  <div className="mt-4 pt-4 border-t border-border">
+                  <div className="border-t border-border">
                     <CategoryForm isInline />
                   </div>
                 )}

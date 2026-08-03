@@ -37,32 +37,23 @@ function Navbar() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-      style={{
-        background: scrolled ? 'rgba(15,15,16,0.92)' : 'transparent',
-        borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-      }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-background/90 border-b border-border backdrop-blur-md'
+          : 'bg-transparent border-b border-transparent'
+      }`}
     >
-      <nav
-        style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}
-        className="flex items-center justify-between h-14"
-      >
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
         {/* Logo */}
-        <a href="/" id="nav-logo" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-          <span
-            style={{
-              width: 28, height: 28, background: 'var(--color-accent)',
-              borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
+        <a href="/" id="nav-logo" className="flex items-center gap-2">
+          <span className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <rect x="2" y="8" width="3" height="6" rx="1" fill="white" />
               <rect x="6.5" y="5" width="3" height="9" rx="1" fill="white" />
               <rect x="11" y="2" width="3" height="12" rx="1" fill="white" />
             </svg>
           </span>
-          <span style={{ fontWeight: 700, fontSize: 17, color: 'var(--color-foreground)', letterSpacing: '-0.3px' }}>
+          <span className="font-bold text-base text-foreground tracking-tight">
             Trackly
           </span>
         </a>
@@ -72,20 +63,14 @@ function Navbar() {
           <a
             href="#features"
             id="nav-features"
-            style={{ color: 'var(--color-muted)', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}
-            className="hover:text-foreground transition-colors"
+            className="text-sm font-medium text-muted hover:text-foreground transition-colors"
           >
             Features
           </a>
           <a
             href="#download"
             id="nav-download"
-            style={{
-              background: 'var(--color-accent)', color: '#fff',
-              padding: '7px 16px', borderRadius: 7, fontSize: 13,
-              fontWeight: 600, textDecoration: 'none', display: 'inline-block',
-            }}
-            className="transition-transform hover:scale-[1.02]"
+            className="bg-accent text-white px-4 py-1.5 rounded-md text-xs font-semibold transition-transform hover:scale-[1.02] inline-block"
           >
             Download App
           </a>
@@ -105,38 +90,30 @@ function Hero() {
     <section
       ref={ref}
       id="hero"
-      style={{ paddingTop: 120, paddingBottom: 96, overflow: 'hidden', position: 'relative' }}
+      className="pt-28 sm:pt-32 pb-20 sm:pb-24 overflow-hidden relative"
     >
       {/* Faint grid */}
       <div
         aria-hidden
+        className="absolute inset-0 pointer-events-none opacity-35"
         style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
           backgroundImage: `linear-gradient(var(--color-border) 1px, transparent 1px),
                             linear-gradient(90deg, var(--color-border) 1px, transparent 1px)`,
           backgroundSize: '48px 48px',
           maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%)',
-          opacity: 0.35,
         }}
       />
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}
+          className="flex justify-center mb-8"
         >
-          <span
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              border: '1px solid var(--color-border)', borderRadius: 99,
-              padding: '5px 14px', fontSize: 12, color: 'var(--color-muted)',
-              fontWeight: 500, background: 'var(--color-card)',
-            }}
-          >
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent)', display: 'inline-block' }} />
+          <span className="inline-flex items-center gap-2 border border-border rounded-full px-3.5 py-1 text-xs text-muted font-medium bg-card">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block" />
             Personal activity tracking, reimagined
           </span>
         </motion.div>
@@ -146,16 +123,11 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            textAlign: 'center', fontSize: 'clamp(38px, 6vw, 68px)',
-            fontWeight: 800, lineHeight: 1.08, letterSpacing: '-2px',
-            color: 'var(--color-foreground)', margin: '0 auto 20px',
-            maxWidth: 820,
-          }}
+          className="text-center text-3xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-foreground max-w-3xl mx-auto mb-5"
         >
           Track what matters.
           <br />
-          <span style={{ color: 'var(--color-accent)' }}>See the pattern.</span>
+          <span className="text-accent">See the pattern.</span>
         </motion.h1>
 
         {/* Sub */}
@@ -163,10 +135,7 @@ function Hero() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            textAlign: 'center', fontSize: 17, color: 'var(--color-muted)',
-            maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.65,
-          }}
+          className="text-center text-sm sm:text-base md:text-lg text-muted max-w-lg mx-auto mb-10 leading-relaxed"
         >
           Define your own categories — workouts, reading, coding, anything —
           then log daily and watch your habits build into streaks and heatmaps.
@@ -177,31 +146,19 @@ function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 72 }}
+          className="flex justify-center gap-3 mb-16 sm:mb-20"
         >
           <a
             href="#download"
             id="hero-cta-primary"
-            style={{
-              background: 'var(--color-accent)', color: '#fff',
-              padding: '12px 28px', borderRadius: 8, fontSize: 15,
-              fontWeight: 600, textDecoration: 'none', display: 'inline-block',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-            }}
-            className="transition-transform hover:scale-[1.02]"
+            className="bg-accent text-white px-6 sm:px-7 py-3 rounded-lg text-sm font-semibold transition-transform hover:scale-[1.02] shadow-sm inline-block"
           >
             Download App
           </a>
           <a
             href="/register"
             id="hero-cta-secondary"
-            style={{
-              background: 'var(--color-surface)', color: 'var(--color-foreground)',
-              padding: '12px 24px', borderRadius: 8, fontSize: 15,
-              fontWeight: 500, textDecoration: 'none', display: 'inline-block',
-              border: '1px solid var(--color-border)',
-            }}
-            className="transition-transform hover:scale-[1.02]"
+            className="bg-surface text-foreground border border-border px-5 sm:px-6 py-3 rounded-lg text-sm font-medium transition-transform hover:scale-[1.02] inline-block"
           >
             Register
           </a>
@@ -212,42 +169,22 @@ function Hero() {
           initial={{ opacity: 0, y: 36 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
-          style={{ maxWidth: 900, margin: '0 auto', position: 'relative' }}
+          className="max-w-4xl mx-auto relative"
         >
           {/* Browser chrome */}
-          <div
-            style={{
-              border: '1px solid var(--color-border)',
-              borderRadius: 12,
-              overflow: 'hidden',
-              boxShadow: '0 32px 80px rgba(0,0,0,0.55)',
-              background: 'var(--color-card)',
-            }}
-          >
+          <div className="border border-border rounded-xl overflow-hidden shadow-2xl bg-card">
             {/* Fake toolbar */}
-            <div
-              style={{
-                height: 36, background: 'var(--color-surface)',
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '0 14px', borderBottom: '1px solid var(--color-border)',
-              }}
-            >
-              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#ff5f57' }} />
-              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#febc2e' }} />
-              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#28c840' }} />
-              <div
-                style={{
-                  flex: 1, margin: '0 16px',
-                  background: 'var(--color-card)', borderRadius: 4,
-                  height: 20, display: 'flex', alignItems: 'center',
-                  paddingLeft: 10,
-                }}
-              >
-                <span style={{ fontSize: 11, color: 'var(--color-muted)' }}>app.trackly.io/dashboard</span>
+            <div className="h-9 bg-surface flex items-center gap-1.5 px-3.5 border-b border-border">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <div className="flex-1 mx-4 bg-card rounded h-5 flex items-center px-2.5">
+                <span className="text-[11px] text-muted">app.trackly.io/dashboard</span>
               </div>
             </div>
             <motion.img
-              style={{ y: imgY, display: 'block', width: '100%' }}
+              style={{ y: imgY }}
+              className="block w-full h-auto"
               src="/dashboard.png"
               alt="Trackly dashboard showing activity heatmap and streak counter"
             />
@@ -256,11 +193,7 @@ function Hero() {
           {/* Glow beneath screenshot */}
           <div
             aria-hidden
-            style={{
-              position: 'absolute', bottom: -40, left: '10%', right: '10%', height: 80,
-              background: 'var(--color-accent)',
-              filter: 'blur(60px)', opacity: 0.12, borderRadius: '50%', zIndex: -1,
-            }}
+            className="absolute -bottom-10 left-[10%] right-[10%] h-20 bg-accent blur-[60px] opacity-15 rounded-full -z-10"
           />
         </motion.div>
       </div>
@@ -277,28 +210,15 @@ function StatsBar() {
     { value: '1', label: 'place for all your habits' },
   ];
   return (
-    <section
-      style={{
-        borderTop: '1px solid var(--color-border)',
-        borderBottom: '1px solid var(--color-border)',
-        padding: '32px 24px',
-      }}
-    >
-      <div
-        style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0 }}
-      >
+    <section className="border-y border-border py-8 px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0">
         {stats.map((s, i) => (
           <Reveal key={i} delay={i * 0.07}>
-            <div
-              style={{
-                textAlign: 'center', padding: '8px 0',
-                borderRight: i < 3 ? '1px solid var(--color-border)' : 'none',
-              }}
-            >
-              <div style={{ fontSize: 30, fontWeight: 800, color: 'var(--color-foreground)', letterSpacing: '-1px' }}>
+            <div className={`text-center py-2 ${i < 3 ? 'md:border-r md:border-border' : ''}`}>
+              <div className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
                 {s.value}
               </div>
-              <div style={{ fontSize: 13, color: 'var(--color-muted)', marginTop: 2 }}>{s.label}</div>
+              <div className="text-xs text-muted mt-1 px-2">{s.label}</div>
             </div>
           </Reveal>
         ))}
@@ -307,16 +227,16 @@ function StatsBar() {
   );
 }
 
-// ── Features ─────────────────────────────────────────────────────
+// ── Features section ─────────────────────────────────────────────
 function Features() {
   const features = [
     {
-      id: 'feature-categories',
-      title: 'Build your own tracking system',
+      id: 'feature-heatmap',
+      title: 'Contribution heatmaps for everything',
       description:
-        'No preset templates. Create categories for exactly the habits that matter to you — whether that\'s climbing sessions, pages read, or hours of deep work.',
-      screenshot: '/categories.png',
-      screenshotAlt: 'Category management screen',
+        'Not just code commits. Track your workouts, reading sessions, pages written, or meditation minutes in a sleek GitHub-style contribution grid.',
+      screenshot: '/contribution-heatmap.png',
+      screenshotAlt: 'Contribution heatmap view',
       flip: false,
     },
     {
@@ -331,69 +251,44 @@ function Features() {
   ];
 
   return (
-    <section id="features" style={{ padding: '96px 24px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <section id="features" className="py-16 sm:py-24 px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto">
         <Reveal>
-          <p style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, letterSpacing: 2, color: 'var(--color-accent)', textTransform: 'uppercase', marginBottom: 16 }}>
+          <p className="text-center text-xs font-semibold tracking-widest text-accent uppercase mb-3 sm:mb-4">
             How it works
           </p>
         </Reveal>
         <Reveal delay={0.06}>
-          <h2
-            style={{
-              textAlign: 'center', fontSize: 'clamp(28px, 4vw, 44px)',
-              fontWeight: 800, letterSpacing: '-1.5px', margin: '0 auto 64px',
-              color: 'var(--color-foreground)', maxWidth: 600,
-            }}
-          >
+          <h2 className="text-center text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground max-w-xl mx-auto mb-10 sm:mb-16">
             Three steps to a clearer picture of your habits
           </h2>
         </Reveal>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 96 }}>
+        <div className="flex flex-col gap-12 sm:gap-20 md:gap-24">
           {features.map((f) => (
             <div
               key={f.id}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 64,
-                alignItems: 'center',
-                direction: f.flip ? 'rtl' : 'ltr',
-              }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center"
             >
               {/* Text */}
-              <Reveal>
-                <div style={{ direction: 'ltr' }}>
-                  <h3
-                    style={{
-                      fontSize: 26, fontWeight: 700, letterSpacing: '-0.8px',
-                      color: 'var(--color-foreground)', marginBottom: 16,
-                    }}
-                  >
+              <Reveal className={f.flip ? 'order-1 md:order-2' : 'order-1 md:order-1'}>
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mb-3 sm:mb-4">
                     {f.title}
                   </h3>
-                  <p style={{ fontSize: 15, color: 'var(--color-muted)', lineHeight: 1.7, maxWidth: 420 }}>
+                  <p className="text-sm sm:text-base text-muted leading-relaxed max-w-md">
                     {f.description}
                   </p>
                 </div>
               </Reveal>
 
               {/* Screenshot */}
-              <Reveal delay={0.12}>
-                <div
-                  style={{
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 10,
-                    overflow: 'hidden',
-                    boxShadow: '0 16px 48px rgba(0,0,0,0.4)',
-                    direction: 'ltr',
-                  }}
-                >
+              <Reveal delay={0.12} className={f.flip ? 'order-2 md:order-1' : 'order-2 md:order-2'}>
+                <div className="border border-border rounded-xl overflow-hidden shadow-2xl">
                   <img
                     src={f.screenshot}
                     alt={f.screenshotAlt}
-                    style={{ display: 'block', width: '100%' }}
+                    className="block w-full h-auto"
                   />
                 </div>
               </Reveal>
@@ -402,28 +297,13 @@ function Features() {
         </div>
 
         {/* Icon feature grid */}
-        <div style={{ marginTop: 96 }}>
+        <div className="mt-16 sm:mt-24">
           <Reveal>
-            <h2
-              style={{
-                textAlign: 'center', fontSize: 'clamp(24px, 3.5vw, 38px)',
-                fontWeight: 800, letterSpacing: '-1px', marginBottom: 56,
-                color: 'var(--color-foreground)',
-              }}
-            >
+            <h2 className="text-center text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-foreground mb-8 sm:mb-14">
               Everything you need, nothing you don't
             </h2>
           </Reveal>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: 2,
-              border: '1px solid var(--color-border)',
-              borderRadius: 12,
-              overflow: 'hidden',
-            }}
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[
               {
                 icon: (
@@ -469,18 +349,12 @@ function Features() {
               },
             ].map((item, i) => (
               <Reveal key={i} delay={i * 0.07}>
-                <div
-                  style={{
-                    padding: '28px 24px',
-                    background: 'var(--color-card)',
-                    borderRight: i % 2 === 0 ? '1px solid var(--color-border)' : 'none',
-                  }}
-                >
-                  <div style={{ marginBottom: 16 }}>{item.icon}</div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-foreground)', marginBottom: 8 }}>
+                <div className="p-5 sm:p-6 bg-card border border-border rounded-xl h-full flex flex-col justify-start">
+                  <div className="mb-3 sm:mb-4">{item.icon}</div>
+                  <div className="text-sm font-semibold text-foreground mb-1.5 sm:mb-2">
                     {item.title}
                   </div>
-                  <div style={{ fontSize: 13, color: 'var(--color-muted)', lineHeight: 1.65 }}>
+                  <div className="text-xs text-muted leading-relaxed">
                     {item.desc}
                   </div>
                 </div>
@@ -496,43 +370,22 @@ function Features() {
 // ── Final CTA ────────────────────────────────────────────────────
 function FinalCTA() {
   return (
-    <section
-      id="download"
-      style={{
-        padding: '96px 24px',
-        borderTop: '1px solid var(--color-border)',
-        textAlign: 'center',
-      }}
-    >
-      <div style={{ maxWidth: 560, margin: '0 auto' }}>
+    <section id="download" className="py-20 sm:py-24 px-4 sm:px-6 border-t border-border text-center">
+      <div className="max-w-xl mx-auto">
         <Reveal>
-          <div
-            style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              width: 52, height: 52,
-              background: 'color-mix(in srgb, var(--color-accent) 12%, transparent)',
-              border: '1px solid color-mix(in srgb, var(--color-accent) 25%, transparent)',
-              borderRadius: 12, marginBottom: 28,
-            }}
-          >
+          <div className="inline-flex items-center justify-center w-13 h-13 bg-accent/10 border border-accent/20 rounded-xl mb-6">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M12 3v12m0 0l-4-4m4 4l4-4M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </Reveal>
         <Reveal delay={0.06}>
-          <h2
-            style={{
-              fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800,
-              letterSpacing: '-1.5px', color: 'var(--color-foreground)',
-              marginBottom: 16,
-            }}
-          >
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground mb-4">
             Start tracking today.
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
-          <p style={{ fontSize: 16, color: 'var(--color-muted)', marginBottom: 36, lineHeight: 1.65 }}>
+          <p className="text-sm sm:text-base text-muted mb-8 leading-relaxed">
             No subscriptions. No clutter. Just a focused tool that helps you
             show up for the things that matter.
           </p>
@@ -541,14 +394,7 @@ function FinalCTA() {
           <a
             href="#"
             id="final-cta-download"
-            style={{
-              display: 'inline-block',
-              background: 'var(--color-accent)', color: '#fff',
-              padding: '13px 36px', borderRadius: 8, fontSize: 15,
-              fontWeight: 600, textDecoration: 'none',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
-            }}
-            className="transition-transform hover:scale-[1.02]"
+            className="inline-block bg-accent text-white px-8 py-3 rounded-lg text-sm font-semibold transition-transform hover:scale-[1.02] shadow-sm"
           >
             Download App
           </a>
@@ -561,33 +407,17 @@ function FinalCTA() {
 // ── Footer ───────────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer
-      style={{
-        borderTop: '1px solid var(--color-border)',
-        padding: '32px 24px',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1100, margin: '0 auto',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          flexWrap: 'wrap', gap: 16,
-        }}
-      >
+    <footer className="border-t border-border py-8 px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span
-            style={{
-              width: 22, height: 22, background: 'var(--color-accent)',
-              borderRadius: 5, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
+          <span className="w-5 h-5 bg-accent rounded-md flex items-center justify-center">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
               <rect x="2" y="8" width="3" height="6" rx="1" fill="white" />
               <rect x="6.5" y="5" width="3" height="9" rx="1" fill="white" />
               <rect x="11" y="2" width="3" height="12" rx="1" fill="white" />
             </svg>
           </span>
-          <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--color-foreground)' }}>Trackly</span>
+          <span className="font-bold text-sm text-foreground">Trackly</span>
         </div>
         <div className="flex items-center gap-5">
           {[
@@ -598,14 +428,13 @@ function Footer() {
             <a
               key={l.label}
               href={l.href}
-              style={{ fontSize: 13, color: 'var(--color-muted)', textDecoration: 'none', fontWeight: 500 }}
-              className="hover:text-foreground transition-colors"
+              className="text-xs font-medium text-muted hover:text-foreground transition-colors"
             >
               {l.label}
             </a>
           ))}
         </div>
-        <p style={{ fontSize: 12, color: 'var(--color-muted)' }}>
+        <p className="text-xs text-muted">
           © {new Date().getFullYear()} Trackly. Built to build habits.
         </p>
       </div>
@@ -616,7 +445,7 @@ function Footer() {
 // ── Page ─────────────────────────────────────────────────────────
 export function LandingPage() {
   return (
-    <div style={{ background: 'var(--color-background)', minHeight: '100vh' }}>
+    <div className="bg-background min-h-screen">
       <Navbar />
       <Hero />
       <StatsBar />
