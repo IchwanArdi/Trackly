@@ -10,6 +10,8 @@ import { HistoryPage } from './pages/HistoryPage';
 import { CategoriesPage } from './pages/CategoriesPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { LandingPage } from './pages/LandingPage';
+import { TermsOfService } from './pages/TermsOfService';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />

@@ -129,8 +129,8 @@ export function RegisterPage() {
 
             <p className="text-[11px] text-muted leading-relaxed">
               By creating an account, you agree to our{' '}
-              <span className="text-accent cursor-pointer hover:underline">Terms of Service</span> and{' '}
-              <span className="text-accent cursor-pointer hover:underline">Privacy Policy</span>.
+              <Link to="/terms-of-service" className="text-accent hover:underline">Terms of Service</Link> and{' '}
+              <Link to="/privacy-policy" className="text-accent hover:underline">Privacy Policy</Link>.
             </p>
 
             <Button

@@ -49,6 +49,10 @@ export function LoginPage() {
     }
   };
 
+  const handleFacebookLogin = async () => {
+    window.location.href = 'http://localhost:3000/api/auth/facebook';
+  };
+
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left panel */}
@@ -125,6 +129,18 @@ export function LoginPage() {
                 Forgot password?
               </button>
             </div>
+
+            {/* Login dengan Facebook */}
+            <Button onClick={handleFacebookLogin}
+              id="btn-facebook"
+              type="button"
+              variant="primary"
+              size="md"
+              className="w-full"
+            // icon={< size={14} />}
+            >
+              Login dengan Facebook
+            </Button>
 
             <Button
               id="btn-login-submit"
