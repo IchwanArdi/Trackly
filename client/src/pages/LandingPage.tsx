@@ -1,26 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 // ── Scroll-reveal wrapper ────────────────────────────────────────
-function Reveal({
-  children,
-  delay = 0,
-  className = '',
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-}) {
+function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px 0px' });
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      initial={{ opacity: 0, y: 28 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <motion.div ref={ref} className={className} initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}>
       {children}
     </motion.div>
   );
@@ -36,13 +23,7 @@ function Navbar() {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-background/90 border-b border-border backdrop-blur-md'
-          : 'bg-transparent border-b border-transparent'
-      }`}
-    >
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/90 border-b border-border backdrop-blur-md' : 'bg-transparent border-b border-transparent'}`}>
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
         {/* Logo */}
         <a href="/" id="nav-logo" className="flex items-center gap-2">
@@ -53,25 +34,15 @@ function Navbar() {
               <rect x="11" y="2" width="3" height="12" rx="1" fill="white" />
             </svg>
           </span>
-          <span className="font-bold text-base text-foreground tracking-tight">
-            Trackly
-          </span>
+          <span className="font-bold text-base text-foreground tracking-tight">Trackly</span>
         </a>
 
         {/* Links */}
         <div className="flex items-center gap-6">
-          <a
-            href="#features"
-            id="nav-features"
-            className="text-sm font-medium text-muted hover:text-foreground transition-colors"
-          >
-            Features
-          </a>
-          <a
-            href="#download"
-            id="nav-download"
-            className="bg-accent text-white px-4 py-1.5 rounded-md text-xs font-semibold transition-transform hover:scale-[1.02] inline-block"
-          >
+          <Link to="/register" id="nav-features" className="text-sm font-medium text-muted hover:text-foreground transition-colors">
+            Register
+          </Link>
+          <a href="#download" id="nav-download" className="bg-accent text-white px-4 py-1.5 rounded-md text-xs font-semibold transition-transform hover:scale-[1.02] inline-block">
             Download App
           </a>
         </div>
@@ -87,11 +58,7 @@ function Hero() {
   const imgY = useTransform(scrollYProgress, [0, 1], [0, 40]);
 
   return (
-    <section
-      ref={ref}
-      id="hero"
-      className="pt-28 sm:pt-32 pb-20 sm:pb-24 overflow-hidden relative"
-    >
+    <section ref={ref} id="hero" className="pt-28 sm:pt-32 pb-20 sm:pb-24 overflow-hidden relative">
       {/* Faint grid */}
       <div
         aria-hidden
@@ -106,12 +73,7 @@ function Hero() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="flex justify-center mb-8"
-        >
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="flex justify-center mb-8">
           <span className="inline-flex items-center gap-2 border border-border rounded-full px-3.5 py-1 text-xs text-muted font-medium bg-card">
             <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block" />
             Personal activity tracking, reimagined
@@ -137,40 +99,21 @@ function Hero() {
           transition={{ duration: 0.55, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
           className="text-center text-sm sm:text-base md:text-lg text-muted max-w-lg mx-auto mb-10 leading-relaxed"
         >
-          Define your own categories — workouts, reading, coding, anything —
-          then log daily and watch your habits build into streaks and heatmaps.
+          Define your own categories — workouts, reading, coding, anything — then log daily and watch your habits build into streaks and heatmaps.
         </motion.p>
 
         {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          className="flex justify-center gap-3 mb-16 sm:mb-20"
-        >
-          <a
-            href="#download"
-            id="hero-cta-primary"
-            className="bg-accent text-white px-6 sm:px-7 py-3 rounded-lg text-sm font-semibold transition-transform hover:scale-[1.02] shadow-sm inline-block"
-          >
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.24, ease: [0.22, 1, 0.36, 1] }} className="flex justify-center gap-3 mb-16 sm:mb-20">
+          <a href="#download" id="hero-cta-primary" className="bg-accent text-white px-6 sm:px-7 py-3 rounded-lg text-sm font-semibold transition-transform hover:scale-[1.02] shadow-sm inline-block">
             Download App
           </a>
-          <a
-            href="/register"
-            id="hero-cta-secondary"
-            className="bg-surface text-foreground border border-border px-5 sm:px-6 py-3 rounded-lg text-sm font-medium transition-transform hover:scale-[1.02] inline-block"
-          >
+          <a href="/register" id="hero-cta-secondary" className="bg-surface text-foreground border border-border px-5 sm:px-6 py-3 rounded-lg text-sm font-medium transition-transform hover:scale-[1.02] inline-block">
             Register
           </a>
         </motion.div>
 
         {/* Hero screenshot */}
-        <motion.div
-          initial={{ opacity: 0, y: 36 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-4xl mx-auto relative"
-        >
+        <motion.div initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.32, ease: [0.22, 1, 0.36, 1] }} className="max-w-4xl mx-auto relative">
           {/* Browser chrome */}
           <div className="border border-border rounded-xl overflow-hidden shadow-2xl bg-card">
             {/* Fake toolbar */}
@@ -182,19 +125,11 @@ function Hero() {
                 <span className="text-[11px] text-muted">app.trackly.io/dashboard</span>
               </div>
             </div>
-            <motion.img
-              style={{ y: imgY }}
-              className="block w-full h-auto"
-              src="/dashboard.png"
-              alt="Trackly dashboard showing activity heatmap and streak counter"
-            />
+            <motion.img style={{ y: imgY }} className="block w-full h-auto" src="/dashboard.png" alt="Trackly dashboard showing activity heatmap and streak counter" />
           </div>
 
           {/* Glow beneath screenshot */}
-          <div
-            aria-hidden
-            className="absolute -bottom-10 left-[10%] right-[10%] h-20 bg-accent blur-[60px] opacity-15 rounded-full -z-10"
-          />
+          <div aria-hidden className="absolute -bottom-10 left-[10%] right-[10%] h-20 bg-accent blur-[60px] opacity-15 rounded-full -z-10" />
         </motion.div>
       </div>
     </section>
@@ -215,9 +150,7 @@ function StatsBar() {
         {stats.map((s, i) => (
           <Reveal key={i} delay={i * 0.07}>
             <div className={`text-center py-2 ${i < 3 ? 'md:border-r md:border-border' : ''}`}>
-              <div className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-                {s.value}
-              </div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">{s.value}</div>
               <div className="text-xs text-muted mt-1 px-2">{s.label}</div>
             </div>
           </Reveal>
@@ -233,8 +166,7 @@ function Features() {
     {
       id: 'feature-heatmap',
       title: 'Contribution heatmaps for everything',
-      description:
-        'Not just code commits. Track your workouts, reading sessions, pages written, or meditation minutes in a sleek GitHub-style contribution grid.',
+      description: 'Not just code commits. Track your workouts, reading sessions, pages written, or meditation minutes in a sleek GitHub-style contribution grid.',
       screenshot: '/contribution-heatmap.png',
       screenshotAlt: 'Contribution heatmap view',
       flip: false,
@@ -242,8 +174,7 @@ function Features() {
     {
       id: 'feature-log',
       title: 'Log in under 10 seconds',
-      description:
-        'Quick daily logging with optional notes. No friction, no forms — just mark what you did and move on. The habit of logging is as important as the habit itself.',
+      description: 'Quick daily logging with optional notes. No friction, no forms — just mark what you did and move on. The habit of logging is as important as the habit itself.',
       screenshot: '/log-activity.png',
       screenshotAlt: 'Log activity screen',
       flip: true,
@@ -254,42 +185,27 @@ function Features() {
     <section id="features" className="py-16 sm:py-24 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         <Reveal>
-          <p className="text-center text-xs font-semibold tracking-widest text-accent uppercase mb-3 sm:mb-4">
-            How it works
-          </p>
+          <p className="text-center text-xs font-semibold tracking-widest text-accent uppercase mb-3 sm:mb-4">How it works</p>
         </Reveal>
         <Reveal delay={0.06}>
-          <h2 className="text-center text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground max-w-xl mx-auto mb-10 sm:mb-16">
-            Three steps to a clearer picture of your habits
-          </h2>
+          <h2 className="text-center text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground max-w-xl mx-auto mb-10 sm:mb-16">Three steps to a clearer picture of your habits</h2>
         </Reveal>
 
         <div className="flex flex-col gap-12 sm:gap-20 md:gap-24">
           {features.map((f) => (
-            <div
-              key={f.id}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center"
-            >
+            <div key={f.id} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
               {/* Text */}
               <Reveal className={f.flip ? 'order-1 md:order-2' : 'order-1 md:order-1'}>
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mb-3 sm:mb-4">
-                    {f.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-muted leading-relaxed max-w-md">
-                    {f.description}
-                  </p>
+                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mb-3 sm:mb-4">{f.title}</h3>
+                  <p className="text-sm sm:text-base text-muted leading-relaxed max-w-md">{f.description}</p>
                 </div>
               </Reveal>
 
               {/* Screenshot */}
               <Reveal delay={0.12} className={f.flip ? 'order-2 md:order-1' : 'order-2 md:order-2'}>
                 <div className="border border-border rounded-xl overflow-hidden shadow-2xl">
-                  <img
-                    src={f.screenshot}
-                    alt={f.screenshotAlt}
-                    className="block w-full h-auto"
-                  />
+                  <img src={f.screenshot} alt={f.screenshotAlt} className="block w-full h-auto" />
                 </div>
               </Reveal>
             </div>
@@ -299,9 +215,7 @@ function Features() {
         {/* Icon feature grid */}
         <div className="mt-16 sm:mt-24">
           <Reveal>
-            <h2 className="text-center text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-foreground mb-8 sm:mb-14">
-              Everything you need, nothing you don't
-            </h2>
+            <h2 className="text-center text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-foreground mb-8 sm:mb-14">Everything you need, nothing you don't</h2>
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[
@@ -351,12 +265,8 @@ function Features() {
               <Reveal key={i} delay={i * 0.07}>
                 <div className="p-5 sm:p-6 bg-card border border-border rounded-xl h-full flex flex-col justify-start">
                   <div className="mb-3 sm:mb-4">{item.icon}</div>
-                  <div className="text-sm font-semibold text-foreground mb-1.5 sm:mb-2">
-                    {item.title}
-                  </div>
-                  <div className="text-xs text-muted leading-relaxed">
-                    {item.desc}
-                  </div>
+                  <div className="text-sm font-semibold text-foreground mb-1.5 sm:mb-2">{item.title}</div>
+                  <div className="text-xs text-muted leading-relaxed">{item.desc}</div>
                 </div>
               </Reveal>
             ))}
@@ -380,22 +290,13 @@ function FinalCTA() {
           </div>
         </Reveal>
         <Reveal delay={0.06}>
-          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground mb-4">
-            Start tracking today.
-          </h2>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground mb-4">Start tracking today.</h2>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="text-sm sm:text-base text-muted mb-8 leading-relaxed">
-            No subscriptions. No clutter. Just a focused tool that helps you
-            show up for the things that matter.
-          </p>
+          <p className="text-sm sm:text-base text-muted mb-8 leading-relaxed">No subscriptions. No clutter. Just a focused tool that helps you show up for the things that matter.</p>
         </Reveal>
         <Reveal delay={0.14}>
-          <a
-            href="#"
-            id="final-cta-download"
-            className="inline-block bg-accent text-white px-8 py-3 rounded-lg text-sm font-semibold transition-transform hover:scale-[1.02] shadow-sm"
-          >
+          <a href="#" id="final-cta-download" className="inline-block bg-accent text-white px-8 py-3 rounded-lg text-sm font-semibold transition-transform hover:scale-[1.02] shadow-sm">
             Download App
           </a>
         </Reveal>
@@ -423,20 +324,14 @@ function Footer() {
           {[
             { label: 'Sign in', href: '/login' },
             { label: 'Register', href: '/register' },
-            { label: 'Download', href: '#download' }
+            { label: 'Download', href: '#download' },
           ].map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              className="text-xs font-medium text-muted hover:text-foreground transition-colors"
-            >
+            <a key={l.label} href={l.href} className="text-xs font-medium text-muted hover:text-foreground transition-colors">
               {l.label}
             </a>
           ))}
         </div>
-        <p className="text-xs text-muted">
-          © {new Date().getFullYear()} Trackly. Built to build habits.
-        </p>
+        <p className="text-xs text-muted">© {new Date().getFullYear()} Trackly. Built to build habits.</p>
       </div>
     </footer>
   );

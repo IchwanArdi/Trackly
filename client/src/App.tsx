@@ -12,11 +12,12 @@ import { ProfilePage } from './pages/ProfilePage';
 import { LandingPage } from './pages/LandingPage';
 import { TermsOfService } from './pages/TermsOfService';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { AuthSuccessPage } from './pages/AuthSuccessPage';
 
 function App() {
   return (
     <DataProvider>
-      <ToastContainer position='top-right' autoClose={2000} theme='colored' />
+      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
       <BrowserRouter>
         <Routes>
           {/* Public routes */}
@@ -27,6 +28,7 @@ function App() {
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/auth/success" element={<AuthSuccessPage />} />
 
           {/* App routes */}
           <Route element={<AppLayout />}>

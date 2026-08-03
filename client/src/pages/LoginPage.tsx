@@ -21,7 +21,7 @@ export function LoginPage() {
     try {
       const response = await api.post('/api/auth/login', {
         email,
-        password
+        password,
       });
       setAuthToken(response.data.token);
       saveUser(response.data.user);
@@ -31,7 +31,7 @@ export function LoginPage() {
         render: `${response.data.message}`,
         type: 'success',
         isLoading: false,
-        autoClose: 2000
+        autoClose: 2000,
       });
 
       setTimeout(() => {
@@ -42,15 +42,16 @@ export function LoginPage() {
         render: `${error.response.data.message}`,
         type: 'error',
         isLoading: false,
-        autoClose: 2000
+        autoClose: 2000,
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFacebookLogin = async () => {
-    window.location.href = 'http://localhost:3000/api/auth/facebook';
+  const handleGoogleLogin = () => {
+    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    window.location.assign(`${apiBaseUrl}/api/auth/google`);
   };
 
   return (
@@ -65,9 +66,7 @@ export function LoginPage() {
         </div>
 
         <div>
-          <blockquote className="text-sm text-muted leading-relaxed">
-            "Consistency beats perfection. Trackly helps me see my patterns clearly without the noise."
-          </blockquote>
+          <blockquote className="text-sm text-muted leading-relaxed">"Consistency beats perfection. Trackly helps me see my patterns clearly without the noise."</blockquote>
           <div className="mt-4">
             <p className="text-sm font-medium text-foreground">Alex Kim</p>
             <p className="text-xs text-muted">Product Designer</p>
@@ -103,26 +102,8 @@ export function LoginPage() {
           <p className="text-sm text-muted mb-7">Track what matters, every day.</p>
 
           <form id="form-login" onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              id="input-email"
-              label="Email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-            <Input
-              id="input-password"
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-            />
+            <Input id="input-email" label="Email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+            <Input id="input-password" label="Password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
 
             <div className="flex justify-end">
               <button type="button" className="text-xs text-accent hover:underline">
@@ -130,26 +111,12 @@ export function LoginPage() {
               </button>
             </div>
 
-            {/* Login dengan Facebook */}
-            <Button onClick={handleFacebookLogin}
-              id="btn-facebook"
-              type="button"
-              variant="primary"
-              size="md"
-              className="w-full"
-            // icon={< size={14} />}
-            >
-              Login dengan Facebook
+            {/* Login dengan Google */}
+            <Button onClick={handleGoogleLogin} id="btn-google-login" type="button" variant="primary" size="md" className="w-full">
+              Login dengan Google
             </Button>
 
-            <Button
-              id="btn-login-submit"
-              type="submit"
-              variant="primary"
-              size="md"
-              className="w-full"
-              icon={<ArrowRight size={14} />}
-            >
+            <Button id="btn-login-submit" type="submit" variant="primary" size="md" className="w-full" icon={<ArrowRight size={14} />}>
               {loading ? 'Loading...' : 'Sign in'}
             </Button>
           </form>

@@ -3,16 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 model User {
-  id        String     @id @default(uuid())
-  name      String
-  email     String     @unique
-  password  String
-  createdAt DateTime   @default(now())
-
+  id         String     @id @default(uuid())
+  name       String
+  email      String     @unique
+  password   String?
+  createdAt  DateTime   @default(now())
+  googleId   String?    @unique
   categories Category[]
   entries    Entry[]
 }
@@ -25,9 +25,8 @@ model Category {
   color     String
   icon      String
   createdAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  entries Entry[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries   Entry[]
 
   @@unique([userId, name])
   @@index([userId])
@@ -41,9 +40,8 @@ model Entry {
   value      Float
   note       String?
   createdAt  DateTime @default(now())
-
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, date])
   @@index([categoryId])
