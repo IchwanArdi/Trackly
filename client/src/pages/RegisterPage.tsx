@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { api } from '../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
-import { Activity, ArrowRight } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 
@@ -52,7 +52,7 @@ export function RegisterPage() {
     <div className="min-h-screen bg-background flex">
       {/* Left panel */}
       <div className="hidden lg:flex w-80 xl:w-96 bg-card border-r border-border flex-col justify-between p-10 shrink-0">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 ">
           <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
             <Activity size={14} className="text-white" />
           </div>
@@ -86,7 +86,7 @@ export function RegisterPage() {
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
-          <div className="flex items-center gap-2 mb-8">
+          <div className="flex items-center gap-2 mb-8 lg:hidden">
             <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
               <Activity size={14} className="text-white" />
             </div>
@@ -139,7 +139,6 @@ export function RegisterPage() {
               variant="primary"
               size="md"
               className="w-full"
-              icon={<ArrowRight size={14} />}
               disabled={loading}
             >
               {loading ? 'Loading...' : 'Create account'}
