@@ -12,6 +12,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { LandingPage } from './pages/LandingPage';
 import { TermsOfService } from './pages/TermsOfService';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { DataDeletion } from './pages/Datadeletion';
 import { AuthSuccessPage } from './pages/AuthSuccessPage';
 import { ScrollToTop } from './components/layout/ScrollToTop';
 
@@ -26,6 +27,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/data-deletion" element={<DataDeletion />} />
 
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />
