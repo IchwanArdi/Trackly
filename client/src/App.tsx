@@ -10,6 +10,7 @@ import { HistoryPage } from './pages/HistoryPage';
 import { CategoriesPage } from './pages/CategoriesPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { LandingPage } from './pages/LandingPage';
+import { HelpPage } from './pages/HelpPage';
 import { TermsOfService } from './pages/TermsOfService';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { DataDeletion } from './pages/Datadeletion';
@@ -25,6 +26,7 @@ function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/help" element={<HelpPage />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/data-deletion" element={<DataDeletion />} />

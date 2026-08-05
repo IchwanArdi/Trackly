@@ -204,7 +204,7 @@ function Features() {
                   <p className="text-sm leading-7 text-muted sm:text-base">{item.description}</p>
                 </div>
                 <div className="overflow-hidden rounded-[18px] border border-border p-2">
-                  <img src={item.image} alt={item.alt} className="block w-full rounded-[14px] border border-border" />
+                  <img src={item.image} alt={item.alt} className="block w-full" />
                 </div>
               </div>
             </Reveal>
@@ -251,13 +251,10 @@ function PreCTASection() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-1 sm:gap-3 sm:grid-cols-[1.4fr_1fr]">
           {cards.map((card) => (
-            <div key={card.label} className={`relative overflow-hidden rounded-lg ${card.bg} p-8 sm:p-10`}>
-              {/* Faint oversized watermark icon, matches the reference pattern */}
-              <Activity size={280} strokeWidth={1} className="pointer-events-none absolute -right-10 top-1/2 -translate-y-1/2 opacity-[0.08]" />
+            <div key={card.label} className={`flex flex-col justify-between h-fit md:h-[400px] overflow-hidden rounded-lg ${card.bg} p-8 sm:p-10`}>
+              <p className={`relative text-xl font-medium leading-snug sm:text-2xl ${card.text}`}>&ldquo;<i>{card.quote}</i>&rdquo;</p>
 
-              <p className={`relative text-xl font-medium leading-snug sm:text-2xl ${card.text}`}>&ldquo;{card.quote}&rdquo;</p>
-
-              <div className="relative mt-16 flex items-center gap-3">
+              <div className=" mt-16 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/10">
                   <Activity size={14} className={card.text} />
                 </div>
@@ -324,10 +321,19 @@ function Footer() {
           <a href="#download" className="transition hover:text-foreground">
             Download
           </a>
+          <a href="/help" className="transition hover:text-foreground">
+            Help
+          </a>
+          <a href="/privacy-policy" className="transition hover:text-foreground">
+            Privacy
+          </a>
+          <a href="/terms-of-service" className="transition hover:text-foreground">
+            Terms of Service
+          </a>
         </div>
         <p className="text-sm text-muted">© {new Date().getFullYear()} Trackly. Built to build habits.</p>
       </div>
-    </footer>
+    </footer >
   );
 }
 

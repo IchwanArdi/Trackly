@@ -51,12 +51,14 @@ export function RegisterPage() {
     <div className="min-h-screen bg-background flex">
       {/* Left panel */}
       <div className="hidden lg:flex w-80 xl:w-96 bg-card border-r border-border flex-col justify-between p-10 shrink-0">
-        <div className="flex items-center gap-2.5 ">
-          <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
-            <img src="/trackly-icon.webp" alt="Trackly Icon" />
+        <Link to='/' >
+          <div className="flex items-center gap-2.5 cursor-pointer">
+            <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
+              <img src="/trackly-icon.webp" alt="Trackly Icon" />
+            </div>
+            <span className="font-semibold text-sm tracking-tight text-foreground">Trackly</span>
           </div>
-          <span className="font-semibold text-sm tracking-tight text-foreground">Trackly</span>
-        </div>
+        </Link>
 
         <div className="flex flex-col justify-center h-full gap-2">
           <blockquote className="text-sm text-muted leading-relaxed">"A journey of a thousand miles begins with a single step."</blockquote>
