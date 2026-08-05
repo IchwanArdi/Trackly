@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import dashboard from '../assets/dashboard.webp';
+import categories from '../assets/categories.webp';
+import logActivity from '../assets/log-activity.webp';
 
 // ── Scroll-reveal wrapper ────────────────────────────────────────
 function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -27,13 +30,7 @@ function Navbar() {
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
         {/* Logo */}
         <a href="/" id="nav-logo" className="flex items-center gap-2">
-          <span className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <rect x="2" y="8" width="3" height="6" rx="1" fill="white" />
-              <rect x="6.5" y="5" width="3" height="9" rx="1" fill="white" />
-              <rect x="11" y="2" width="3" height="12" rx="1" fill="white" />
-            </svg>
-          </span>
+          <img src="/trackly-icon.webp" alt="Trackly Icon" className="w-8 h-8" />
           <span className="font-bold text-base text-foreground tracking-tight">Trackly</span>
         </a>
 
@@ -107,9 +104,9 @@ function Hero() {
           <a href="#download" id="hero-cta-primary" className="bg-accent text-white px-6 sm:px-7 py-3 rounded-lg text-sm font-semibold transition-transform hover:scale-[1.02] shadow-sm inline-block">
             Download App
           </a>
-          <a href="/register" id="hero-cta-secondary" className="bg-surface text-foreground border border-border px-5 sm:px-6 py-3 rounded-lg text-sm font-medium transition-transform hover:scale-[1.02] inline-block">
+          <Link to="/register" id="hero-cta-secondary" className="bg-surface text-foreground border border-border px-5 sm:px-6 py-3 rounded-lg text-sm font-medium transition-transform hover:scale-[1.02] inline-block">
             Register
-          </a>
+          </Link>
         </motion.div>
 
         {/* Hero screenshot */}
@@ -125,7 +122,7 @@ function Hero() {
                 <span className="text-[11px] text-muted">app.trackly.io/dashboard</span>
               </div>
             </div>
-            <motion.img style={{ y: imgY }} className="block w-full h-auto" src="/dashboard.png" alt="Trackly dashboard showing activity heatmap and streak counter" />
+            <motion.img style={{ y: imgY }} className="block w-full h-auto" src={dashboard} alt="Trackly dashboard showing activity heatmap and streak counter" />
           </div>
 
           {/* Glow beneath screenshot */}
@@ -167,15 +164,15 @@ function Features() {
       id: 'feature-heatmap',
       title: 'Contribution heatmaps for everything',
       description: 'Not just code commits. Track your workouts, reading sessions, pages written, or meditation minutes in a sleek GitHub-style contribution grid.',
-      screenshot: '/contribution-heatmap.png',
-      screenshotAlt: 'Contribution heatmap view',
+      screenshot: categories,
+      screenshotAlt: 'categories view',
       flip: false,
     },
     {
       id: 'feature-log',
       title: 'Log in under 10 seconds',
       description: 'Quick daily logging with optional notes. No friction, no forms — just mark what you did and move on. The habit of logging is as important as the habit itself.',
-      screenshot: '/log-activity.png',
+      screenshot: logActivity,
       screenshotAlt: 'Log activity screen',
       flip: true,
     },
@@ -282,13 +279,6 @@ function FinalCTA() {
   return (
     <section id="download" className="py-20 sm:py-24 px-4 sm:px-6 border-t border-border text-center">
       <div className="max-w-xl mx-auto">
-        <Reveal>
-          <div className="inline-flex items-center justify-center w-13 h-13 bg-accent/10 border border-accent/20 rounded-xl mb-6">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 3v12m0 0l-4-4m4 4l4-4M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-        </Reveal>
         <Reveal delay={0.06}>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground mb-4">Start tracking today.</h2>
         </Reveal>
@@ -311,13 +301,7 @@ function Footer() {
     <footer className="border-t border-border py-8 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="w-5 h-5 bg-accent rounded-md flex items-center justify-center">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-              <rect x="2" y="8" width="3" height="6" rx="1" fill="white" />
-              <rect x="6.5" y="5" width="3" height="9" rx="1" fill="white" />
-              <rect x="11" y="2" width="3" height="12" rx="1" fill="white" />
-            </svg>
-          </span>
+          <img src="/trackly-icon.webp" alt="Trackly Icon" className="w-8 h-8" />
           <span className="font-bold text-sm text-foreground">Trackly</span>
         </div>
         <div className="flex items-center gap-5">

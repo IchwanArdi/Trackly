@@ -24,14 +24,14 @@ export function RegisterPage() {
       const response = await api.post('/api/auth/register', {
         name,
         email,
-        password
+        password,
       });
       // 4. Notifikasi sukses + redirect
       toast.update(idToast, {
         render: `${response.data.message}`,
         type: 'success',
         isLoading: false,
-        autoClose: 2000
+        autoClose: 2000,
       });
       setTimeout(() => {
         navigate('/login');
@@ -41,7 +41,7 @@ export function RegisterPage() {
         render: `${error.response.data.message}`,
         type: 'error',
         isLoading: false,
-        autoClose: 2000
+        autoClose: 2000,
       });
     } finally {
       setLoading(false);
@@ -59,27 +59,12 @@ export function RegisterPage() {
           <span className="font-semibold text-sm tracking-tight text-foreground">Trackly</span>
         </div>
 
-        <div>
-          <blockquote className="text-sm text-muted leading-relaxed">
-            "A journey of a thousand miles begins with a single step."
-          </blockquote>
+        <div className="flex flex-col justify-center h-full gap-2">
+          <blockquote className="text-sm text-muted leading-relaxed">"A journey of a thousand miles begins with a single step."</blockquote>
           <div className="mt-4">
             <p className="text-sm font-medium text-foreground">Laozi</p>
             <p className="text-xs text-muted">Filosofi</p>
           </div>
-        </div>
-
-        <div className="space-y-3">
-          {[
-            { label: 'Total activities logged', value: '2,847' },
-            { label: 'Active users', value: '1,200+' },
-            { label: 'Categories tracked', value: '18' },
-          ].map(({ label, value }) => (
-            <div key={label} className="flex justify-between items-center">
-              <span className="text-xs text-muted">{label}</span>
-              <span className="text-sm font-semibold text-foreground tabular-nums">{value}</span>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -87,8 +72,8 @@ export function RegisterPage() {
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
-              <Activity size={14} className="text-white" />
+            <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
+              <img src="../public/trackly-icon.webp" alt="Trackly Icon" />
             </div>
             <span className="font-semibold text-sm text-foreground">Trackly</span>
           </div>
@@ -97,50 +82,23 @@ export function RegisterPage() {
           <p className="text-sm text-muted mb-7">Start building your activity history.</p>
 
           <form id="form-register" onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              id="input-name"
-              label="Full name"
-              type="text"
-              placeholder="Alex Kim"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-            />
-            <Input
-              id="input-email"
-              label="Email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-            <Input
-              id="input-password"
-              label="Password"
-              type="password"
-              placeholder="Min. 8 characters"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              minLength={8}
-            />
+            <Input id="input-name" label="Full name" type="text" placeholder="Alex Kim" value={name} onChange={(e) => setName(e.target.value)} required />
+            <Input id="input-email" label="Email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+            <Input id="input-password" label="Password" type="password" placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
 
             <p className="text-[11px] text-muted leading-relaxed">
               By creating an account, you agree to our{' '}
-              <Link to="/terms-of-service" className="text-accent hover:underline">Terms of Service</Link> and{' '}
-              <Link to="/privacy-policy" className="text-accent hover:underline">Privacy Policy</Link>.
+              <Link to="/terms-of-service" className="text-accent hover:underline">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link to="/privacy-policy" className="text-accent hover:underline">
+                Privacy Policy
+              </Link>
+              .
             </p>
 
-            <Button
-              id="btn-register-submit"
-              type="submit"
-              variant="primary"
-              size="md"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button id="btn-register-submit" type="submit" variant="primary" size="md" className="w-full" disabled={loading}>
               {loading ? 'Loading...' : 'Create account'}
             </Button>
           </form>

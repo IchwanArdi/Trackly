@@ -1,0 +1,21 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Transparent background -->
+
+  <!-- Heatmap grid, 3x3, larger squares + higher contrast for legibility at small sizes -->
+  <g>
+    <!-- Row 1 -->
+    <rect x="256" y="256" width="176" height="176" rx="36" fill="#3A3A3A"/>
+    <rect x="464" y="256" width="176" height="176" rx="36" fill="#F0653E" fill-opacity="0.5"/>
+    <rect x="672" y="256" width="176" height="176" rx="36" fill="#3A3A3A"/>
+
+    <!-- Row 2 (hero row) -->
+    <rect x="256" y="464" width="176" height="176" rx="36" fill="#F0653E" fill-opacity="0.5"/>
+    <rect x="464" y="464" width="176" height="176" rx="36" fill="#F0653E"/>
+    <rect x="672" y="464" width="176" height="176" rx="36" fill="#F0653E" fill-opacity="0.5"/>
+
+    <!-- Row 3 -->
+    <rect x="256" y="672" width="176" height="176" rx="36" fill="#3A3A3A"/>
+    <rect x="464" y="672" width="176" height="176" rx="36" fill="#F0653E" fill-opacity="0.5"/>
+    <rect x="672" y="672" width="176" height="176" rx="36" fill="#3A3A3A"/>
+  </g>
+</svg>

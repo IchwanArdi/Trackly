@@ -11,22 +11,10 @@ import { useData } from '../store/dataStore';
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-      <path
-        fill="#4285F4"
-        d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"
-      />
-      <path
-        fill="#34A853"
-        d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z"
-      />
-      <path
-        fill="#EA4335"
-        d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.581C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z"
-      />
+      <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" />
+      <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" />
+      <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" />
+      <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.581C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z" />
     </svg>
   );
 }
@@ -85,31 +73,18 @@ export function LoginPage() {
       {/* Left panel */}
       <div className="hidden lg:flex w-80 xl:w-96 bg-card border-r border-border flex-col justify-between p-10 shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
-            <Activity size={14} className="text-white" />
+          <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
+            <img src="../public/trackly-icon.webp" alt="Trackly Icon" />
           </div>
           <span className="font-semibold text-sm tracking-tight text-foreground">Trackly</span>
         </div>
 
-        <div>
+        <div className="flex flex-col justify-center h-full gap-2">
           <blockquote className="text-sm text-muted leading-relaxed">"Consistency beats perfection. Trackly helps me see my patterns clearly without the noise."</blockquote>
           <div className="mt-4">
             <p className="text-sm font-medium text-foreground">Alex Kim</p>
             <p className="text-xs text-muted">Product Designer</p>
           </div>
-        </div>
-
-        <div className="space-y-3">
-          {[
-            { label: 'Total activities logged', value: '2,847' },
-            { label: 'Active users', value: '1,200+' },
-            { label: 'Categories tracked', value: '18' },
-          ].map(({ label, value }) => (
-            <div key={label} className="flex justify-between items-center">
-              <span className="text-xs text-muted">{label}</span>
-              <span className="text-sm font-semibold text-foreground tabular-nums">{value}</span>
-            </div>
-          ))}
         </div>
       </div>
 

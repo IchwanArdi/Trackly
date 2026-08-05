@@ -13,12 +13,14 @@ import { LandingPage } from './pages/LandingPage';
 import { TermsOfService } from './pages/TermsOfService';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { AuthSuccessPage } from './pages/AuthSuccessPage';
+import { ScrollToTop } from './components/layout/ScrollToTop';
 
 function App() {
   return (
     <DataProvider>
       <ToastContainer position="top-right" autoClose={2000} theme="colored" />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
