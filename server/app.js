@@ -7,6 +7,7 @@ import './src/config/passport.js';
 import authRoutes from './src/routes/auth.js';
 import categoriesRoutes from './src/routes/categories.js';
 import entriesRoutes from './src/routes/entries.js';
+import userRoutes from './src/routes/user.js';
 
 const app = express();
 dotenv.config();
@@ -52,5 +53,6 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/entries', entriesRoutes);
+app.use('/api/users', userRoutes);
 
 export default app;
