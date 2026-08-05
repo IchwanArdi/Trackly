@@ -37,6 +37,7 @@ export function LoginPage() {
       });
       setAuthToken(response.data.token);
       saveUser(response.data.user);
+      console.log('Login successful:', response.data.user);
       await refreshAll();
 
       toast.update(idToast, {
@@ -71,7 +72,7 @@ export function LoginPage() {
     <div className="min-h-screen bg-background flex">
       {/* Left panel */}
       <div className="hidden lg:flex w-80 xl:w-96 bg-card border-r border-border flex-col justify-between p-10 shrink-0">
-        <Link to='/' >
+        <Link to="/">
           <div className="flex items-center gap-2.5 cursor-pointer">
             <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
               <img src="/trackly-icon.webp" alt="Trackly Icon" />

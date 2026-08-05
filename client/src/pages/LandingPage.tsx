@@ -35,8 +35,8 @@ function Navbar() {
         </a>
 
         <div className="flex items-center gap-4 sm:gap-6">
-          <Link to="/register" id="nav-features" className="text-sm font-medium text-muted transition-colors hover:text-foreground">
-            Register
+          <Link to="/login" id="nav-features" className="text-sm font-medium text-muted transition-colors hover:text-foreground">
+            Login
           </Link>
           <a href="#download" id="nav-download" className="inline-flex items-center rounded-full border border-border px-3.5 py-1.5 text-xs font-semibold text-foreground transition hover:text-accent">
             Download App
@@ -252,7 +252,9 @@ function PreCTASection() {
         <div className="grid gap-1 sm:gap-3 sm:grid-cols-[1.4fr_1fr]">
           {cards.map((card) => (
             <div key={card.label} className={`flex flex-col justify-between h-fit md:h-[400px] overflow-hidden rounded-lg ${card.bg} p-8 sm:p-10`}>
-              <p className={`relative text-xl font-medium leading-snug sm:text-2xl ${card.text}`}>&ldquo;<i>{card.quote}</i>&rdquo;</p>
+              <p className={`relative text-xl font-medium leading-snug sm:text-2xl ${card.text}`}>
+                &ldquo;<i>{card.quote}</i>&rdquo;
+              </p>
 
               <div className=" mt-16 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/10">
@@ -333,7 +335,7 @@ function Footer() {
         </div>
         <p className="text-sm text-muted">© {new Date().getFullYear()} Trackly. Built to build habits.</p>
       </div>
-    </footer >
+    </footer>
   );
 }
 
