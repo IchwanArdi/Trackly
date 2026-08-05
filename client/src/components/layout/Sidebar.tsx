@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, ListOrdered, Plus, FolderOpen, LogOut } from 'lucide-react';
-
 import { clearAuthToken } from '../../utils/auth';
 import { useData } from '../../store/dataStore';
 import { getUser } from '../../utils/auth';
@@ -27,8 +26,8 @@ export function Sidebar() {
     <aside className="w-56 shrink-0 h-screen sticky top-0 bg-card border-r border-border flex flex-col">
       {/* Logo */}
       <div className="px-5 py-5 border-b border-border flex items-center gap-2.5">
-        <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
-          <img src="../public/trackly-icon.webp" alt="Trackly Icon" />
+        <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
+          <img src="/trackly-icon.webp" alt="Trackly Icon" />
         </div>
         <span className="font-semibold text-sm tracking-tight text-foreground">Trackly</span>
       </div>

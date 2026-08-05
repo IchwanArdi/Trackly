@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { api, setAuthToken, saveUser } from '../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
-import { Activity } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useData } from '../store/dataStore';
@@ -74,7 +73,7 @@ export function LoginPage() {
       <div className="hidden lg:flex w-80 xl:w-96 bg-card border-r border-border flex-col justify-between p-10 shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
-            <img src="../public/trackly-icon.webp" alt="Trackly Icon" />
+            <img src="/trackly-icon.webp" alt="Trackly Icon" />
           </div>
           <span className="font-semibold text-sm tracking-tight text-foreground">Trackly</span>
         </div>
@@ -93,8 +92,8 @@ export function LoginPage() {
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
-              <Activity size={14} className="text-white" />
+            <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
+              <img src="/trackly-icon.webp" alt="Trackly Icon" />
             </div>
             <span className="font-semibold text-sm text-foreground">Trackly</span>
           </div>

@@ -166,7 +166,6 @@ export function CategoriesPage() {
         </div>
         {!showForm && !editingId && (
           <Button
-            className="sm:text-sm sm:text-muted"
             id="btn-new-category"
             variant="primary"
             size="md"
