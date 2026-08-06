@@ -24,7 +24,6 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(200).json({
         message: 'Jika email terdaftar, link reset password telah dikirim.',
       });
-      console.log(`Forgot Password Request: Email ${email} tidak ditemukan di database.`);
     }
 
     // Kalau user ini daftar via Google (gak punya password), gak masuk akal
@@ -33,7 +32,6 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(200).json({
         message: 'Jika email terdaftar, link reset password telah dikirim.',
       });
-      console.log(`Forgot Password Request: Email ${email} tidak memiliki password.`);
     }
 
     // Generate token random (bukan JWT), simpan ke database

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon server.js",
+    "build": "prisma generate",
     "vercel-build": "prisma generate"
   },
   "keywords": [],
