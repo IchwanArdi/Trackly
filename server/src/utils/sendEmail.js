@@ -2,9 +2,15 @@ import { Resend } from 'resend';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 export const sendResetPasswordEmail = async (toEmail, resetLink) => {
+  if (!resend) {
+    console.warn('RESEND_API_KEY is not configured. Skipping email send.');
+    return { ok: false, skipped: true, reason: 'Missing RESEND_API_KEY' };
+  }
+
   try {
     await resend.emails.send({
       from: 'Trackly <onboarding@resend.dev>',

@@ -18,17 +18,17 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Middleware untuk parsing JSON
 app.use(express.json());
 
-const allowedOrigins = [process.env.CLIENT_URL || 'http://localhost:5173', 'https://thetrackly.vercel.app'];
+const allowedOrigins = [process.env.CLIENT_URL || 'http://localhost:5173', 'https://thetrackly.vercel.app', 'https://trackly-iwdl.vercel.app'];
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || /^https:\/\/.*\.vercel\.app$/i.test(origin)) {
       callback(null, true);
     } else {
       callback(new Error(`CORS policy does not allow access from ${origin}`));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   preflightContinue: false,
@@ -37,7 +37,7 @@ const corsOptions = {
 
 // Middleware untuk CORS
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options(/(.*)/, cors(corsOptions));
 
 // Wajib diaktifkan jika backend dideploy di platform seperti Render, Railway, Vercel, atau Heroku
 app.set('trust proxy', 1);
