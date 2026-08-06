@@ -160,7 +160,7 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                             type="button"
                             onClick={handleDeleteAccount}
                             disabled={confirmText !== 'hapus akun permanen' || isDeleting}
-                            className="flex items-center gap-1.5 rounded-lg bg-red-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-600 disabled:text-red-500/40 disabled:cursor-not-allowed transition cursor-pointer"
+                            className="flex items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-red-500/60 disabled:border-border disabled:bg-transparent disabled:text-muted disabled:cursor-not-allowed disabled:hover:bg-transparent cursor-pointer"
                           >
                             {isDeleting ? (
                               <>

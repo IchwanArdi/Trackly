@@ -50,9 +50,9 @@ export function LoginPage() {
       setTimeout(() => {
         navigate('/dashboard');
       }, 1500);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.update(idToast, {
-        render: `${error.response.data.message}`,
+        render: `${(error as { response?: { data?: { message?: string } } }).response?.data?.message || 'An unexpected error occurred'}`,
         type: 'error',
         isLoading: false,
         autoClose: 2000,
@@ -109,9 +109,9 @@ export function LoginPage() {
             <Input id="input-password" label="Password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
 
             <div className="flex justify-end">
-              <button type="button" className="text-xs text-accent hover:underline">
+              <Link to="/forgot-password" className="text-xs text-accent hover:underline">
                 Forgot password?
-              </button>
+              </Link>
             </div>
 
             <Button id="btn-login-submit" type="submit" variant="primary" size="md" className="w-full">
