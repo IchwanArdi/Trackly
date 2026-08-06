@@ -6,6 +6,15 @@ import dashboard from '../assets/dashboard.webp';
 import categories from '../assets/categories.webp';
 import logActivity from '../assets/log-activity.webp';
 
+interface InstallButtonProps {
+  onInstallClick: () => void;
+}
+
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+};
+
 function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px 0px' });
@@ -17,7 +26,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
   );
 }
 
-function Navbar() {
+function Navbar({ onInstallClick }: InstallButtonProps) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -38,16 +47,16 @@ function Navbar() {
           <Link to="/login" id="nav-features" className="text-sm font-medium text-muted transition-colors hover:text-foreground">
             Login
           </Link>
-          <a href="#download" id="nav-download" className="inline-flex items-center rounded-full border border-border px-3.5 py-1.5 text-xs font-semibold text-foreground transition hover:text-accent">
+          <button onClick={onInstallClick} id="nav-download" className="inline-flex items-center rounded-full border border-border px-3.5 py-1.5 text-xs font-semibold text-foreground transition hover:text-accent">
             Download App
-          </a>
+          </button>
         </div>
       </nav>
     </header>
   );
 }
 
-function Hero() {
+function Hero({ onInstallClick }: InstallButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   useScroll({ target: ref, offset: ['start start', 'end start'] });
 
@@ -62,10 +71,10 @@ function Hero() {
           <p className="mt-4 max-w-xl text-base leading-7 text-muted sm:text-lg">Track routines, build consistency, and keep your progress easy to understand without noise.</p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a href="#download" id="hero-cta-primary" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition hover:text-accent">
+            <button onClick={onInstallClick} id="hero-cta-primary" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition hover:text-accent">
               Download App
               <ArrowRight size={16} />
-            </a>
+            </button>
             <Link to="/register" id="hero-cta-secondary" className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium text-muted transition hover:text-foreground">
               Create account
             </Link>
@@ -73,8 +82,8 @@ function Hero() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="rounded-3xl border border-border p-2">
-            <img src={dashboard} alt="Trackly dashboard preview" className="block w-full rounded-[18px] border border-border" />
+          <div className="rounded-lg border border-border py-4 px-2">
+            <img src={dashboard} alt="Trackly dashboard preview" className="block w-full rounded-[18px] " />
           </div>
         </motion.div>
       </div>
@@ -82,27 +91,22 @@ function Hero() {
   );
 }
 
-function StatsBar() {
-  const stats = [
-    { value: '50+', label: 'trackable activity types' },
-    { value: '365', label: 'history days per category' },
-    { value: '∞', label: 'custom categories' },
-    { value: '1', label: 'calm home for your habits' },
-  ];
+// ── Marquee scrolling strip ─────────────────────────────────────
+const ACTIVITIES = ['Morning Run', 'Reading', 'Meditation', 'Workout', 'Journaling', 'Walking', 'Cycling', 'Sleep', 'Stretching', 'Study', 'Swimming', 'Yoga', 'Cooking', 'Language Practice', 'Cold Shower'];
 
+function Marquee() {
+  const doubled = [...ACTIVITIES, ...ACTIVITIES];
   return (
-    <section className="border-y border-border px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-4">
-        {stats.map((item, index) => (
-          <Reveal key={item.label} delay={index * 0.05}>
-            <div className="rounded-2xl border border-border px-4 py-4 text-center">
-              <div className="text-2xl font-semibold tracking-tight text-foreground">{item.value}</div>
-              <div className="mt-1 text-xs uppercase tracking-[0.2em] text-muted">{item.label}</div>
-            </div>
-          </Reveal>
+    <div className="relative overflow-hidden w-full py-3 border-t border-border/50">
+      <div className="flex gap-0 animate-marquee whitespace-nowrap">
+        {doubled.map((act, i) => (
+          <span key={i} className="inline-flex items-center gap-2 px-5 text-xs font-medium text-muted/70">
+            <span className="h-1 w-1 rounded-full bg-accent/50 shrink-0" />
+            {act}
+          </span>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -279,7 +283,7 @@ function PreCTASection() {
   );
 }
 
-function FinalCTA() {
+function FinalCTA({ onInstallClick }: InstallButtonProps) {
   return (
     <section id="download" className="border-t border-border px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl rounded-lg border border-border px-6 py-12 text-center sm:px-10">
@@ -291,10 +295,10 @@ function FinalCTA() {
         </Reveal>
         <Reveal delay={0.14}>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href="#" id="final-cta-download" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition hover:text-accent">
+            <button onClick={onInstallClick} id="final-cta-download" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition hover:text-accent">
               Download App
               <ArrowRight size={16} />
-            </a>
+            </button>
             <Link to="/register" className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium text-muted transition hover:text-foreground">
               Create your account
             </Link>
@@ -349,15 +353,41 @@ function Footer() {
 }
 
 export function LandingPage() {
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      window.alert('Install prompt belum tersedia. Buka aplikasi ini di browser yang mendukung PWA (Chrome/Edge) dan pastikan situs dijalankan di https atau localhost.');
+      return;
+    }
+
+    deferredPrompt.prompt();
+    const choiceResult = await deferredPrompt.userChoice;
+
+    console.log(`User response to the install prompt: ${choiceResult.outcome}`);
+    setDeferredPrompt(null);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
-      <Hero />
-      <StatsBar />
+      <Navbar onInstallClick={handleInstallClick} />
+      <Hero onInstallClick={handleInstallClick} />
+      <Marquee />
       <IntroSection />
       <Features />
       <PreCTASection />
-      <FinalCTA />
+      <FinalCTA onInstallClick={handleInstallClick} />
       <Footer />
     </div>
   );

@@ -5,12 +5,12 @@
 :root {
   /* Dark mode by default */
   --color-background: #0f0f10;
-  --color-card:       #161618;
-  --color-surface:    #1e1e21;
-  --color-border:     #2a2a2e;
+  --color-card: #161618;
+  --color-surface: #1e1e21;
+  --color-border: #2a2a2e;
   --color-foreground: #e8e8ea;
-  --color-muted:      #6b6b72;
-  --color-accent:     #e85d04;
+  --color-muted: #6b6b72;
+  --color-accent: #e85d04;
 
   /* Font */
   --font-sans: 'Inter', system-ui, sans-serif;
@@ -20,16 +20,18 @@
 /* Light mode (opt-in via .light class) */
 .light {
   --color-background: #fafafa;
-  --color-card:       #ffffff;
-  --color-surface:    #f4f4f5;
-  --color-border:     #e4e4e7;
+  --color-card: #ffffff;
+  --color-surface: #f4f4f5;
+  --color-border: #e4e4e7;
   --color-foreground: #18181b;
-  --color-muted:      #71717a;
-  --color-accent:     #e85d04;
+  --color-muted: #71717a;
+  --color-accent: #e85d04;
 }
 
 /* ── Base reset ─────────────────────────────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -50,12 +52,12 @@ body {
 /* ── Tailwind CSS v4 custom theme utilities ─────────────────── */
 @theme {
   --color-background: var(--color-background);
-  --color-card:       var(--color-card);
-  --color-surface:    var(--color-surface);
-  --color-border:     var(--color-border);
+  --color-card: var(--color-card);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
   --color-foreground: var(--color-foreground);
-  --color-muted:      var(--color-muted);
-  --color-accent:     var(--color-accent);
+  --color-muted: var(--color-muted);
+  --color-accent: var(--color-accent);
 }
 
 /* ── Scrollbar styling ──────────────────────────────────────── */
@@ -63,13 +65,16 @@ body {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-muted);
 }
@@ -82,40 +87,109 @@ body {
 }
 
 /* Don't animate layout properties */
-img, svg {
+img,
+svg {
   transition: none;
 }
 
 /* ── Custom utilities via Tailwind v4 ───────────────────────── */
 @layer utilities {
-  .bg-background { background-color: var(--color-background); }
-  .bg-card       { background-color: var(--color-card); }
-  .bg-surface    { background-color: var(--color-surface); }
-  .text-foreground { color: var(--color-foreground); }
-  .text-muted    { color: var(--color-muted); }
-  .text-accent   { color: var(--color-accent); }
-  .bg-accent     { background-color: var(--color-accent); }
-  .border-border { border-color: var(--color-border); }
-  .border-accent { border-color: var(--color-accent); }
-  .ring-accent   { --tw-ring-color: var(--color-accent); }
+  .bg-background {
+    background-color: var(--color-background);
+  }
+
+  .bg-card {
+    background-color: var(--color-card);
+  }
+
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+
+  .text-foreground {
+    color: var(--color-foreground);
+  }
+
+  .text-muted {
+    color: var(--color-muted);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+
+  .border-border {
+    border-color: var(--color-border);
+  }
+
+  .border-accent {
+    border-color: var(--color-accent);
+  }
+
+  .ring-accent {
+    --tw-ring-color: var(--color-accent);
+  }
 
   /* Accent tints */
-  .bg-accent\/5  { background-color: color-mix(in srgb, var(--color-accent) 5%, transparent); }
-  .bg-accent\/10 { background-color: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-  .bg-accent\/20 { background-color: color-mix(in srgb, var(--color-accent) 20%, transparent); }
-  .bg-accent\/40 { background-color: color-mix(in srgb, var(--color-accent) 40%, transparent); }
-  .bg-accent\/65 { background-color: color-mix(in srgb, var(--color-accent) 65%, transparent); }
-  .bg-accent\/90 { background-color: color-mix(in srgb, var(--color-accent) 90%, transparent); }
+  .bg-accent\/5 {
+    background-color: color-mix(in srgb, var(--color-accent) 5%, transparent);
+  }
 
-  .border-accent\/10 { border-color: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-  .border-accent\/20 { border-color: color-mix(in srgb, var(--color-accent) 20%, transparent); }
-  .border-accent\/30 { border-color: color-mix(in srgb, var(--color-accent) 30%, transparent); }
-  .border-accent\/50 { border-color: color-mix(in srgb, var(--color-accent) 50%, transparent); }
-  .border-accent\/60 { border-color: color-mix(in srgb, var(--color-accent) 60%, transparent); }
+  .bg-accent\/10 {
+    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
 
-  .hover\:bg-accent\/90:hover { background-color: color-mix(in srgb, var(--color-accent) 90%, transparent); }
-  .hover\:bg-surface\/50:hover { background-color: color-mix(in srgb, var(--color-surface) 50%, transparent); }
-  .hover\:border-accent\/50:hover { border-color: color-mix(in srgb, var(--color-accent) 50%, transparent); }
+  .bg-accent\/20 {
+    background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .bg-accent\/40 {
+    background-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+
+  .bg-accent\/65 {
+    background-color: color-mix(in srgb, var(--color-accent) 65%, transparent);
+  }
+
+  .bg-accent\/90 {
+    background-color: color-mix(in srgb, var(--color-accent) 90%, transparent);
+  }
+
+  .border-accent\/10 {
+    border-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+
+  .border-accent\/20 {
+    border-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .border-accent\/30 {
+    border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  }
+
+  .border-accent\/50 {
+    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  }
+
+  .border-accent\/60 {
+    border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
+  }
+
+  .hover\:bg-accent\/90:hover {
+    background-color: color-mix(in srgb, var(--color-accent) 90%, transparent);
+  }
+
+  .hover\:bg-surface\/50:hover {
+    background-color: color-mix(in srgb, var(--color-surface) 50%, transparent);
+  }
+
+  .hover\:border-accent\/50:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  }
 }
 
 /* ── Input date picker in dark mode ────────────────────────── */
@@ -132,8 +206,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* ── Streak flame pulse animation ──────────────────────────── */
 @keyframes flame-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.08); opacity: 0.9; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 0.9;
+  }
 }
 
 .streak-flame-pulse {
@@ -142,8 +225,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* ── Page enter animation ───────────────────────────────────── */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-up {
@@ -152,11 +242,38 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* ── Log success pop animation ──────────────────────────────── */
 @keyframes success-pop {
-  0%   { transform: scale(0.5); opacity: 0; }
-  70%  { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1);   opacity: 1; }
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .success-pop {
   animation: success-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ── Marquee (Hero landing strip) ───────────────────────────── */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
 }
