@@ -93,12 +93,12 @@ export function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
+          <Link to="/" className="flex items-center gap-2 mb-8 lg:hidden">
             <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
               <img src="/trackly-icon.webp" alt="Trackly Icon" />
             </div>
             <span className="font-semibold text-sm text-foreground">Trackly</span>
-          </div>
+          </Link>
 
           <h1 className="text-xl font-semibold text-foreground mb-1">Sign in</h1>
           <p className="text-sm text-muted mb-7">Track what matters, every day.</p>

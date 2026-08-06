@@ -93,7 +93,7 @@ function HighlightsDeck({
           className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-card border border-border flex flex-col justify-between p-4 group select-none cursor-pointer"
         >
           <img
-            src="/images/banner1.png"
+            src="/images/banner1.webp"
             alt="Highlight"
             className="absolute inset-0 w-full h-full object-cover opacity-65 group-hover:scale-105 transition-transform duration-500"
           />
@@ -131,7 +131,7 @@ function HighlightsDeck({
         {/* Slide 2: Top Active Category */}
         <div className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-card border border-border flex flex-col justify-between p-4 group select-none cursor-pointer">
           <img
-            src="/images/banner2.png"
+            src="/images/banner2.webp"
             alt="Category highlight"
             className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500"
           />
@@ -211,8 +211,8 @@ function HighlightsDeck({
               {todayLoggedCount === 0
                 ? 'No activities logged today yet'
                 : todayLoggedCount === categoriesCount
-                ? 'All categories logged for today!'
-                : `${categoriesCount - todayLoggedCount} more to complete today`}
+                  ? 'All categories logged for today!'
+                  : `${categoriesCount - todayLoggedCount} more to complete today`}
             </p>
           </div>
 
@@ -233,9 +233,8 @@ function HighlightsDeck({
         {[0, 1, 2].map(i => (
           <div
             key={i}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              activeIndex === i ? 'w-5 bg-accent' : 'w-1.5 bg-border'
-            }`}
+            className={`h-1.5 rounded-full transition-all duration-300 ${activeIndex === i ? 'w-5 bg-accent' : 'w-1.5 bg-border'
+              }`}
           />
         ))}
       </div>
@@ -465,9 +464,8 @@ export function DashboardPage() {
                       <div
                         key={entry.id}
                         onClick={() => setSelectedCategoryDetail(cat)}
-                        className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-surface/50 transition-colors ${
-                          ei < dayEntries.length - 1 ? 'border-b border-border/50' : ''
-                        }`}
+                        className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-surface/50 transition-colors ${ei < dayEntries.length - 1 ? 'border-b border-border/50' : ''
+                          }`}
                       >
                         <div
                           className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"

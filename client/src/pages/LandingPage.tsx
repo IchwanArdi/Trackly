@@ -250,8 +250,8 @@ function PreCTASection() {
     <section className="px-4 pb-4 pt-2 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-1 sm:gap-3 sm:grid-cols-[1.4fr_1fr]">
-          {cards.map((card) => (
-            <div key={card.label} className={`flex flex-col justify-between h-fit md:h-100 overflow-hidden rounded-lg ${card.bg} p-8 sm:p-10`}>
+          {cards.map((card, index) => (
+            <div key={index} className={`flex flex-col justify-between h-fit md:h-100 overflow-hidden rounded-lg ${card.bg} p-8 sm:p-10`}>
               <p className={`relative text-xl font-medium leading-snug sm:text-2xl ${card.text}`}>
                 &ldquo;<i>{card.quote}</i>&rdquo;
               </p>

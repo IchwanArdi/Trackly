@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
-import { MobileHeader } from './MobileHeader';
 
 export function AppLayout() {
   return (
@@ -13,9 +12,6 @@ export function AppLayout() {
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile header — hidden on desktop */}
-        <MobileHeader />
-
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-5xl mx-auto px-4 py-5 md:px-6 md:py-8 pb-24 md:pb-8">
             <Outlet />
