@@ -8,6 +8,7 @@ import authRoutes from './src/routes/auth.js';
 import categoriesRoutes from './src/routes/categories.js';
 import entriesRoutes from './src/routes/entries.js';
 import userRoutes from './src/routes/user.js';
+import resetPasswordRoutes from './src/routes/resetPassword.js';
 
 const app = express();
 dotenv.config();
@@ -54,5 +55,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/entries', entriesRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/reset-password', resetPasswordRoutes);
 
 export default app;

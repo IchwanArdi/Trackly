@@ -7,14 +7,16 @@ datasource db {
 }
 
 model User {
-  id         String     @id @default(uuid())
-  name       String
-  email      String     @unique
-  password   String?
-  createdAt  DateTime   @default(now())
-  googleId   String?    @unique
-  categories Category[]
-  entries    Entry[]
+  id                String     @id @default(uuid())
+  name              String
+  email             String     @unique
+  password          String?
+  createdAt         DateTime   @default(now())
+  googleId          String?    @unique
+  resetToken        String?    @unique
+  resetTokenExpiry  DateTime?
+  categories        Category[]
+  entries           Entry[]
 }
 
 model Category {
