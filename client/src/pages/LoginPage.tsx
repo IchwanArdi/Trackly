@@ -37,7 +37,6 @@ export function LoginPage() {
       });
       setAuthToken(response.data.token);
       saveUser(response.data.user);
-      console.log('Login successful:', response.data.user);
       await refreshAll();
 
       toast.update(idToast, {

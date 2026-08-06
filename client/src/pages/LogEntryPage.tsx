@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useData } from '../store/dataStore';
 import { getIcon } from '../utils/icons';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
+import { formatUnit } from '../utils/format';
 
 export function LogEntryPage() {
   const { categories, addEntry } = useData();
@@ -23,13 +21,14 @@ export function LogEntryPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const selectedCategory = categories.find(c => c.id === categoryId);
+  const cleanUnit = formatUnit(selectedCategory?.unit);
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!categoryId) errs.category = 'Please select a category.';
+    if (!categoryId) errs.category = 'Select a category.';
     if (!value || isNaN(Number(value)) || Number(value) <= 0)
-      errs.value = 'Please enter a valid positive number.';
-    if (!date) errs.date = 'Please select a date.';
+      errs.value = 'Enter a valid number.';
+    if (!date) errs.date = 'Required.';
     return errs;
   };
 
@@ -40,177 +39,185 @@ export function LogEntryPage() {
 
     setSaving(true);
     try {
-      await addEntry({
-        categoryId,
-        date,
-        value: Number(value),
-        note: note.trim() || undefined,
-      });
-
+      await addEntry({ categoryId, date, value: Number(value), note: note.trim() || undefined });
       setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setValue('');
-        setNote('');
-        setDate(today);
-      }, 2000);
     } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? 'Gagal menyimpan entry');
+      toast.error(err?.response?.data?.message ?? 'Failed to save');
     } finally {
       setSaving(false);
     }
   };
 
-  return (
-    <div className="space-y-5 sm:space-y-6">
-      <div>
-        <h1 className="text-lg sm:text-xl font-semibold text-foreground">Log an activity</h1>
-        <p className="text-xs sm:text-sm text-muted mt-0.5">Record what you did today (or any day).</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
-        <div className="lg:col-span-2">
-          <Card className="!p-4 sm:!p-6">
-            {submitted ? (
-              <div className="flex flex-col items-center justify-center py-10 gap-3 text-center">
-                <CheckCircle2 size={40} className="text-accent" />
-                <p className="text-base font-semibold text-foreground">Entry logged!</p>
-                <p className="text-xs sm:text-sm text-muted">Keep it up — consistency is everything.</p>
-                <Button
-                  id="btn-log-another"
-                  variant="secondary"
-                  size="md"
-                  className="mt-2"
-                  onClick={() => setSubmitted(false)}
-                >
-                  Log another
-                </Button>
-              </div>
-            ) : (
-              <form id="form-log-entry" onSubmit={handleSubmit} className="space-y-5">
-                {/* Category selector */}
-                <div className="space-y-2">
-                  <label className="text-xs sm:text-sm font-medium text-foreground">Select Category</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                    {categories.map(cat => {
-                      const Icon = getIcon(cat.icon);
-                      const isSelected = categoryId === cat.id;
-                      return (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          id={`cat-btn-${cat.id}`}
-                          onClick={() => { setCategoryId(cat.id); setErrors(prev => ({ ...prev, category: '' })); }}
-                          className={`flex items-center gap-2.5 px-3 py-3 rounded-lg border text-xs sm:text-sm font-medium transition-all duration-100 min-h-[44px] cursor-pointer ${
-                            isSelected
-                              ? 'border-accent text-foreground shadow-sm'
-                              : 'border-border text-muted hover:text-foreground hover:border-border/80 bg-surface'
-                          }`}
-                          style={isSelected ? { background: `${cat.color}1a`, borderColor: `${cat.color}` } : {}}
-                        >
-                          <div
-                            className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
-                            style={{ background: `${cat.color}25` }}
-                          >
-                            <Icon size={14} style={{ color: cat.color }} />
-                          </div>
-                          <span className="truncate">{cat.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {errors.category && <p className="text-xs text-red-400">{errors.category}</p>}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input
-                    id="input-value"
-                    label={`Value ${selectedCategory ? `(${selectedCategory.unit})` : ''}`}
-                    type="number"
-                    min="0"
-                    step="any"
-                    placeholder="e.g. 45"
-                    value={value}
-                    onChange={e => { setValue(e.target.value); setErrors(prev => ({ ...prev, value: '' })); }}
-                    error={errors.value}
-                  />
-                  <Input
-                    id="input-date"
-                    label="Date"
-                    type="date"
-                    value={date}
-                    max={today}
-                    onChange={e => { setDate(e.target.value); setErrors(prev => ({ ...prev, date: '' })); }}
-                    error={errors.date}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="input-note" className="text-xs sm:text-sm font-medium text-foreground">
-                    Note <span className="text-muted font-normal">(optional)</span>
-                  </label>
-                  <textarea
-                    id="input-note"
-                    rows={3}
-                    placeholder="Any observations, how it went, etc."
-                    value={note}
-                    onChange={e => setNote(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-sm bg-surface border border-border rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors duration-150 resize-none min-h-[80px]"
-                  />
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                  <Button id="btn-submit-entry" type="submit" variant="primary" size="md" disabled={saving} className="w-full sm:w-auto">
-                    {saving ? 'Saving...' : 'Save entry'}
-                  </Button>
-                  <Button
-                    id="btn-cancel-entry"
-                    type="button"
-                    variant="ghost"
-                    size="md"
-                    onClick={() => navigate('/dashboard')}
-                    className="w-full sm:w-auto"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            )}
-          </Card>
+  // ── Success ────────────────────────────────────────────────────
+  if (submitted && selectedCategory) {
+    const Icon = getIcon(selectedCategory.icon);
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[55vh] text-center px-4 pb-8">
+        <div
+          className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+          style={{ background: `${selectedCategory.color}18` }}
+        >
+          <Icon size={28} style={{ color: selectedCategory.color }} />
         </div>
 
-        {/* Sidebar tips */}
-        <div className="space-y-4">
-          <Card className="!p-4 sm:!p-5">
-            <h3 className="text-[10px] sm:text-xs font-semibold text-muted uppercase tracking-wide mb-3">Your categories</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+        <p className="text-3xl font-bold text-foreground tabular-nums">
+          {value}{' '}
+          {cleanUnit && <span className="text-lg font-normal text-muted">{cleanUnit}</span>}
+        </p>
+        <p className="text-sm text-muted mt-1">{selectedCategory.name}</p>
+
+        <div
+          className="flex items-center gap-1.5 mt-4 px-3 py-1.5 rounded-full"
+          style={{ background: `${selectedCategory.color}12` }}
+        >
+          <Check size={12} style={{ color: selectedCategory.color }} />
+          <span className="text-xs font-medium" style={{ color: selectedCategory.color }}>
+            Logged
+          </span>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-2.5 w-full max-w-xs mt-8">
+          <button
+            onClick={() => { setSubmitted(false); setValue(''); setNote(''); setDate(today); }}
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-accent text-white cursor-pointer active:scale-[0.97] transition-transform"
+          >
+            Log another
+          </button>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-surface border border-border text-foreground cursor-pointer active:scale-[0.97] transition-transform"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Form ──────────────────────────────────────────────────────
+  return (
+    <div className="space-y-5 pb-4 max-w-md mx-auto">
+
+      {/* Header */}
+      <div className="flex items-center gap-2.5">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-2 -ml-2 rounded-lg text-muted hover:text-foreground hover:bg-surface transition-colors cursor-pointer"
+        >
+          <ArrowLeft size={17} />
+        </button>
+        <h1 className="text-base font-semibold text-foreground">Log activity</h1>
+      </div>
+
+      <form id="form-log-entry" onSubmit={handleSubmit} className="space-y-4">
+
+        {/* Category */}
+        <div>
+          <p className="text-xs text-muted mb-2">Category</p>
+
+          {categories.length === 0 ? (
+            <div className="bg-surface border border-border rounded-xl p-4 text-center">
+              <p className="text-xs text-muted">No categories yet.</p>
+              <button type="button" onClick={() => navigate('/categories')} className="mt-1 text-xs text-accent cursor-pointer">
+                Create one →
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
               {categories.map(cat => {
                 const Icon = getIcon(cat.icon);
+                const isSelected = categoryId === cat.id;
                 return (
-                  <div key={cat.id} className="flex items-center gap-2.5 py-1">
+                  <button
+                    key={cat.id}
+                    type="button"
+                    id={`cat-btn-${cat.id}`}
+                    onClick={() => { setCategoryId(cat.id); setErrors(p => ({ ...p, category: '' })); }}
+                    className="flex items-center gap-2.5 px-3 py-3 rounded-xl border text-left cursor-pointer active:scale-[0.97] transition-all"
+                    style={
+                      isSelected
+                        ? { borderColor: cat.color, background: `${cat.color}12` }
+                        : { borderColor: 'var(--color-border)', background: 'var(--color-surface)' }
+                    }
+                  >
                     <div
-                      className="w-6 h-6 rounded flex items-center justify-center shrink-0"
-                      style={{ background: `${cat.color}1a` }}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ background: `${cat.color}20` }}
                     >
-                      <Icon size={12} style={{ color: cat.color }} />
+                      <Icon size={14} style={{ color: cat.color }} />
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium text-foreground truncate">{cat.name}</p>
-                      <p className="text-[10px] text-muted truncate">{cat.unit}</p>
-                    </div>
-                  </div>
+                    <span className={`text-xs font-medium truncate ${isSelected ? 'text-foreground' : 'text-muted'}`}>
+                      {cat.name}
+                    </span>
+                  </button>
                 );
               })}
             </div>
-          </Card>
-          <Card className="!p-4 sm:!p-5">
-            <h3 className="text-[10px] sm:text-xs font-semibold text-muted uppercase tracking-wide mb-2">Tip</h3>
-            <p className="text-xs text-muted leading-relaxed">
-              Log entries consistently — even partial days count. Small amounts add up and keep your streak alive.
-            </p>
-          </Card>
+          )}
+          {errors.category && <p className="text-xs text-red-400 mt-1">{errors.category}</p>}
         </div>
-      </div>
+
+        {/* Value + Date */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <p className="text-xs text-muted mb-1.5 truncate">
+              {cleanUnit ? `Amount (${cleanUnit})` : 'Value'}
+            </p>
+            <input
+              id="input-value"
+              type="number"
+              min="0"
+              step="any"
+              inputMode="decimal"
+              placeholder="0"
+              value={value}
+              onChange={e => { setValue(e.target.value); setErrors(p => ({ ...p, value: '' })); }}
+              className={`w-full px-3.5 py-2.5 bg-surface border rounded-xl text-foreground text-base font-semibold placeholder:text-muted/40 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors ${
+                errors.value ? 'border-red-400' : 'border-border'
+              }`}
+            />
+            {errors.value && <p className="text-xs text-red-400 mt-1">{errors.value}</p>}
+          </div>
+
+          <div>
+            <p className="text-xs text-muted mb-1.5">Date</p>
+            <input
+              id="input-date"
+              type="date"
+              value={date}
+              max={today}
+              onChange={e => { setDate(e.target.value); setErrors(p => ({ ...p, date: '' })); }}
+              className={`w-full px-3.5 py-2.5 bg-surface border rounded-xl text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors ${
+                errors.date ? 'border-red-400' : 'border-border'
+              }`}
+            />
+            {errors.date && <p className="text-xs text-red-400 mt-1">{errors.date}</p>}
+          </div>
+        </div>
+
+        {/* Note */}
+        <div>
+          <p className="text-xs text-muted mb-1.5">Note <span className="text-muted/60">(optional)</span></p>
+          <textarea
+            id="input-note"
+            rows={3}
+            placeholder="Any notes…"
+            value={note}
+            onChange={e => setNote(e.target.value)}
+            className="w-full px-3.5 py-2.5 bg-surface border border-border rounded-xl text-foreground text-sm placeholder:text-muted/40 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors resize-none"
+          />
+        </div>
+
+        {/* Submit */}
+        <button
+          id="btn-submit-entry"
+          type="submit"
+          disabled={saving || categories.length === 0}
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-accent hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-[0.98] cursor-pointer"
+        >
+          {saving ? 'Saving…' : 'Save'}
+        </button>
+      </form>
     </div>
   );
 }

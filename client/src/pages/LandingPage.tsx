@@ -251,7 +251,7 @@ function PreCTASection() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-1 sm:gap-3 sm:grid-cols-[1.4fr_1fr]">
           {cards.map((card) => (
-            <div key={card.label} className={`flex flex-col justify-between h-fit md:h-[400px] overflow-hidden rounded-lg ${card.bg} p-8 sm:p-10`}>
+            <div key={card.label} className={`flex flex-col justify-between h-fit md:h-100 overflow-hidden rounded-lg ${card.bg} p-8 sm:p-10`}>
               <p className={`relative text-xl font-medium leading-snug sm:text-2xl ${card.text}`}>
                 &ldquo;<i>{card.quote}</i>&rdquo;
               </p>
@@ -307,33 +307,42 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
-        <div className="flex items-center gap-2.5">
-          <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-8 w-8" />
-          <span className="text-sm font-semibold text-foreground">Trackly</span>
+    <footer className="border-t border-border bg-background/80 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col items-center gap-3 text-center md:items-start md:text-left">
+          <div className="flex items-center gap-2.5">
+            <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-8 w-8" />
+            <div>
+              <div className="text-sm font-semibold text-foreground">Trackly</div>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-5 text-sm text-muted">
-          <a href="/login" className="transition hover:text-foreground">
+
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted md:justify-end">
+          <Link to="/login" className="transition hover:text-foreground">
             Sign in
-          </a>
-          <a href="/register" className="transition hover:text-foreground">
+          </Link>
+          <Link to="/register" className="transition hover:text-foreground">
             Register
-          </a>
+          </Link>
           <a href="#download" className="transition hover:text-foreground">
             Download
           </a>
-          <a href="/help" className="transition hover:text-foreground">
+          <Link to="/help" className="transition hover:text-foreground">
             Help
-          </a>
-          <a href="/privacy-policy" className="transition hover:text-foreground">
+          </Link>
+          <Link to="/privacy-policy" className="transition hover:text-foreground">
             Privacy
-          </a>
-          <a href="/terms-of-service" className="transition hover:text-foreground">
+          </Link>
+          <Link to="/terms-of-service" className="transition hover:text-foreground">
             Terms of Service
-          </a>
+          </Link>
         </div>
-        <p className="text-sm text-muted">© {new Date().getFullYear()} Trackly. Built to build habits.</p>
+
+        <p className="text-center text-sm text-muted md:text-right">
+          © {new Date().getFullYear()} Trackly
+          <span className="mt-1 block sm:mt-0 sm:ml-1 sm:inline">Built to build habits.</span>
+        </p>
       </div>
     </footer>
   );
