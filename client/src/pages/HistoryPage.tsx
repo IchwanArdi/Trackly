@@ -17,24 +17,27 @@ export function HistoryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  const [selectedCatDetail, setSelectedCatDetail] = useState<any | null>(null);
+  const [selectedCatDetail, setSelectedCatDetail] = useState<{
+    id: string;
+    name: string;
+    unit: string;
+    color: string;
+    icon: string;
+  } | null>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const today = new Date();
-    const from =
-      dateRange === '7d' ? subDays(today, 7) :
-        dateRange === '30d' ? subDays(today, 30) :
-          subDays(today, 3650);
+    const from = dateRange === '7d' ? subDays(today, 7) : dateRange === '30d' ? subDays(today, 30) : subDays(today, 3650);
 
     const query = searchQuery.trim().toLowerCase();
 
     return entries
-      .filter(e => {
+      .filter((e) => {
         const inRange = isWithinInterval(parseISO(e.date), { start: from, end: today });
         const inCat = catFilter === 'all' || e.categoryId === catFilter;
 
-        const catObj = categories.find(c => c.id === e.categoryId);
+        const catObj = categories.find((c) => c.id === e.categoryId);
         const catNameMatches = catObj ? catObj.name.toLowerCase().includes(query) : false;
         const noteMatches = e.note ? e.note.toLowerCase().includes(query) : false;
 
@@ -61,8 +64,10 @@ export function HistoryPage() {
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (deleteConfirm === id) {
-      try { await deleteEntry(id); } catch (err: any) {
-        toast.error(err?.response?.data?.message ?? 'Failed to delete');
+      try {
+        await deleteEntry(id);
+      } catch (err: unknown) {
+        toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Failed to delete');
       }
       setDeleteConfirm(null);
     } else {
@@ -82,25 +87,17 @@ export function HistoryPage() {
 
   return (
     <div className="space-y-4 pb-4">
-
       {/* Hero Header Banner */}
       <div className="relative rounded-2xl overflow-hidden h-36 border border-border bg-card p-4 flex flex-col justify-between select-none shadow-lg">
-        <img
-          src="/images/history_banner.webp"
-          alt="History Banner"
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-transparent" />
+        <img src="/images/history_banner.webp" alt="History Banner" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/60 to-transparent" />
 
         <div className="relative z-10 flex items-center justify-between">
           <span className="text-[10px] font-semibold text-white/90 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
             <Activity size={11} className="text-accent" />
             Activity Log
           </span>
-          <button
-            onClick={() => setShareModalOpen(true)}
-            className="text-[10px] font-semibold text-white/90 bg-accent/80 hover:bg-accent px-2.5 py-1 rounded-full flex items-center gap-1 transition-colors cursor-pointer"
-          >
+          <button onClick={() => setShareModalOpen(true)} className="text-[10px] font-semibold text-white/90 bg-accent/80 hover:bg-accent px-2.5 py-1 rounded-full flex items-center gap-1 transition-colors cursor-pointer">
             <Sparkles size={11} /> Share Log
           </button>
         </div>
@@ -125,21 +122,18 @@ export function HistoryPage() {
             type="text"
             placeholder="Search notes or activity name…"
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-xs bg-card border border-border rounded-xl text-foreground placeholder:text-muted/50 focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
           />
         </div>
 
         {/* Date range pills */}
         <div className="flex gap-1.5">
-          {(['7d', '30d', 'all'] as DateRange[]).map(r => (
+          {(['7d', '30d', 'all'] as DateRange[]).map((r) => (
             <button
               key={r}
               onClick={() => setDateRange(r)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${dateRange === r
-                ? 'bg-foreground text-background'
-                : 'bg-surface border border-border text-muted hover:text-foreground'
-                }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${dateRange === r ? 'bg-foreground text-background' : 'bg-surface border border-border text-muted hover:text-foreground'}`}
             >
               {r === '7d' ? '7 days' : r === '30d' ? '30 days' : 'All time'}
             </button>
@@ -151,23 +145,16 @@ export function HistoryPage() {
           <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
             <button
               onClick={() => setCatFilter('all')}
-              className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${catFilter === 'all'
-                ? 'bg-foreground text-background'
-                : 'bg-surface border border-border text-muted hover:text-foreground'
-                }`}
+              className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${catFilter === 'all' ? 'bg-foreground text-background' : 'bg-surface border border-border text-muted hover:text-foreground'}`}
             >
               All Categories
             </button>
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setCatFilter(cat.id)}
                 className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border"
-                style={
-                  catFilter === cat.id
-                    ? { background: cat.color, color: '#fff', borderColor: cat.color }
-                    : { background: 'var(--color-surface)', color: 'var(--color-muted)', borderColor: 'var(--color-border)' }
-                }
+                style={catFilter === cat.id ? { background: cat.color, color: '#fff', borderColor: cat.color } : { background: 'var(--color-surface)', color: 'var(--color-muted)', borderColor: 'var(--color-border)' }}
               >
                 {cat.name}
               </button>
@@ -198,7 +185,7 @@ export function HistoryPage() {
 
               {/* Entries */}
               {dayEntries.map((entry, i) => {
-                const cat = categories.find(c => c.id === entry.categoryId);
+                const cat = categories.find((c) => c.id === entry.categoryId);
                 if (!cat) return null;
                 const Icon = getIcon(cat.icon);
                 const isDeleting = deleteConfirm === entry.id;
@@ -208,14 +195,10 @@ export function HistoryPage() {
                   <div
                     key={entry.id}
                     onClick={() => setSelectedCatDetail(cat)}
-                    className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-surface/60 transition-all ${i < dayEntries.length - 1 ? 'border-b border-border/50' : ''
-                      } ${isDeleting ? 'bg-red-500/10' : ''}`}
+                    className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-surface/60 transition-all ${i < dayEntries.length - 1 ? 'border-b border-border/50' : ''} ${isDeleting ? 'bg-red-500/10' : ''}`}
                   >
                     {/* Category Icon */}
-                    <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-xs"
-                      style={{ background: `${cat.color}18` }}
-                    >
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-xs" style={{ background: `${cat.color}18` }}>
                       <Icon size={16} style={{ color: cat.color }} />
                     </div>
 
@@ -235,22 +218,15 @@ export function HistoryPage() {
 
                     {/* Value + Unit */}
                     <div className="text-right shrink-0 mr-1">
-                      <span className="text-sm font-black text-foreground tabular-nums">
-                        {entry.value}
-                      </span>
-                      {unitStr && (
-                        <span className="text-xs font-normal text-muted ml-1">{unitStr}</span>
-                      )}
+                      <span className="text-sm font-black text-foreground tabular-nums">{entry.value}</span>
+                      {unitStr && <span className="text-xs font-normal text-muted ml-1">{unitStr}</span>}
                     </div>
 
                     {/* Delete action */}
                     <button
                       id={`btn-delete-${entry.id}`}
                       onClick={(e) => handleDelete(e, entry.id)}
-                      className={`p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${isDeleting
-                        ? 'bg-red-500 text-white'
-                        : 'text-muted/40 hover:text-red-400 hover:bg-surface'
-                        }`}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${isDeleting ? 'bg-red-500 text-white' : 'text-muted/40 hover:text-red-400 hover:bg-surface'}`}
                       title="Delete entry"
                     >
                       <Trash2 size={13} />

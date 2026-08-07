@@ -90,7 +90,7 @@ export const ResetPasswordPage = () => {
                   autoComplete="new-password"
                   autoFocus
                 />
-                <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="absolute right-3 top-[34px] text-muted hover:text-foreground transition-colors" tabIndex={-1}>
+                <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="absolute right-3 top-8.5 text-muted hover:text-foreground transition-colors" tabIndex={-1}>
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>

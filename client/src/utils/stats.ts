@@ -1,4 +1,4 @@
-import { format, parseISO, differenceInDays, subDays, isToday } from 'date-fns';
+import { format, parseISO, differenceInDays, subDays } from 'date-fns';
 import { type Entry } from '../store/dataStore';
 
 /** Map of date string → total entries on that day */
@@ -14,21 +14,14 @@ export function buildDayMap(entries: Entry[]): Record<string, number> {
 export function computeStreaks(entries: Entry[]): { current: number; longest: number } {
   if (entries.length === 0) return { current: 0, longest: 0 };
 
-  const datesWithEntries = new Set(entries.map(e => e.date));
+  const datesWithEntries = new Set(entries.map((e) => e.date));
   const today = new Date();
 
   let current = 0;
-  // Check today first, then yesterday, etc.
-  let checkDate = isToday(today) ? today : today;
-  if (!datesWithEntries.has(format(checkDate, 'yyyy-MM-dd'))) {
-    // Check if yesterday counts
-    checkDate = subDays(today, 1);
-  }
-
-  // Walk backwards from today (or yesterday if today has no entry)
-  let ptr = today;
   const todayStr = format(today, 'yyyy-MM-dd');
   const yesterdayStr = format(subDays(today, 1), 'yyyy-MM-dd');
+
+  let ptr: Date;
 
   if (datesWithEntries.has(todayStr)) {
     ptr = today;

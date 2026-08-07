@@ -97,7 +97,7 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                       <Mail size={15} />
                       <span>Email</span>
                     </div>
-                    <span className="max-w-[180px] truncate font-medium text-foreground">{user?.email ?? 'N/A'}</span>
+                    <span className="max-w-45 truncate font-medium text-foreground">{user?.email ?? 'N/A'}</span>
                   </div>
 
                   <div className="flex items-center justify-between">

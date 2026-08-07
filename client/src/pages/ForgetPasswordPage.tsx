@@ -56,7 +56,7 @@ export function ForgetPasswordPage() {
             {/* Logo */}
             <div className="flex items-center gap-2 mb-8 justify-left">
               <div className="w-8 h-8 rounded-md flex items-center justify-center">
-                <img src="../../public/icon-512.png" alt="icon" />
+                <img src="/trackly-icon.webp" alt="icon" />
               </div>
               <span className="font-semibold text-sm text-foreground">Trackly</span>
             </div>

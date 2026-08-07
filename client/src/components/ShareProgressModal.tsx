@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import { X, Download, Share2, Sparkles, Flame, TrendingUp } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { getUser } from '../utils/auth';
-import { getIcon } from '../utils/icons';
+import { renderIcon } from '../utils/icons';
 import { formatUnit } from '../utils/format';
 import { format } from 'date-fns';
 
@@ -25,23 +25,17 @@ interface ShareProgressModalProps {
   };
 }
 
-export function ShareProgressModal({
-  isOpen,
-  onClose,
-  title,
-  category,
-  stats,
-}: ShareProgressModalProps) {
+export function ShareProgressModal({ isOpen, onClose, title, category, stats }: ShareProgressModalProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
   const user = getUser();
   const todayStr = format(new Date(), 'MMM d, yyyy');
 
-  if (!isOpen) return null;
-
-  const CategoryIcon = category ? getIcon(category.icon) : Flame;
+  const categoryIcon = category?.icon;
   const accentColor = category?.color || '#e85d04';
-  const cleanUnit = formatUnit(category?.unit);
+  const cleanUnit = useMemo(() => formatUnit(category?.unit), [category?.unit]);
+
+  if (!isOpen) return null;
 
   const handleDownload = async () => {
     if (!cardRef.current) return;
@@ -78,9 +72,7 @@ export function ShareProgressModal({
       } else {
         // Fallback to image download + clipboard
         await handleDownload();
-        await navigator.clipboard.writeText(
-          `Logged ${stats.totalValue} ${cleanUnit || 'entries'} on Trackly! 🔥 Streak: ${stats.streakDays} days.`
-        );
+        await navigator.clipboard.writeText(`Logged ${stats.totalValue} ${cleanUnit || 'entries'} on Trackly! 🔥 Streak: ${stats.streakDays} days.`);
         toast.info('Summary copied to clipboard!');
       }
     } catch (err) {
@@ -100,17 +92,13 @@ export function ShareProgressModal({
             <Sparkles size={16} className="text-accent" />
             <h3 className="text-xs font-semibold text-foreground">Share Progress Card</h3>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-lg text-muted hover:text-foreground hover:bg-surface cursor-pointer transition-colors"
-          >
+          <button onClick={onClose} className="p-1 rounded-lg text-muted hover:text-foreground hover:bg-surface cursor-pointer transition-colors">
             <X size={18} />
           </button>
         </div>
 
         {/* Scrollable Modal Content */}
         <div className="p-4 overflow-y-auto space-y-4">
-
           {/* ── Strava/Spotify Wrapped Style Share Card ── */}
           <div
             ref={cardRef}
@@ -124,10 +112,7 @@ export function ShareProgressModal({
             {/* Top Brand & Date */}
             <div className="flex items-center justify-between z-10">
               <div className="flex items-center gap-2">
-                <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs"
-                  style={{ background: accentColor, color: '#fff' }}
-                >
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs" style={{ background: accentColor, color: '#fff' }}>
                   T
                 </div>
                 <span className="text-xs font-bold tracking-wider uppercase text-white/90">TRACKLY</span>
@@ -138,21 +123,14 @@ export function ShareProgressModal({
             {/* Middle Main Metric */}
             <div className="my-6 z-10">
               <div className="flex items-center gap-2 mb-2">
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center"
-                  style={{ background: `${accentColor}30` }}
-                >
-                  <CategoryIcon size={16} style={{ color: accentColor }} />
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: `${accentColor}30` }}>
+                  {renderIcon(categoryIcon ?? 'Flame', { size: 16, style: { color: accentColor } })}
                 </div>
-                <span className="text-xs font-semibold text-white/80 uppercase tracking-wide">
-                  {category?.name || title}
-                </span>
+                <span className="text-xs font-semibold text-white/80 uppercase tracking-wide">{category?.name || title}</span>
               </div>
 
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-black text-white tabular-nums tracking-tight leading-none">
-                  {stats.totalValue.toLocaleString()}
-                </span>
+                <span className="text-5xl font-black text-white tabular-nums tracking-tight leading-none">{stats.totalValue.toLocaleString()}</span>
                 {cleanUnit && <span className="text-base text-white/70 font-medium">{cleanUnit}</span>}
               </div>
 
@@ -181,18 +159,13 @@ export function ShareProgressModal({
 
               {/* User watermark */}
               <div className="flex items-center justify-between text-[11px] text-white/70">
-                <span className="font-semibold text-white truncate max-w-[150px]">
-                  @{user?.name ? user.name.toLowerCase().replace(/\s+/g, '') : 'trackly_user'}
-                </span>
+                <span className="font-semibold text-white truncate max-w-37.5">@{user?.name ? user.name.toLowerCase().replace(/\s+/g, '') : 'trackly_user'}</span>
                 <span className="text-white/50 text-[10px]">trackly.app</span>
               </div>
             </div>
 
             {/* Background Decorative Glow */}
-            <div
-              className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-40 pointer-events-none"
-              style={{ background: accentColor }}
-            />
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-40 pointer-events-none" style={{ background: accentColor }} />
           </div>
 
           {/* Action Buttons */}

@@ -19,7 +19,7 @@ export function ProfilePage() {
     return name
       .split(' ')
       .slice(0, 2)
-      .map(n => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase();
   };
@@ -35,9 +35,7 @@ export function ProfilePage() {
       {/* User Card */}
       <div className="bg-card border border-border rounded-xl p-4">
         <div className="flex items-center gap-3.5 pb-4 border-b border-border/60">
-          <div className="w-12 h-12 rounded-full bg-accent/15 border border-accent/20 flex items-center justify-center text-sm font-bold text-accent shrink-0">
-            {getInitials(user?.name)}
-          </div>
+          <div className="w-12 h-12 rounded-full bg-accent/15 border border-accent/20 flex items-center justify-center text-sm font-bold text-accent shrink-0">{getInitials(user?.name)}</div>
           <div className="min-w-0 flex-1">
             <h2 className="text-sm font-semibold text-foreground truncate">{user?.name ?? 'User'}</h2>
             <p className="text-xs text-muted truncate mt-0.5">{user?.email ?? 'user@example.com'}</p>
@@ -58,7 +56,7 @@ export function ProfilePage() {
               <Mail size={14} />
               <span>Email</span>
             </div>
-            <span className="font-medium text-foreground truncate max-w-[180px]">{user?.email ?? 'N/A'}</span>
+            <span className="font-medium text-foreground truncate max-w-45">{user?.email ?? 'N/A'}</span>
           </div>
 
           <div className="flex items-center justify-between text-xs">

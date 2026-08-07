@@ -11,18 +11,23 @@ import { Select } from '../components/ui/Select';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
 import { ShareProgressModal } from '../components/ShareProgressModal';
 
-const PRESET_COLORS = [
-  '#e85d04', '#f97316', '#eab308', '#22c55e',
-  '#0ea5e9', '#6366f1', '#a855f7', '#ec4899',
-  '#14b8a6', '#64748b',
-];
+const PRESET_COLORS = ['#e85d04', '#f97316', '#eab308', '#22c55e', '#0ea5e9', '#6366f1', '#a855f7', '#ec4899', '#14b8a6', '#64748b'];
 
-interface CategoryFormState { name: string; unit: string; color: string; icon: string; }
+interface CategoryFormState {
+  name: string;
+  unit: string;
+  color: string;
+  icon: string;
+}
 
 const defaultForm = (): CategoryFormState => ({ name: '', unit: '', color: PRESET_COLORS[0], icon: 'Activity' });
 
 function CategoryForm({
-  form, setForm, errors, handleSave, handleCancel,
+  form,
+  setForm,
+  errors,
+  handleSave,
+  handleCancel,
 }: {
   form: CategoryFormState;
   setForm: Dispatch<SetStateAction<CategoryFormState>>;
@@ -33,33 +38,19 @@ function CategoryForm({
   return (
     <div className="space-y-4 pt-4 mt-4 border-t border-border">
       <div className="grid grid-cols-2 gap-3">
-        <Input
-          id="input-cat-name"
-          label="Name"
-          placeholder="e.g. Running, Workout"
-          value={form.name}
-          onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-          error={errors.name}
-        />
-        <Input
-          id="input-cat-unit"
-          label="Unit"
-          placeholder="km, mins, sessions…"
-          value={form.unit}
-          onChange={e => setForm(f => ({ ...f, unit: e.target.value }))}
-          error={errors.unit}
-        />
+        <Input id="input-cat-name" label="Name" placeholder="e.g. Running, Workout" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} error={errors.name} />
+        <Input id="input-cat-unit" label="Unit" placeholder="km, mins, sessions…" value={form.unit} onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))} error={errors.unit} />
       </div>
 
       {/* Color picker */}
       <div>
         <p className="text-xs text-muted mb-2">Color accent</p>
         <div className="flex gap-2 flex-wrap">
-          {PRESET_COLORS.map(color => (
+          {PRESET_COLORS.map((color) => (
             <button
               key={color}
               type="button"
-              onClick={() => setForm(f => ({ ...f, color }))}
+              onClick={() => setForm((f) => ({ ...f, color }))}
               className="w-7 h-7 rounded-lg border-2 transition-transform hover:scale-110 cursor-pointer"
               style={{
                 background: color,
@@ -73,19 +64,22 @@ function CategoryForm({
 
       {/* Icon selector */}
       <div className="w-36">
-        <Select
-          id="select-cat-icon"
-          label="Icon"
-          value={form.icon}
-          onChange={e => setForm(f => ({ ...f, icon: e.target.value }))}
-        >
-          {ICON_OPTIONS.map(name => <option key={name} value={name}>{name}</option>)}
+        <Select id="select-cat-icon" label="Icon" value={form.icon} onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))}>
+          {ICON_OPTIONS.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
         </Select>
       </div>
 
       <div className="flex gap-2">
-        <Button id="btn-save-category" variant="primary" size="sm" icon={<Check size={13} />} onClick={handleSave}>Save</Button>
-        <Button id="btn-cancel-category" variant="ghost" size="sm" icon={<X size={13} />} onClick={handleCancel}>Cancel</Button>
+        <Button id="btn-save-category" variant="primary" size="sm" icon={<Check size={13} />} onClick={handleSave}>
+          Save
+        </Button>
+        <Button id="btn-cancel-category" variant="ghost" size="sm" icon={<X size={13} />} onClick={handleCancel}>
+          Cancel
+        </Button>
       </div>
     </div>
   );
@@ -110,8 +104,7 @@ export function CategoriesPage() {
     for (const e of entries) {
       if (!map[e.categoryId]) map[e.categoryId] = { total: 0, month: 0 };
       map[e.categoryId].total++;
-      if (isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd }))
-        map[e.categoryId].month++;
+      if (isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd })) map[e.categoryId].month++;
     }
     return map;
   }, [entries]);
@@ -132,7 +125,10 @@ export function CategoriesPage() {
 
   const handleSave = async () => {
     const errs = validate();
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
 
     const cleanedForm = {
       ...form,
@@ -140,19 +136,26 @@ export function CategoriesPage() {
     };
 
     try {
-      if (editingId) { await updateCategory(editingId, cleanedForm); setEditingId(null); }
-      else { await addCategory(cleanedForm); setShowForm(false); }
+      if (editingId) {
+        await updateCategory(editingId, cleanedForm);
+        setEditingId(null);
+      } else {
+        await addCategory(cleanedForm);
+        setShowForm(false);
+      }
       setForm(defaultForm());
       setErrors({});
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? 'Failed to save');
+    } catch (err: unknown) {
+      toast.error((err as { response?: { data?: { message?: string } } }).response?.data?.message ?? 'Failed to save');
     }
   };
 
   const handleDelete = async (id: string) => {
     if (deleteConfirm === id) {
-      try { await deleteCategory(id); } catch (err: any) {
-        toast.error(err?.response?.data?.message ?? 'Failed to delete');
+      try {
+        await deleteCategory(id);
+      } catch (err: unknown) {
+        toast.error((err as { response?: { data?: { message?: string } } }).response?.data?.message ?? 'Failed to delete');
       }
       setDeleteConfirm(null);
     } else {
@@ -170,17 +173,12 @@ export function CategoriesPage() {
 
   return (
     <div className="space-y-4 pb-4">
-
       {/* Hero Header Banner */}
       <div className="relative rounded-2xl overflow-hidden h-36 border border-border bg-card p-4 flex flex-col justify-between select-none shadow-lg">
-        <img
-          src="/images/categories_banner.webp"
-          alt="Categories Hero"
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-transparent" />
+        <img src="/images/categories_banner.webp" alt="Categories Hero" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/60 to-transparent" />
 
-        <div className="relative z-10 flex items-center justify-between">
+        <div className="relative flex items-center justify-between">
           <span className="text-[10px] font-semibold text-white/90 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
             <Folder size={11} className="text-emerald-400" />
             Categories Deck
@@ -192,7 +190,10 @@ export function CategoriesPage() {
               variant="primary"
               size="sm"
               icon={<Plus size={13} />}
-              onClick={() => { setShowForm(true); setForm(defaultForm()); }}
+              onClick={() => {
+                setShowForm(true);
+                setForm(defaultForm());
+              }}
             >
               New Category
             </Button>
@@ -221,7 +222,10 @@ export function CategoriesPage() {
         <div className="bg-card border border-border rounded-xl py-12 text-center">
           <p className="text-xs text-muted">No categories created yet.</p>
           <button
-            onClick={() => { setShowForm(true); setForm(defaultForm()); }}
+            onClick={() => {
+              setShowForm(true);
+              setForm(defaultForm());
+            }}
             className="mt-2 text-xs font-semibold text-accent cursor-pointer"
           >
             Create your first category →
@@ -229,7 +233,7 @@ export function CategoriesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-2.5">
-          {categories.map(cat => {
+          {categories.map((cat) => {
             const Icon = getIcon(cat.icon);
             const isEditing = editingId === cat.id;
             const isDeleting = deleteConfirm === cat.id;
@@ -239,18 +243,14 @@ export function CategoriesPage() {
             return (
               <div
                 key={cat.id}
-                className={`bg-card border rounded-2xl overflow-hidden transition-all shadow-sm ${isEditing ? 'border-accent/60 ring-1 ring-accent/30' : isDeleting ? 'border-red-500/40 bg-red-500/5' : 'border-border'
-                  }`}
+                className={`bg-card border rounded-2xl overflow-hidden transition-all shadow-sm ${isEditing ? 'border-accent/60 ring-1 ring-accent/30' : isDeleting ? 'border-red-500/40 bg-red-500/5' : 'border-border'}`}
                 style={{
                   background: `linear-gradient(135deg, ${cat.color}08 0%, var(--color-card) 60%)`,
                 }}
               >
                 <div className="flex items-center gap-3 p-4">
                   {/* Category icon with color halo */}
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-xs border border-white/10"
-                    style={{ background: `${cat.color}22` }}
-                  >
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-xs border border-white/10" style={{ background: `${cat.color}22` }}>
                     <Icon size={18} style={{ color: cat.color }} />
                   </div>
 
@@ -258,9 +258,7 @@ export function CategoriesPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-bold text-foreground truncate">{cat.name}</p>
-                      <span className="text-[10px] font-medium text-muted/80 bg-surface px-2 py-0.5 rounded-full border border-border shrink-0">
-                        {cleanUnit}
-                      </span>
+                      <span className="text-[10px] font-medium text-muted/80 bg-surface px-2 py-0.5 rounded-full border border-border shrink-0">{cleanUnit}</span>
                     </div>
 
                     <p className="text-xs text-muted mt-1 flex items-center gap-1.5">
@@ -273,21 +271,12 @@ export function CategoriesPage() {
                   {!isEditing && (
                     <div className="flex items-center gap-1 shrink-0">
                       {/* Deep Insights button */}
-                      <button
-                        onClick={() => setSelectedCatDetail(cat)}
-                        className="p-2 text-accent hover:bg-accent/10 rounded-lg transition-colors cursor-pointer"
-                        title="View Category Insights & Share Card"
-                      >
+                      <button onClick={() => setSelectedCatDetail(cat)} className="p-2 text-accent hover:bg-accent/10 rounded-lg transition-colors cursor-pointer" title="View Category Insights & Share Card">
                         <BarChart2 size={15} />
                       </button>
 
                       {/* Edit button */}
-                      <button
-                        id={`btn-edit-cat-${cat.id}`}
-                        onClick={() => startEdit(cat)}
-                        className="p-2 text-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors cursor-pointer"
-                        title="Edit category"
-                      >
+                      <button id={`btn-edit-cat-${cat.id}`} onClick={() => startEdit(cat)} className="p-2 text-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors cursor-pointer" title="Edit category">
                         <Pencil size={14} />
                       </button>
 
@@ -295,8 +284,7 @@ export function CategoriesPage() {
                       <button
                         id={`btn-delete-cat-${cat.id}`}
                         onClick={() => handleDelete(cat.id)}
-                        className={`p-2 rounded-lg transition-colors cursor-pointer ${isDeleting ? 'bg-red-500 text-white' : 'text-muted hover:text-red-400 hover:bg-surface'
-                          }`}
+                        className={`p-2 rounded-lg transition-colors cursor-pointer ${isDeleting ? 'bg-red-500 text-white' : 'text-muted hover:text-red-400 hover:bg-surface'}`}
                         title="Delete category"
                       >
                         <Trash2 size={14} />

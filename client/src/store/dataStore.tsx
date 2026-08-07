@@ -1,11 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  type ReactNode,
-} from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { api } from '../utils/auth';
 import { toast } from 'react-toastify';
 
@@ -62,15 +56,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     setLoading(true);
     try {
-      const [catRes, entRes] = await Promise.all([
-        api.get<Category[]>('/api/categories'),
-        api.get<Entry[]>('/api/entries'),
-      ]);
+      const [catRes, entRes] = await Promise.all([api.get<Category[]>('/api/categories'), api.get<Entry[]>('/api/entries')]);
       setCategories(catRes.data);
       setEntries(entRes.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       // 401 = not logged in, silently ignore (redirect handled by page)
-      if (err?.response?.status !== 401) {
+      if ((err as { response?: { status?: number } })?.response?.status !== 401) {
         toast.error('Gagal memuat data dari server');
       }
     } finally {
@@ -80,41 +71,44 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   // Load on mount
   useEffect(() => {
-    refreshAll();
+    const initialLoad = async () => {
+      await refreshAll();
+    };
+    initialLoad();
   }, [refreshAll]);
 
   // ── Category actions ─────────────────────────────────────────
   const addCategory = useCallback(async (cat: Omit<Category, 'id'>) => {
     const res = await api.post<Category>('/api/categories', cat);
-    setCategories(prev => [...prev, res.data]);
+    setCategories((prev) => [...prev, res.data]);
   }, []);
 
   const updateCategory = useCallback(async (id: string, updates: Partial<Omit<Category, 'id'>>) => {
     const res = await api.put<Category>(`/api/categories/${id}`, updates);
-    setCategories(prev => prev.map(c => c.id === id ? res.data : c));
+    setCategories((prev) => prev.map((c) => (c.id === id ? res.data : c)));
   }, []);
 
   const deleteCategory = useCallback(async (id: string) => {
     await api.delete(`/api/categories/${id}`);
     // Hapus juga entries yang terkait (cascade sudah ada di DB, tapi update state lokal)
-    setCategories(prev => prev.filter(c => c.id !== id));
-    setEntries(prev => prev.filter(e => e.categoryId !== id));
+    setCategories((prev) => prev.filter((c) => c.id !== id));
+    setEntries((prev) => prev.filter((e) => e.categoryId !== id));
   }, []);
 
   // ── Entry actions ────────────────────────────────────────────
   const addEntry = useCallback(async (entry: Omit<Entry, 'id'>) => {
     const res = await api.post<Entry>('/api/entries', entry);
-    setEntries(prev => [res.data, ...prev]);
+    setEntries((prev) => [res.data, ...prev]);
   }, []);
 
   const updateEntry = useCallback(async (id: string, updates: Partial<Omit<Entry, 'id'>>) => {
     const res = await api.put<Entry>(`/api/entries/${id}`, updates);
-    setEntries(prev => prev.map(e => e.id === id ? res.data : e));
+    setEntries((prev) => prev.map((e) => (e.id === id ? res.data : e)));
   }, []);
 
   const deleteEntry = useCallback(async (id: string) => {
     await api.delete(`/api/entries/${id}`);
-    setEntries(prev => prev.filter(e => e.id !== id));
+    setEntries((prev) => prev.filter((e) => e.id !== id));
   }, []);
 
   // Hapus semua state lokal — dipanggil saat logout

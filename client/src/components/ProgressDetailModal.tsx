@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { X, Share2, Zap, BarChart2 } from 'lucide-react';
 import { format, subDays, parseISO, isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
-import { getIcon } from '../utils/icons';
+import { renderIcon } from '../utils/icons';
 import { formatUnit } from '../utils/format';
 
 interface ProgressDetailModalProps {
@@ -19,23 +19,17 @@ interface ProgressDetailModalProps {
   entries: { id: string; categoryId: string; date: string; value: number; note?: string }[];
 }
 
-export function ProgressDetailModal({
-  isOpen,
-  onClose,
-  onOpenShare,
-  category,
-  entries,
-}: ProgressDetailModalProps) {
-  if (!isOpen || !category) return null;
+export function ProgressDetailModal({ isOpen, onClose, onOpenShare, category, entries }: ProgressDetailModalProps) {
+  const categoryId = category?.id;
+  const categoryIcon = category?.icon;
+  const categoryUnit = category?.unit;
+  const categoryColor = category?.color;
 
-  const Icon = getIcon(category.icon);
-  const cleanUnit = formatUnit(category.unit);
+  const cleanUnit = useMemo(() => formatUnit(categoryUnit), [categoryUnit]);
 
   // Compute category specific deep metrics
   const { totalValue, totalCount, avgValue, monthValue, chartData, consistencyPct } = useMemo(() => {
-    const catEntries = entries
-      .filter(e => e.categoryId === category.id)
-      .sort((a, b) => a.date.localeCompare(b.date));
+    const catEntries = categoryId ? entries.filter((e) => e.categoryId === categoryId).sort((a, b) => a.date.localeCompare(b.date)) : [];
 
     const totalValue = catEntries.reduce((sum, e) => sum + e.value, 0);
     const totalCount = catEntries.length;
@@ -44,16 +38,14 @@ export function ProgressDetailModal({
     const today = new Date();
     const monthStart = startOfMonth(today);
     const monthEnd = endOfMonth(today);
-    const monthEntries = catEntries.filter(e =>
-      isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd })
-    );
+    const monthEntries = catEntries.filter((e) => isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd }));
     const monthValue = monthEntries.reduce((sum, e) => sum + e.value, 0);
 
     // Consistency over last 30 days
     const last30Days = Array.from({ length: 30 }).map((_, i) => {
       const d = subDays(today, 29 - i);
       const dateStr = format(d, 'yyyy-MM-dd');
-      const dayEntries = catEntries.filter(e => e.date === dateStr);
+      const dayEntries = catEntries.filter((e) => e.date === dateStr);
       const dayTotal = dayEntries.reduce((s, e) => s + e.value, 0);
       return {
         date: format(d, 'MMM d'),
@@ -61,7 +53,7 @@ export function ProgressDetailModal({
       };
     });
 
-    const activeDays30 = last30Days.filter(d => d.val > 0).length;
+    const activeDays30 = last30Days.filter((d) => d.val > 0).length;
     const consistencyPct = Math.round((activeDays30 / 30) * 100);
 
     return {
@@ -73,7 +65,9 @@ export function ProgressDetailModal({
       chartData: last30Days,
       consistencyPct,
     };
-  }, [entries, category]);
+  }, [entries, categoryId]);
+
+  if (!isOpen || !category) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-up">
@@ -81,11 +75,8 @@ export function ProgressDetailModal({
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: `${category.color}20` }}
-            >
-              <Icon size={18} style={{ color: category.color }} />
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${categoryColor}20` }}>
+              {renderIcon(categoryIcon ?? 'Activity', { size: 18, style: { color: categoryColor } })}
             </div>
             <div>
               <h2 className="text-sm font-bold text-foreground">{category.name}</h2>
@@ -93,10 +84,7 @@ export function ProgressDetailModal({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-surface cursor-pointer transition-colors"
-          >
+          <button onClick={onClose} className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-surface cursor-pointer transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -127,10 +115,7 @@ export function ProgressDetailModal({
           {/* Consistency & Log Count summary */}
           <div className="bg-surface/50 border border-border rounded-xl p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: `${category.color}15` }}
-              >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${category.color}15` }}>
                 <Zap size={18} style={{ color: category.color }} />
               </div>
               <div>
@@ -169,16 +154,9 @@ export function ProgressDetailModal({
                       borderRadius: '8px',
                       fontSize: '11px',
                     }}
-                    formatter={(val: any) => [`${val} ${cleanUnit}`, category.name]}
+                    formatter={(val: unknown) => [`${val} ${cleanUnit}`, category.name]}
                   />
-                  <Area
-                    type="monotone"
-                    dataKey="val"
-                    stroke={category.color}
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill={`url(#grad-${category.id})`}
-                  />
+                  <Area type="monotone" dataKey="val" stroke={category.color} strokeWidth={2} fillOpacity={1} fill={`url(#grad-${category.id})`} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

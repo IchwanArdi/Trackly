@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, subDays, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
 import { Plus, Check, ChevronRight, Flame, Trophy, Target, Share2, BarChart2 } from 'lucide-react';
@@ -22,7 +22,7 @@ function WeekDots({ entries }: { entries: { date: string }[] }) {
     const d = subDays(today, 6 - i);
     const dateStr = format(d, 'yyyy-MM-dd');
     const isToday = i === 6;
-    const hasEntry = entries.some(e => e.date === dateStr);
+    const hasEntry = entries.some((e) => e.date === dateStr);
     return { label: format(d, 'EEE').slice(0, 1), dateStr, isToday, hasEntry };
   });
 
@@ -33,17 +33,13 @@ function WeekDots({ entries }: { entries: { date: string }[] }) {
           <div
             className={`rounded-full transition-colors ${isToday ? 'w-2.5 h-2.5' : 'w-2 h-2'}`}
             style={{
-              background: hasEntry
-                ? 'var(--color-accent)'
-                : 'var(--color-surface)',
+              background: hasEntry ? 'var(--color-accent)' : 'var(--color-surface)',
               border: hasEntry ? 'none' : '1.5px solid var(--color-border)',
               outline: isToday && !hasEntry ? '1.5px solid var(--color-accent)' : 'none',
               outlineOffset: '1.5px',
             }}
           />
-          <span className={`text-[10px] ${isToday ? 'text-accent font-semibold' : 'text-muted'}`}>
-            {label}
-          </span>
+          <span className={`text-[10px] ${isToday ? 'text-accent font-semibold' : 'text-muted'}`}>{label}</span>
         </div>
       ))}
     </div>
@@ -81,23 +77,11 @@ function HighlightsDeck({
   return (
     <div className="space-y-2">
       {/* Horizontal Carousel */}
-      <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-none py-1 -mx-4 px-4 sm:mx-0 sm:px-0"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
+      <div ref={scrollRef} onScroll={handleScroll} className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-none py-1 -mx-4 px-4 sm:mx-0 sm:px-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {/* Slide 1: Weekly Highlight Banner */}
-        <div
-          onClick={onOpenShare}
-          className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-card border border-border flex flex-col justify-between p-4 group select-none cursor-pointer"
-        >
-          <img
-            src="/images/banner1.webp"
-            alt="Highlight"
-            className="absolute inset-0 w-full h-full object-cover opacity-65 group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        <div onClick={onOpenShare} className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-card border border-border flex flex-col justify-between p-4 group select-none cursor-pointer">
+          <img src="/images/banner1.webp" alt="Highlight" className="absolute inset-0 w-full h-full object-cover opacity-65 group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
 
           <div className="relative z-10 flex items-center justify-between">
             <span className="text-[10px] font-semibold text-white/90 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
@@ -110,12 +94,8 @@ function HighlightsDeck({
           </div>
 
           <div className="relative z-10">
-            <h3 className="text-base font-bold text-white leading-tight">
-              {streaks.current > 0 ? `${streaks.current} Day Active Streak` : 'Start Your Habit Stream'}
-            </h3>
-            <p className="text-xs text-white/80 mt-1 line-clamp-1">
-              {monthCount} activities logged this month
-            </p>
+            <h3 className="text-base font-bold text-white leading-tight">{streaks.current > 0 ? `${streaks.current} Day Active Streak` : 'Start Your Habit Stream'}</h3>
+            <p className="text-xs text-white/80 mt-1 line-clamp-1">{monthCount} activities logged this month</p>
 
             <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/10">
               <span className="text-xs text-amber-300 font-medium flex items-center gap-1">
@@ -130,12 +110,8 @@ function HighlightsDeck({
 
         {/* Slide 2: Top Active Category */}
         <div className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-card border border-border flex flex-col justify-between p-4 group select-none cursor-pointer">
-          <img
-            src="/images/banner2.webp"
-            alt="Category highlight"
-            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <img src="/images/banner2.webp" alt="Category highlight" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
 
           <div className="relative z-10 flex items-center justify-between">
             <span className="text-[10px] font-semibold text-white/90 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
@@ -149,10 +125,7 @@ function HighlightsDeck({
             {topCategory ? (
               <>
                 <div className="flex items-center gap-2 mb-1">
-                  <div
-                    className="w-6 h-6 rounded-md flex items-center justify-center"
-                    style={{ background: `${topCategory.color}35` }}
-                  >
+                  <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: `${topCategory.color}35` }}>
                     {(() => {
                       const IconComponent = getIcon(topCategory.icon);
                       return <IconComponent size={13} style={{ color: topCategory.color }} />;
@@ -187,11 +160,9 @@ function HighlightsDeck({
         </div>
 
         {/* Slide 3: Today's Habit Progress */}
-        <div className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-gradient-to-br from-card via-surface to-card border border-border flex flex-col justify-between p-4 select-none">
+        <div className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-linear-to-br from-card via-surface to-card border border-border flex flex-col justify-between p-4 select-none">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/20">
-              Today's Goal
-            </span>
+            <span className="text-[10px] font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/20">Today's Goal</span>
             <span className="text-xs font-bold text-foreground">
               {todayLoggedCount} / {categoriesCount} Logged
             </span>
@@ -208,20 +179,13 @@ function HighlightsDeck({
               />
             </div>
             <p className="text-[11px] text-muted mt-2">
-              {todayLoggedCount === 0
-                ? 'No activities logged today yet'
-                : todayLoggedCount === categoriesCount
-                  ? 'All categories logged for today!'
-                  : `${categoriesCount - todayLoggedCount} more to complete today`}
+              {todayLoggedCount === 0 ? 'No activities logged today yet' : todayLoggedCount === categoriesCount ? 'All categories logged for today!' : `${categoriesCount - todayLoggedCount} more to complete today`}
             </p>
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-border">
             <span className="text-[11px] text-muted">Keep building your stream</span>
-            <button
-              onClick={() => navigate('/log')}
-              className="text-xs font-semibold text-accent hover:underline cursor-pointer"
-            >
+            <button onClick={() => navigate('/log')} className="text-xs font-semibold text-accent hover:underline cursor-pointer">
               Add entry →
             </button>
           </div>
@@ -230,12 +194,8 @@ function HighlightsDeck({
 
       {/* Indicator dots */}
       <div className="flex items-center justify-center gap-1.5 pt-1">
-        {[0, 1, 2].map(i => (
-          <div
-            key={i}
-            className={`h-1.5 rounded-full transition-all duration-300 ${activeIndex === i ? 'w-5 bg-accent' : 'w-1.5 bg-border'
-              }`}
-          />
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${activeIndex === i ? 'w-5 bg-accent' : 'w-1.5 bg-border'}`} />
         ))}
       </div>
     </div>
@@ -265,60 +225,48 @@ export function DashboardPage() {
   const monthStart = startOfMonth(today);
   const monthEnd = endOfMonth(today);
 
-  const { streaks, monthCount, todayEntries, recentByDate, topCategory, monthTotalValue } = useMemo(() => {
-    const streaks = computeStreaks(entries);
-    const monthEntries = entries.filter(e =>
-      isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd })
-    );
-    const monthCount = monthEntries.length;
-    const monthTotalValue = monthEntries.reduce((sum, e) => sum + e.value, 0);
-    const todayEntries = entries.filter(e => e.date === todayStr);
+  const streaks = computeStreaks(entries);
+  const monthEntries = entries.filter((e) => isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd }));
+  const monthCount = monthEntries.length;
+  const monthTotalValue = monthEntries.reduce((sum, e) => sum + e.value, 0);
+  const todayEntries = entries.filter((e) => e.date === todayStr);
 
-    // Calculate top category this month
-    const catCounts: Record<string, number> = {};
-    for (const e of monthEntries) {
-      catCounts[e.categoryId] = (catCounts[e.categoryId] || 0) + 1;
-    }
-    let topCatObj: { name: string; icon: string; color: string; count: number; unit: string } | undefined = undefined;
-    let maxCount = 0;
-    for (const [catId, count] of Object.entries(catCounts)) {
-      if (count > maxCount) {
-        maxCount = count;
-        const cat = categories.find(c => c.id === catId);
-        if (cat) {
-          topCatObj = { name: cat.name, icon: cat.icon, color: cat.color, count, unit: cat.unit };
-        }
+  // Calculate top category this month
+  const catCounts: Record<string, number> = {};
+  for (const e of monthEntries) {
+    catCounts[e.categoryId] = (catCounts[e.categoryId] || 0) + 1;
+  }
+  let topCategory: { name: string; icon: string; color: string; count: number; unit: string } | undefined = undefined;
+  let maxCount = 0;
+  for (const [catId, count] of Object.entries(catCounts)) {
+    if (count > maxCount) {
+      maxCount = count;
+      const cat = categories.find((c) => c.id === catId);
+      if (cat) {
+        topCategory = { name: cat.name, icon: cat.icon, color: cat.color, count, unit: cat.unit };
       }
     }
+  }
 
-    const recent = [...entries].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
-    const map: Record<string, typeof recent> = {};
-    for (const e of recent) {
-      if (!map[e.date]) map[e.date] = [];
-      map[e.date].push(e);
-    }
-    const recentByDate = Object.entries(map).slice(0, 4);
+  const recent = [...entries].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+  const map: Record<string, typeof recent> = {};
+  for (const e of recent) {
+    if (!map[e.date]) map[e.date] = [];
+    map[e.date].push(e);
+  }
+  const recentByDate = Object.entries(map).slice(0, 4);
 
-    return { streaks, monthCount, todayEntries, recentByDate, topCategory: topCatObj, monthTotalValue };
-  }, [entries, todayStr, categories, monthStart, monthEnd]);
-
-  const todayLoggedCatIds = useMemo(
-    () => new Set(todayEntries.map(e => e.categoryId)),
-    [todayEntries]
-  );
+  const todayLoggedCatIds = new Set(todayEntries.map((e) => e.categoryId));
 
   const yesterday = format(subDays(today, 1), 'yyyy-MM-dd');
 
   return (
     <div className="space-y-5 pb-4">
-
       {/* Header */}
       <div className="flex items-center justify-between pt-1">
         <div>
           <p className="text-[11px] text-muted">{format(today, 'EEEE, MMMM d')}</p>
-          <h1 className="text-lg font-semibold text-foreground leading-snug mt-0.5">
-            {getFirstName(user?.name) ? `Hi, ${getFirstName(user?.name)}` : 'Dashboard'}
-          </h1>
+          <h1 className="text-lg font-semibold text-foreground leading-snug mt-0.5">{getFirstName(user?.name) ? `Hi, ${getFirstName(user?.name)}` : 'Dashboard'}</h1>
         </div>
 
         <div className="flex items-center gap-2">
@@ -330,10 +278,7 @@ export function DashboardPage() {
             <Share2 size={13} className="text-accent" />
             Share
           </button>
-          <button
-            onClick={() => navigate('/log')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-accent text-white text-xs font-semibold cursor-pointer active:scale-95 transition-transform"
-          >
+          <button onClick={() => navigate('/log')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-accent text-white text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
             <Plus size={13} />
             Log
           </button>
@@ -341,14 +286,7 @@ export function DashboardPage() {
       </div>
 
       {/* Horizontal Highlights Deck Carousel */}
-      <HighlightsDeck
-        streaks={streaks}
-        monthCount={monthCount}
-        categoriesCount={categories.length}
-        todayLoggedCount={todayLoggedCatIds.size}
-        topCategory={topCategory}
-        onOpenShare={() => setShareModalOpen(true)}
-      />
+      <HighlightsDeck streaks={streaks} monthCount={monthCount} categoriesCount={categories.length} todayLoggedCount={todayLoggedCatIds.size} topCategory={topCategory} onOpenShare={() => setShareModalOpen(true)} />
 
       {/* Streak & Week Dots Card */}
       <div className="bg-card border border-border rounded-xl p-5">
@@ -356,12 +294,8 @@ export function DashboardPage() {
           <div>
             <p className="text-xs text-muted mb-1">Current streak</p>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-5xl font-black text-foreground tabular-nums leading-none">
-                {streaks.current}
-              </span>
-              <span className="text-base text-muted font-normal">
-                {streaks.current === 1 ? 'day' : 'days'}
-              </span>
+              <span className="text-5xl font-black text-foreground tabular-nums leading-none">{streaks.current}</span>
+              <span className="text-base text-muted font-normal">{streaks.current === 1 ? 'day' : 'days'}</span>
             </div>
           </div>
           <div className="text-right">
@@ -383,7 +317,7 @@ export function DashboardPage() {
             <span className="text-[10px] text-muted">Tap for deep insights</span>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {categories.slice(0, 8).map(cat => {
+            {categories.slice(0, 8).map((cat) => {
               const Icon = getIcon(cat.icon);
               const logged = todayLoggedCatIds.has(cat.id);
               return (
@@ -396,30 +330,18 @@ export function DashboardPage() {
                     backgroundColor: logged ? `${cat.color}08` : undefined,
                   }}
                 >
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ background: `${cat.color}18` }}
-                  >
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${cat.color}18` }}>
                     <Icon size={15} style={{ color: cat.color }} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-foreground truncate group-hover:text-accent transition-colors">
-                      {cat.name}
-                    </p>
+                    <p className="text-xs font-medium text-foreground truncate group-hover:text-accent transition-colors">{cat.name}</p>
                     <p className="text-[10px] text-muted flex items-center gap-1">
-                      {logged ? (
-                        <span className="text-emerald-500 font-semibold">Logged</span>
-                      ) : (
-                        <span>Tap detail</span>
-                      )}
+                      {logged ? <span className="text-emerald-500 font-semibold">Logged</span> : <span>Tap detail</span>}
                       <BarChart2 size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                     </p>
                   </div>
                   {logged && (
-                    <div
-                      className="w-4 h-4 rounded-full flex items-center justify-center shrink-0"
-                      style={{ background: cat.color }}
-                    >
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ background: cat.color }}>
                       <Check size={9} color="#fff" strokeWidth={3} />
                     </div>
                   )}
@@ -435,10 +357,7 @@ export function DashboardPage() {
         <div>
           <div className="flex items-center justify-between mb-2.5">
             <p className="text-xs font-medium text-muted">Recent</p>
-            <button
-              onClick={() => navigate('/history')}
-              className="text-xs text-accent cursor-pointer"
-            >
+            <button onClick={() => navigate('/history')} className="text-xs text-accent cursor-pointer">
               See all
             </button>
           </div>
@@ -456,7 +375,7 @@ export function DashboardPage() {
                     <p className="text-[10px] font-semibold text-muted uppercase tracking-wide">{label}</p>
                   </div>
                   {dayEntries.map((entry, ei) => {
-                    const cat = categories.find(c => c.id === entry.categoryId);
+                    const cat = categories.find((c) => c.id === entry.categoryId);
                     if (!cat) return null;
                     const Icon = getIcon(cat.icon);
                     const unitStr = formatUnit(cat.unit);
@@ -464,13 +383,9 @@ export function DashboardPage() {
                       <div
                         key={entry.id}
                         onClick={() => setSelectedCategoryDetail(cat)}
-                        className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-surface/50 transition-colors ${ei < dayEntries.length - 1 ? 'border-b border-border/50' : ''
-                          }`}
+                        className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-surface/50 transition-colors ${ei < dayEntries.length - 1 ? 'border-b border-border/50' : ''}`}
                       >
-                        <div
-                          className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ background: `${cat.color}18` }}
-                        >
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${cat.color}18` }}>
                           <Icon size={13} style={{ color: cat.color }} />
                         </div>
                         <p className="flex-1 text-xs font-medium text-foreground truncate">{cat.name}</p>

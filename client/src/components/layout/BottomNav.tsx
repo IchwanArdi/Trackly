@@ -1,7 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import {
-  LayoutDashboard, ListOrdered, Plus, FolderOpen, User
-} from 'lucide-react';
+import { LayoutDashboard, ListOrdered, Plus, FolderOpen, User } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
@@ -13,11 +11,7 @@ const navItems = [
 
 export function BottomNav() {
   return (
-    <nav
-      id="bottom-nav"
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-card border-t border-border"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-    >
+    <nav id="bottom-nav" className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-card border-t border-border" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       <div className="flex items-end justify-around px-2 h-14">
         {navItems.map(({ to, icon: Icon, label, isCenter }) => (
           <NavLink
@@ -25,17 +19,14 @@ export function BottomNav() {
             to={to}
             id={`bottom-nav-${label.toLowerCase()}`}
             className={({ isActive }) => {
-              const base = 'flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] select-none transition-colors duration-100';
+              const base = 'flex flex-col items-center justify-center gap-0.5 min-w-14 min-h-11 select-none transition-colors duration-100';
               if (isCenter) {
                 return `${base} -mt-4`;
               }
-              return `${base} ${isActive
-                ? 'text-accent'
-                : 'text-muted'
-              }`;
+              return `${base} ${isActive ? 'text-accent' : 'text-muted'}`;
             }}
           >
-            {({ isActive }) => (
+            {({ isActive }) =>
               isCenter ? (
                 <>
                   <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center shadow-md shadow-accent/20">
@@ -45,16 +36,11 @@ export function BottomNav() {
                 </>
               ) : (
                 <>
-                  <Icon
-                    size={20}
-                    strokeWidth={isActive ? 2.2 : 1.5}
-                  />
-                  <span className={`text-[10px] leading-none ${isActive ? 'font-semibold' : 'font-medium'}`}>
-                    {label}
-                  </span>
+                  <Icon size={20} strokeWidth={isActive ? 2.2 : 1.5} />
+                  <span className={`text-[10px] leading-none ${isActive ? 'font-semibold' : 'font-medium'}`}>{label}</span>
                 </>
               )
-            )}
+            }
           </NavLink>
         ))}
       </div>

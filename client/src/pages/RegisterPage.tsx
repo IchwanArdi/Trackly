@@ -35,9 +35,9 @@ export function RegisterPage() {
       setTimeout(() => {
         navigate('/login');
       }, 1500);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.update(idToast, {
-        render: `${error.response.data.message}`,
+        render: `${(error as { response?: { data?: { message?: string } } }).response?.data?.message}`,
         type: 'error',
         isLoading: false,
         autoClose: 2000,
@@ -51,7 +51,7 @@ export function RegisterPage() {
     <div className="min-h-screen bg-background flex">
       {/* Left panel */}
       <div className="hidden lg:flex w-80 xl:w-96 bg-card border-r border-border flex-col justify-between p-10 shrink-0">
-        <Link to='/' >
+        <Link to="/">
           <div className="flex items-center gap-2.5 cursor-pointer">
             <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
               <img src="/trackly-icon.webp" alt="Trackly Icon" />
@@ -72,7 +72,7 @@ export function RegisterPage() {
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
-          <Link to='/' className="flex items-center gap-2 mb-8 lg:hidden">
+          <Link to="/" className="flex items-center gap-2 mb-8 lg:hidden">
             <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
               <img src="/trackly-icon.webp" alt="Trackly Icon" />
             </div>
