@@ -3,7 +3,7 @@ import { X, Share2, Zap, BarChart2 } from 'lucide-react';
 import { format, subDays, parseISO, isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import { renderIcon } from '../utils/icons';
-import { formatUnit } from '../utils/format';
+import { getUnit } from '../utils/format';
 
 interface ProgressDetailModalProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export function ProgressDetailModal({ isOpen, onClose, onOpenShare, category, en
   const categoryUnit = category?.unit;
   const categoryColor = category?.color;
 
-  const cleanUnit = useMemo(() => formatUnit(categoryUnit), [categoryUnit]);
+  const cleanUnit = useMemo(() => getUnit(categoryUnit), [categoryUnit]);
 
   // Compute category specific deep metrics
   const { totalValue, totalCount, avgValue, monthValue, chartData, consistencyPct } = useMemo(() => {

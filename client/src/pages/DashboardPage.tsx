@@ -7,7 +7,7 @@ import { useData } from '../store/dataStore';
 import { computeStreaks } from '../utils/stats';
 import { getIcon } from '../utils/icons';
 import { isAuthenticated, getUser } from '../utils/auth';
-import { formatUnit } from '../utils/format';
+import { getUnit } from '../utils/format';
 import { ShareProgressModal } from '../components/ShareProgressModal';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
 
@@ -134,7 +134,7 @@ function HighlightsDeck({
                   <h3 className="text-base font-bold text-white truncate">{topCategory.name}</h3>
                 </div>
                 <p className="text-xs text-white/80">
-                  Logged {topCategory.count} times this month {formatUnit(topCategory.unit) ? `(${formatUnit(topCategory.unit)})` : ''}
+                  Logged {topCategory.count} times this month {getUnit(topCategory.unit) ? `(${getUnit(topCategory.unit)})` : ''}
                 </p>
               </>
             ) : (
@@ -378,7 +378,7 @@ export function DashboardPage() {
                     const cat = categories.find((c) => c.id === entry.categoryId);
                     if (!cat) return null;
                     const Icon = getIcon(cat.icon);
-                    const unitStr = formatUnit(cat.unit);
+                    const unitStr = getUnit(cat.unit);
                     return (
                       <div
                         key={entry.id}

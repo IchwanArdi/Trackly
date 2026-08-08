@@ -5,7 +5,7 @@ import { ArrowLeft, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useData } from '../store/dataStore';
 import { getIcon } from '../utils/icons';
-import { formatUnit } from '../utils/format';
+import { getUnit } from '../utils/format';
 
 export function LogEntryPage() {
   const { categories, addEntry } = useData();
@@ -21,7 +21,7 @@ export function LogEntryPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const selectedCategory = categories.find((c) => c.id === categoryId);
-  const cleanUnit = formatUnit(selectedCategory?.unit);
+  const cleanUnit = getUnit(selectedCategory?.unit);
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -159,9 +159,8 @@ export function LogEntryPage() {
                 setValue(e.target.value);
                 setErrors((p) => ({ ...p, value: '' }));
               }}
-              className={`w-full px-3.5 py-2.5 bg-surface border rounded-xl text-foreground text-base font-semibold placeholder:text-muted/40 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors ${
-                errors.value ? 'border-red-400' : 'border-border'
-              }`}
+              className={`w-full px-3.5 py-2.5 bg-surface border rounded-xl text-foreground text-base font-semibold placeholder:text-muted/40 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors ${errors.value ? 'border-red-400' : 'border-border'
+                }`}
             />
             {errors.value && <p className="text-xs text-red-400 mt-1">{errors.value}</p>}
           </div>
@@ -177,9 +176,8 @@ export function LogEntryPage() {
                 setDate(e.target.value);
                 setErrors((p) => ({ ...p, date: '' }));
               }}
-              className={`w-full px-3.5 py-2.5 bg-surface border rounded-xl text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors ${
-                errors.date ? 'border-red-400' : 'border-border'
-              }`}
+              className={`w-full px-3.5 py-2.5 bg-surface border rounded-xl text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors ${errors.date ? 'border-red-400' : 'border-border'
+                }`}
             />
             {errors.date && <p className="text-xs text-red-400 mt-1">{errors.date}</p>}
           </div>

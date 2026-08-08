@@ -4,7 +4,7 @@ import { X, Download, Share2, Sparkles, Flame, TrendingUp } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { getUser } from '../utils/auth';
 import { renderIcon } from '../utils/icons';
-import { formatUnit } from '../utils/format';
+import { getUnit } from '../utils/format';
 import { format } from 'date-fns';
 
 interface ShareProgressModalProps {
@@ -33,7 +33,7 @@ export function ShareProgressModal({ isOpen, onClose, title, category, stats }: 
 
   const categoryIcon = category?.icon;
   const accentColor = category?.color || '#e85d04';
-  const cleanUnit = useMemo(() => formatUnit(category?.unit), [category?.unit]);
+  const cleanUnit = useMemo(() => getUnit(category?.unit), [category?.unit]);
 
   if (!isOpen) return null;
 

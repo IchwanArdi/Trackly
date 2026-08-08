@@ -1,8 +1,16 @@
-/**
- * Cleanly formats category units by removing leading "1" or "1 "
- * E.g.: "1km" -> "km", "1 km" -> "km", "1 session" -> "session", "km" -> "km"
- */
-export function formatUnit(unit?: string): string {
-  if (!unit) return '';
-  return unit.trim().replace(/^1\s*/, '');
+export const RANDOM_UNIT = [
+  "km",
+  "session",
+  "minutes",
+  "pages",
+  "hours",
+  "reps",
+  "sets",
+];
+
+export const UNIT_OPTIONS = RANDOM_UNIT;
+
+// Fallback aja kalau unit kosong/undefined — custom unit apapun tetap dipakai apa adanya
+export function getUnit(name?: string): string {
+  return name && name.trim() !== '' ? name : 'km';
 }

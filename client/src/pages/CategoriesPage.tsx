@@ -4,7 +4,7 @@ import { Plus, Pencil, Trash2, Check, X, BarChart2, Folder } from 'lucide-react'
 import { toast } from 'react-toastify';
 import { useData, type Category } from '../store/dataStore';
 import { getIcon, ICON_OPTIONS } from '../utils/icons';
-import { formatUnit } from '../utils/format';
+import { getUnit, UNIT_OPTIONS } from '../utils/format';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
@@ -12,6 +12,7 @@ import { ProgressDetailModal } from '../components/ProgressDetailModal';
 import { ShareProgressModal } from '../components/ShareProgressModal';
 
 const PRESET_COLORS = ['#e85d04', '#f97316', '#eab308', '#22c55e', '#0ea5e9', '#6366f1', '#a855f7', '#ec4899', '#14b8a6', '#64748b'];
+const CUSTOM_UNIT_VALUE = '__custom__';
 
 interface CategoryFormState {
   name: string;
@@ -35,11 +36,52 @@ function CategoryForm({
   handleSave: () => void;
   handleCancel: () => void;
 }) {
+  // Mode custom aktif kalau unit-nya diisi tapi gak ada di daftar preset (misal lagi edit kategori lama)
+  const [customMode, setCustomMode] = useState(() => form.unit !== '' && !UNIT_OPTIONS.includes(form.unit));
+
+  const selectValue = customMode ? CUSTOM_UNIT_VALUE : form.unit;
+
+  const handleUnitSelectChange = (value: string) => {
+    if (value === CUSTOM_UNIT_VALUE) {
+      setCustomMode(true);
+      setForm((f) => ({ ...f, unit: '' }));
+    } else {
+      setCustomMode(false);
+      setForm((f) => ({ ...f, unit: value }));
+    }
+  };
+
   return (
     <div className="space-y-4 pt-4 mt-4 border-t border-border">
       <div className="grid grid-cols-2 gap-3">
         <Input id="input-cat-name" label="Name" placeholder="e.g. Running, Workout" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} error={errors.name} />
-        <Input id="input-cat-unit" label="Unit" placeholder="km, mins, sessions…" value={form.unit} onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))} error={errors.unit} />
+
+        <div>
+          <Select id="select-cat-unit" label="Unit" value={selectValue} onChange={(e) => handleUnitSelectChange(e.target.value)} error={!customMode ? errors.unit : undefined}>
+            <option value="" disabled>
+              Pilih unit
+            </option>
+            {UNIT_OPTIONS.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+            <option value={CUSTOM_UNIT_VALUE}>Custom...</option>
+          </Select>
+
+          {customMode && (
+            <div className="mt-2">
+              <Input
+                id="input-cat-unit-custom"
+                placeholder="mis. gelas, halaman, push-up"
+                value={form.unit}
+                onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
+                error={errors.unit}
+                autoFocus
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Color picker */}
@@ -118,7 +160,7 @@ export function CategoriesPage() {
 
   const startEdit = (cat: Category) => {
     setEditingId(cat.id);
-    setForm({ name: cat.name, unit: formatUnit(cat.unit), color: cat.color, icon: cat.icon });
+    setForm({ name: cat.name, unit: getUnit(cat.unit), color: cat.color, icon: cat.icon });
     setShowForm(false);
     setErrors({});
   };
@@ -132,7 +174,7 @@ export function CategoriesPage() {
 
     const cleanedForm = {
       ...form,
-      unit: formatUnit(form.unit),
+      unit: getUnit(form.unit),
     };
 
     try {
@@ -238,7 +280,7 @@ export function CategoriesPage() {
             const isEditing = editingId === cat.id;
             const isDeleting = deleteConfirm === cat.id;
             const stats = catStats[cat.id] ?? { total: 0, month: 0 };
-            const cleanUnit = formatUnit(cat.unit);
+            const cleanUnit = getUnit(cat.unit);
 
             return (
               <div

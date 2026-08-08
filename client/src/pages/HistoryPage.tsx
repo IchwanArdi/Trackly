@@ -4,7 +4,7 @@ import { Trash2, FileText, Search, Calendar, Activity, Sparkles, ChevronRight } 
 import { toast } from 'react-toastify';
 import { useData } from '../store/dataStore';
 import { getIcon } from '../utils/icons';
-import { formatUnit } from '../utils/format';
+import { getUnit } from '../utils/format';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
 import { ShareProgressModal } from '../components/ShareProgressModal';
 
@@ -189,7 +189,7 @@ export function HistoryPage() {
                 if (!cat) return null;
                 const Icon = getIcon(cat.icon);
                 const isDeleting = deleteConfirm === entry.id;
-                const unitStr = formatUnit(cat.unit);
+                const unitStr = getUnit(cat.unit);
 
                 return (
                   <div
