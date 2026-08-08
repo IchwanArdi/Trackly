@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, BarChart3, CalendarDays, ShieldCheck, Sparkles, Zap, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import dashboard from '../assets/dashboard.webp';
 import categories from '../assets/categories.webp';
 import logActivity from '../assets/log-activity.webp';
+import { isAuthenticated, clearAuthToken } from '../utils/auth';
+import { useData } from '../store/dataStore';
 
 interface InstallButtonProps {
   onInstallClick: () => void;
@@ -28,6 +31,14 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
 
 function Navbar({ onInstallClick }: InstallButtonProps) {
   const [scrolled, setScrolled] = useState(false);
+  const isLoggedIn = isAuthenticated();
+  const { clearData } = useData();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    clearAuthToken();
+    clearData();
+    navigate('/');
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -43,14 +54,26 @@ function Navbar({ onInstallClick }: InstallButtonProps) {
           <span className="text-sm font-semibold tracking-tight text-foreground">Trackly</span>
         </a>
 
-        <div className="flex items-center gap-4 sm:gap-6">
-          <Link to="/login" id="nav-features" className="text-sm font-medium text-muted transition-colors hover:text-foreground">
-            Login
-          </Link>
-          <button onClick={onInstallClick} id="nav-download" className="inline-flex items-center rounded-full border border-border px-3.5 py-1.5 text-xs font-semibold text-foreground transition hover:text-accent">
-            Download App
-          </button>
-        </div>
+        {isLoggedIn && (
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link to="/dashboard" id="nav-dashboard" className="text-sm transition-colors rounded-lg bg-accent/90 hover:bg-accent px-2 py-1 font-medium text-white">
+              Dashboard
+            </Link>
+            <button onClick={handleLogout} id="nav-logout" className="text-sm font-medium text-muted transition-colors hover:text-foreground">
+              Logout
+            </button>
+          </div>
+        )}
+        {!isLoggedIn && (
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link to="/login" id="nav-features" className="text-sm font-medium text-muted transition-colors hover:text-foreground">
+              Login
+            </Link>
+            <button onClick={onInstallClick} id="nav-download" className="inline-flex items-center rounded-full border border-border px-3.5 py-1.5 text-xs font-semibold text-foreground transition hover:text-accent">
+              Download App
+            </button>
+          </div>
+        )}
       </nav>
     </header>
   );
