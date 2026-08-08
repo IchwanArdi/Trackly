@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Clock3, KeyRound, Mail, ShieldCheck, User, X, Trash2, Loader2, AlertTriangle } from 'lucide-react';
+import { Clock3, KeyRound, Mail, ShieldCheck, User, X, Trash2, Loader2, AlertTriangle, MessageSquare } from 'lucide-react';
 import { getUser, api } from '../utils/auth';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -8,11 +8,12 @@ interface AccountPageProps {
   onClose: () => void;
 }
 
-type AccountTab = 'account' | 'security';
+type AccountTab = 'account' | 'security' | 'feedback';
 
 const navItems: { key: AccountTab; label: string }[] = [
   { key: 'account', label: 'Account' },
   { key: 'security', label: 'Keamanan' },
+  { key: 'feedback', label: 'Feedback' },
 ];
 
 export const AccountPage = ({ onClose }: AccountPageProps) => {
@@ -22,6 +23,34 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [feedbackCategory, setFeedbackCategory] = useState<string>('');
+  const [feedbackMessage, setFeedbackMessage] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Func untuk submit feedback
+  const handleFeedbackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!feedbackCategory || !feedbackMessage) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await api.post('/api/users/feedback', {
+        category: feedbackCategory,
+        message: feedbackMessage,
+      });
+
+      toast.success(`${response.data.message}`);
+      setFeedbackCategory('');
+      setFeedbackMessage('');
+    } catch (error) {
+      toast.error('Failed to submit feedback');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Func delete account
   const handleDeleteAccount = async () => {
@@ -110,7 +139,7 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                 </div>
               </div>
 
-              {/* REDESAIN SECTION: Danger Zone (Hapus Akun) */}
+              {/* Danger Zone (Hapus Akun) */}
               <div className="rounded-xl border border-border bg-surface/70 p-4">
                 <div className="flex items-start gap-3">
                   <div className="p-2 text-red-500 mt-0.5">
@@ -178,7 +207,7 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : activeTab === 'security' ? (
             <div className="space-y-4">
               <div className="rounded-xl border border-border bg-surface/70 p-4">
                 <div className="flex items-center gap-2">
@@ -205,6 +234,57 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                     <span>Gunakan koneksi internet yang aman saat mengakses akun Anda.</span>
                   </div>
                 </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="rounded-xl border border-border bg-surface/70 p-4">
+                <div className="flex items-center gap-2">
+                  <MessageSquare size={18} className="text-accent" />
+                  <h3 className="text-base font-semibold text-foreground">Feedback</h3>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">Berikan feedback Anda untuk membantu kami meningkatkan layanan.</p>
+
+                <div className="mt-3 flex items-start gap-2 rounded-lg border border-border bg-surface px-3 py-2.5">
+                  <ShieldCheck size={14} className="mt-0.5 text-accent shrink-0" />
+                  <p className="text-xs text-muted-foreground leading-relaxed">Feedback ini bersifat <span className="font-bold text-foreground">anonim</span> kami tidak dapat mengetahui identitas pengirim, jadi silakan sampaikan dengan jujur dan terbuka.</p>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-border bg-surface/70 p-4">
+                <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+                  <div>
+                    <label htmlFor="feedback-category" className="text-xs font-medium text-muted-foreground">
+                      Kategori
+                    </label>
+                    <select id="feedback-category" value={feedbackCategory} onChange={(e) => setFeedbackCategory(e.target.value)} className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-accent">
+                      <option value="">Pilih kategori</option>
+                      <option value="bug">Laporan Bug</option>
+                      <option value="feature">Saran Fitur</option>
+                      <option value="other">Lainnya</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="feedback-message" className="text-xs font-medium text-muted-foreground">
+                      Pesan
+                    </label>
+                    <textarea
+                      id="feedback-message"
+                      value={feedbackMessage}
+                      onChange={(e) => setFeedbackMessage(e.target.value)}
+                      rows={4}
+                      placeholder="Tulis feedback Anda di sini..."
+                      className="mt-1.5 w-full resize-none rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-accent"
+                    />
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button disabled={isSubmitting} type="submit" className="rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white hover:bg-accent/90 transition cursor-pointer flex items-center gap-2">
+                      {isSubmitting ? <> <Loader2 size={14} className="animate-spin w-full" /> Processing...</> : 'Kirim Feedback'}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           )}

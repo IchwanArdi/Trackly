@@ -48,3 +48,10 @@ model Entry {
   @@index([userId, date])
   @@index([categoryId])
 }
+
+model Feedback {
+  id        String   @id @default(cuid())
+  category  String
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+}

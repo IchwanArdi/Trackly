@@ -18,7 +18,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Middleware untuk parsing JSON
 app.use(express.json());
 
-const allowedOrigins = [process.env.CLIENT_URL || 'http://localhost:5173', 'https://thetrackly.vercel.app', 'https://trackly-iwdl.vercel.app'];
+const allowedOrigins = ['http://localhost:5173', process.env.CLIENT_URL].filter(Boolean);
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -67,5 +67,6 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/entries', entriesRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/reset-password', resetPasswordRoutes);
+
 
 export default app;
