@@ -45,8 +45,8 @@ export function DataDeletion() {
             <h2 className="text-base font-semibold text-foreground mb-2">Option 2: Request via Email</h2>
             <p className="text-sm leading-relaxed text-muted">
               Send an email to{' '}
-              <a href="mailto:your-email@example.com" className="text-accent hover:underline">
-                your-email@example.com
+              <a href="mailto:ichwanpwt22@gmail.com" className="text-accent hover:underline">
+                ichwanpwt22@gmail.com
               </a>{' '}
               with the subject "Data Deletion Request", including the email address associated with your Trackly account. Your data will be deleted within 7 business days.
             </p>

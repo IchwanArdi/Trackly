@@ -46,6 +46,7 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
       setFeedbackCategory('');
       setFeedbackMessage('');
     } catch (error) {
+      console.error('Error submitting feedback:', error);
       toast.error('Failed to submit feedback');
     } finally {
       setIsSubmitting(false);
@@ -65,8 +66,7 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
     } catch (error) {
       console.error('Error deleting account:', error);
       toast.error('Failed to delete account');
-    }
-    {
+    } finally {
       setIsDeleting(false); // Tambahkan ini
     }
   };
@@ -247,7 +247,9 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
 
                 <div className="mt-3 flex items-start gap-2 rounded-lg border border-border bg-surface px-3 py-2.5">
                   <ShieldCheck size={14} className="mt-0.5 text-accent shrink-0" />
-                  <p className="text-xs text-muted-foreground leading-relaxed">Feedback ini bersifat <span className="font-bold text-foreground">anonim</span> kami tidak dapat mengetahui identitas pengirim, jadi silakan sampaikan dengan jujur dan terbuka.</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Feedback ini bersifat <span className="font-bold text-foreground">anonim</span> kami tidak dapat mengetahui identitas pengirim, jadi silakan sampaikan dengan jujur dan terbuka.
+                  </p>
                 </div>
               </div>
 
@@ -257,7 +259,12 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                     <label htmlFor="feedback-category" className="text-xs font-medium text-muted-foreground">
                       Kategori
                     </label>
-                    <select id="feedback-category" value={feedbackCategory} onChange={(e) => setFeedbackCategory(e.target.value)} className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-accent">
+                    <select
+                      id="feedback-category"
+                      value={feedbackCategory}
+                      onChange={(e) => setFeedbackCategory(e.target.value)}
+                      className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-accent"
+                    >
                       <option value="">Pilih kategori</option>
                       <option value="bug">Laporan Bug</option>
                       <option value="feature">Saran Fitur</option>
@@ -281,7 +288,14 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
 
                   <div className="flex justify-end">
                     <button disabled={isSubmitting} type="submit" className="rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white hover:bg-accent/90 transition cursor-pointer flex items-center gap-2">
-                      {isSubmitting ? <> <Loader2 size={14} className="animate-spin w-full" /> Processing...</> : 'Kirim Feedback'}
+                      {isSubmitting ? (
+                        <>
+                          {' '}
+                          <Loader2 size={14} className="animate-spin w-full" /> Processing...
+                        </>
+                      ) : (
+                        'Kirim Feedback'
+                      )}
                     </button>
                   </div>
                 </form>
