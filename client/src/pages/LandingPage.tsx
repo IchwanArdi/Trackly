@@ -177,7 +177,7 @@ function Features() {
   const highlights = [
     {
       title: 'Build a system that feels effortless',
-      description: 'Create categories for work, wellness, learning, and everything else — then let Trackly turn your routine into a visual story.',
+      description: 'Create categories for work, wellness, learning, and everything else then let Trackly turn your routine into a visual story.',
       image: categories,
       alt: 'Categories view preview',
       icon: <BarChart3 size={16} className="text-accent" />,

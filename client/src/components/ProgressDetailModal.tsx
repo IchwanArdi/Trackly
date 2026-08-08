@@ -4,11 +4,15 @@ import { format, subDays, parseISO, isWithinInterval, startOfMonth, endOfMonth }
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import { renderIcon } from '../utils/icons';
 import { getUnit } from '../utils/format';
+import type { ShareCategoryData } from './ShareProgressModal';
 
 interface ProgressDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpenShare: () => void;
+  onOpenShare: (
+    category: ShareCategoryData,
+    stats: { totalValue: number; totalLogs: number; streakDays: number; periodLabel: string }
+  ) => void;
   category: {
     id: string;
     name: string;
@@ -28,7 +32,7 @@ export function ProgressDetailModal({ isOpen, onClose, onOpenShare, category, en
   const cleanUnit = useMemo(() => getUnit(categoryUnit), [categoryUnit]);
 
   // Compute category specific deep metrics
-  const { totalValue, totalCount, avgValue, monthValue, chartData, consistencyPct } = useMemo(() => {
+  const { totalValue, totalCount, avgValue, monthValue, chartData, consistencyPct, activeDays30 } = useMemo(() => {
     const catEntries = categoryId ? entries.filter((e) => e.categoryId === categoryId).sort((a, b) => a.date.localeCompare(b.date)) : [];
 
     const totalValue = catEntries.reduce((sum, e) => sum + e.value, 0);
@@ -64,6 +68,7 @@ export function ProgressDetailModal({ isOpen, onClose, onOpenShare, category, en
       monthValue,
       chartData: last30Days,
       consistencyPct,
+      activeDays30,
     };
   }, [entries, categoryId]);
 
@@ -167,7 +172,12 @@ export function ProgressDetailModal({ isOpen, onClose, onOpenShare, category, en
             <button
               onClick={() => {
                 onClose();
-                onOpenShare();
+                onOpenShare(category, {
+                  totalValue: monthValue || totalValue,
+                  totalLogs: totalCount,
+                  streakDays: activeDays30,
+                  periodLabel: `Logged ${monthValue || totalValue} ${cleanUnit || ''} across ${totalCount} sessions`,
+                });
               }}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold text-white bg-accent hover:bg-accent/90 cursor-pointer active:scale-95 transition-all shadow-md shadow-accent/20"
             >
@@ -180,3 +190,4 @@ export function ProgressDetailModal({ isOpen, onClose, onOpenShare, category, en
     </div>
   );
 }
+

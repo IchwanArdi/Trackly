@@ -8,7 +8,7 @@ import { computeStreaks } from '../utils/stats';
 import { getIcon } from '../utils/icons';
 import { isAuthenticated, getUser } from '../utils/auth';
 import { getUnit } from '../utils/format';
-import { ShareProgressModal } from '../components/ShareProgressModal';
+import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
 
 function getFirstName(fullName?: string) {
@@ -208,6 +208,7 @@ export function DashboardPage() {
   const user = getUser();
 
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareCategory, setShareCategory] = useState<ShareCategoryData | null>(null);
   const [selectedCategoryDetail, setSelectedCategoryDetail] = useState<{
     id: string;
     name: string;
@@ -228,7 +229,6 @@ export function DashboardPage() {
   const streaks = computeStreaks(entries);
   const monthEntries = entries.filter((e) => isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd }));
   const monthCount = monthEntries.length;
-  const monthTotalValue = monthEntries.reduce((sum, e) => sum + e.value, 0);
   const todayEntries = entries.filter((e) => e.date === todayStr);
 
   // Calculate top category this month
@@ -406,14 +406,30 @@ export function DashboardPage() {
       {/* Share Progress Card Modal */}
       <ShareProgressModal
         isOpen={shareModalOpen}
-        onClose={() => setShareModalOpen(false)}
-        title="Monthly Activity Stream"
-        stats={{
-          totalValue: monthTotalValue,
-          totalLogs: monthCount,
-          streakDays: streaks.current,
-          periodLabel: `Logged ${monthCount} sessions this month`,
+        onClose={() => {
+          setShareModalOpen(false);
+          setShareCategory(null);
         }}
+        title="Monthly Activity Stream"
+        category={shareCategory}
+        topCategory={topCategory ? { name: topCategory.name, value: topCategory.count, unit: topCategory.unit, color: topCategory.color } : null}
+        stats={
+          shareCategory
+            ? {
+                totalValue:
+                  monthEntries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0) ||
+                  entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
+                totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
+                streakDays: streaks.current,
+                periodLabel: `Logged this month on Trackly`,
+              }
+            : {
+                totalLogs: monthCount,
+                streakDays: streaks.current,
+                periodLabel: `Logged ${monthCount} sessions across ${categories.length} categories this month`,
+                categoriesCount: categories.length,
+              }
+        }
       />
 
       {/* Progress Detail Modal */}
@@ -421,8 +437,9 @@ export function DashboardPage() {
         <ProgressDetailModal
           isOpen={Boolean(selectedCategoryDetail)}
           onClose={() => setSelectedCategoryDetail(null)}
-          onOpenShare={() => {
+          onOpenShare={(cat) => {
             setSelectedCategoryDetail(null);
+            setShareCategory(cat);
             setShareModalOpen(true);
           }}
           category={selectedCategoryDetail}

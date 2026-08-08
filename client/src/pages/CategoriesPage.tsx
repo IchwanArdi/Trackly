@@ -9,7 +9,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
-import { ShareProgressModal } from '../components/ShareProgressModal';
+import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
 
 const PRESET_COLORS = ['#e85d04', '#f97316', '#eab308', '#22c55e', '#0ea5e9', '#6366f1', '#a855f7', '#ec4899', '#14b8a6', '#64748b'];
 const CUSTOM_UNIT_VALUE = '__custom__';
@@ -136,6 +136,7 @@ export function CategoriesPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [selectedCatDetail, setSelectedCatDetail] = useState<Category | null>(null);
+  const [shareCategory, setShareCategory] = useState<ShareCategoryData | null>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const catStats = useMemo(() => {
@@ -351,8 +352,9 @@ export function CategoriesPage() {
         <ProgressDetailModal
           isOpen={Boolean(selectedCatDetail)}
           onClose={() => setSelectedCatDetail(null)}
-          onOpenShare={() => {
+          onOpenShare={(cat) => {
             setSelectedCatDetail(null);
+            setShareCategory(cat);
             setShareModalOpen(true);
           }}
           category={selectedCatDetail}
@@ -363,14 +365,27 @@ export function CategoriesPage() {
       {/* Share Progress Modal */}
       <ShareProgressModal
         isOpen={shareModalOpen}
-        onClose={() => setShareModalOpen(false)}
-        title="Category Highlights"
-        stats={{
-          totalValue: entries.length,
-          totalLogs: entries.length,
-          streakDays: 7,
-          periodLabel: 'Category Highlights Overview',
+        onClose={() => {
+          setShareModalOpen(false);
+          setShareCategory(null);
         }}
+        title="Category Highlights"
+        category={shareCategory}
+        stats={
+          shareCategory
+            ? {
+                totalValue: entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
+                totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
+                streakDays: 7,
+                periodLabel: `Logged on Trackly`,
+              }
+            : {
+                totalLogs: entries.length,
+                streakDays: 7,
+                periodLabel: 'Category Highlights Overview',
+                categoriesCount: categories.length,
+              }
+        }
       />
     </div>
   );

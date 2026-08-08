@@ -6,7 +6,7 @@ import { useData } from '../store/dataStore';
 import { getIcon } from '../utils/icons';
 import { getUnit } from '../utils/format';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
-import { ShareProgressModal } from '../components/ShareProgressModal';
+import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
 
 type DateRange = '7d' | '30d' | 'all';
 
@@ -24,6 +24,7 @@ export function HistoryPage() {
     color: string;
     icon: string;
   } | null>(null);
+  const [shareCategory, setShareCategory] = useState<ShareCategoryData | null>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const filtered = useMemo(() => {
@@ -244,8 +245,9 @@ export function HistoryPage() {
         <ProgressDetailModal
           isOpen={Boolean(selectedCatDetail)}
           onClose={() => setSelectedCatDetail(null)}
-          onOpenShare={() => {
+          onOpenShare={(cat) => {
             setSelectedCatDetail(null);
+            setShareCategory(cat);
             setShareModalOpen(true);
           }}
           category={selectedCatDetail}
@@ -256,14 +258,29 @@ export function HistoryPage() {
       {/* Share Progress Modal */}
       <ShareProgressModal
         isOpen={shareModalOpen}
-        onClose={() => setShareModalOpen(false)}
-        title="Activity Stream History"
-        stats={{
-          totalValue: filtered.length,
-          totalLogs: filtered.length,
-          streakDays: 7,
-          periodLabel: `${filtered.length} entries recorded in this period`,
+        onClose={() => {
+          setShareModalOpen(false);
+          setShareCategory(null);
         }}
+        title="Activity Stream History"
+        category={shareCategory}
+        stats={
+          shareCategory
+            ? {
+                totalValue:
+                  filtered.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0) ||
+                  entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
+                totalLogs: filtered.filter((e) => e.categoryId === shareCategory.id).length || entries.filter((e) => e.categoryId === shareCategory.id).length,
+                streakDays: 7,
+                periodLabel: `Logged on Trackly`,
+              }
+            : {
+                totalLogs: filtered.length,
+                streakDays: 7,
+                periodLabel: `${filtered.length} entries recorded in this period`,
+                categoriesCount: new Set(filtered.map((e) => e.categoryId)).size,
+              }
+        }
       />
     </div>
   );

@@ -54,9 +54,7 @@ export function DataDeletion() {
 
           <div className="pt-6 border-t border-border">
             <h2 className="text-base font-semibold text-foreground mb-2">What Gets Deleted</h2>
-            <p className="text-sm leading-relaxed text-muted">
-              Once processed, all of your account data — including your name, email, categories, and activity history — will be permanently removed from our servers and cannot be recovered.
-            </p>
+            <p className="text-sm leading-relaxed text-muted">Once processed, all of your account data including your name, email, categories, and activity history will be permanently removed from our servers and cannot be recovered.</p>
           </div>
         </div>
       </main>
