@@ -73,9 +73,9 @@ export function AccountMenu({ onClose, onLogout }: AccountMenuProps) {
   const menuItems = [
     { id: 'account', icon: User, label: 'Account', onClick: () => handleAccountClick() },
     {
-      id: 'bantuan',
+      id: 'help',
       icon: HelpCircle,
-      label: 'Bantuan',
+      label: 'Help',
       onClick: () => {
         onClose();
         window.open('/help', '_blank');
@@ -98,14 +98,14 @@ export function AccountMenu({ onClose, onLogout }: AccountMenuProps) {
         <div className="border-t border-border py-1">
           <button id="account-menu-logout" onClick={onLogout} className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-red-500 transition-colors duration-100 hover:bg-red-500/10">
             <LogOut size={15} />
-            Keluar
+            Log out
           </button>
         </div>
       </div>
 
       {showAccountPage && (
         <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm" role="presentation" onClick={() => setShowAccountPage(false)}>
-          <div role="dialog" aria-modal="true" aria-label="Modal akun" onClick={(event) => event.stopPropagation()} className="w-full max-w-2xl rounded-2xl border border-border bg-card p-5 shadow-2xl">
+          <div role="dialog" aria-modal="true" aria-label="Account modal" onClick={(event) => event.stopPropagation()} className="w-full max-w-2xl rounded-2xl border border-border bg-card p-5 shadow-2xl">
             <AccountPage onClose={() => setShowAccountPage(false)} />
           </div>
         </div>

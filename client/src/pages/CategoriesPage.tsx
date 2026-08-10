@@ -59,7 +59,7 @@ function CategoryForm({
         <div>
           <Select id="select-cat-unit" label="Unit" value={selectValue} onChange={(e) => handleUnitSelectChange(e.target.value)} error={!customMode ? errors.unit : undefined}>
             <option value="" disabled>
-              Pilih unit
+              Select unit
             </option>
             {UNIT_OPTIONS.map((name) => (
               <option key={name} value={name}>
@@ -73,7 +73,7 @@ function CategoryForm({
             <div className="mt-2">
               <Input
                 id="input-cat-unit-custom"
-                placeholder="mis. gelas, halaman, push-up"
+                placeholder="e.g. glasses, pages, push-ups"
                 value={form.unit}
                 onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
                 error={errors.unit}

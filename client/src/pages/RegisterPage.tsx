@@ -64,7 +64,7 @@ export function RegisterPage() {
           <blockquote className="text-sm text-muted leading-relaxed">"A journey of a thousand miles begins with a single step."</blockquote>
           <div className="mt-4">
             <p className="text-sm font-medium text-foreground">Laozi</p>
-            <p className="text-xs text-muted">Filosofi</p>
+            <p className="text-xs text-muted">Philosophy</p>
           </div>
         </div>
       </div>

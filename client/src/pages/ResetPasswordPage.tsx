@@ -21,12 +21,12 @@ export const ResetPasswordPage = () => {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      toast.error('Password dan konfirmasi password tidak sama.');
+      toast.error('Passwords do not match.');
       return;
     }
 
     setLoading(true);
-    const idToast = toast.loading('Menyimpan password baru...');
+    const idToast = toast.loading('Saving new password...');
     try {
       const response = await api.post(`/api/reset-password/reset-password/${token}`, { newPassword });
       toast.update(idToast, {
@@ -41,7 +41,7 @@ export const ResetPasswordPage = () => {
       }, 1800);
     } catch (error: unknown) {
       toast.update(idToast, {
-        render: (error as { response?: { data?: { message?: string } } }).response?.data?.message ?? 'Terjadi kesalahan saat mereset password. Silakan coba lagi.',
+        render: (error as { response?: { data?: { message?: string } } }).response?.data?.message ?? 'An error occurred while resetting password. Please try again.',
         type: 'error',
         isLoading: false,
         autoClose: 2500,
@@ -68,19 +68,19 @@ export const ResetPasswordPage = () => {
             <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card">
               <CheckCircle2 size={18} className="text-accent" />
             </div>
-            <h1 className="text-lg font-semibold text-foreground mb-1.5">Password berhasil diubah</h1>
-            <p className="text-sm text-muted leading-relaxed">Mengalihkan kamu ke halaman login...</p>
+            <h1 className="text-lg font-semibold text-foreground mb-1.5">Password successfully changed</h1>
+            <p className="text-sm text-muted leading-relaxed">Redirecting you to the login page...</p>
           </div>
         ) : (
           <>
-            <h1 className="text-xl font-semibold text-foreground mb-1">Buat password baru</h1>
-            <p className="text-sm text-muted mb-7">Password baru harus berbeda dari password sebelumnya.</p>
+            <h1 className="text-xl font-semibold text-foreground mb-1">Create new password</h1>
+            <p className="text-sm text-muted mb-7">Your new password must be different from previous passwords.</p>
 
             <form id="form-reset-password" onSubmit={handleResetPassword} className="space-y-4">
               <div className="relative">
                 <Input
                   id="input-new-password"
-                  label="Password baru"
+                  label="New password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={newPassword}
@@ -97,7 +97,7 @@ export const ResetPasswordPage = () => {
 
               <Input
                 id="input-confirm-password"
-                label="Konfirmasi password"
+                label="Confirm password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
                 value={confirmPassword}
@@ -106,12 +106,12 @@ export const ResetPasswordPage = () => {
                 minLength={8}
                 autoComplete="new-password"
               />
-              {passwordsMismatch && <p className="text-xs text-red-500 -mt-2">Password tidak sama.</p>}
+              {passwordsMismatch && <p className="text-xs text-red-500 -mt-2">Passwords do not match.</p>}
 
-              <p className="text-xs text-muted">Minimal 8 karakter.</p>
+              <p className="text-xs text-muted">At least 8 characters.</p>
 
               <Button id="btn-reset-submit" type="submit" variant="primary" size="md" className="w-full" icon={<ArrowRight size={14} />}>
-                {loading ? 'Menyimpan...' : 'Reset password'}
+                {loading ? 'Saving...' : 'Reset password'}
               </Button>
             </form>
           </>
@@ -120,7 +120,7 @@ export const ResetPasswordPage = () => {
         {!success && (
           <Link to="/login" className="mt-6 flex items-center justify-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors">
             <ArrowLeft size={13} />
-            Kembali ke halaman login
+            Back to login page
           </Link>
         )}
       </div>

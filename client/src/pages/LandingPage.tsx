@@ -391,7 +391,7 @@ export function LandingPage() {
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
-      window.alert('Install prompt belum tersedia. Buka aplikasi ini di browser yang mendukung PWA (Chrome/Edge) dan pastikan situs dijalankan di https atau localhost.');
+      window.alert('Install prompt is not available yet. Open this app in a PWA-supported browser (Chrome/Edge) and ensure the site is running on HTTPS or localhost.');
       return;
     }
 

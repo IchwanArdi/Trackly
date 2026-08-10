@@ -13,7 +13,7 @@ export function DataDeletion() {
           </Link>
           <Link to="/" className="flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors">
             <ArrowLeft size={13} />
-            Kembali
+            Back
           </Link>
         </div>
       </header>
@@ -21,7 +21,7 @@ export function DataDeletion() {
       <main className="max-w-3xl mx-auto px-6 md:px-8 py-14 md:py-20">
         <div className="mb-10">
           <h1 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">Data Deletion Instructions</h1>
-          <p className="text-sm text-muted">Terakhir diperbarui: 3 Agustus 2026</p>
+          <p className="text-sm text-muted">Last updated: August 3, 2026</p>
         </div>
 
         <p className="text-sm leading-relaxed text-foreground/90 mb-10 pb-10 border-b border-border">

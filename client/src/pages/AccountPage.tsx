@@ -12,7 +12,7 @@ type AccountTab = 'account' | 'security' | 'feedback';
 
 const navItems: { key: AccountTab; label: string }[] = [
   { key: 'account', label: 'Account' },
-  { key: 'security', label: 'Keamanan' },
+  { key: 'security', label: 'Security' },
   { key: 'feedback', label: 'Feedback' },
 ];
 
@@ -75,11 +75,11 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
     <div className="w-full">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Akun</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Kelola informasi akun dan preferensi Anda dengan lebih nyaman.</p>
+          <h2 className="text-lg font-semibold text-foreground">Account</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Manage your account information and preferences with ease.</p>
         </div>
 
-        <button type="button" onClick={onClose} className="rounded-full p-2 text-muted-foreground transition hover:bg-surface hover:text-foreground" aria-label="Tutup akun">
+        <button type="button" onClick={onClose} className="rounded-full p-2 text-muted-foreground transition hover:bg-surface hover:text-foreground" aria-label="Close account">
           <X size={18} />
         </button>
       </div>
@@ -111,12 +111,12 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
               </div>
 
               <div className="rounded-xl border border-border bg-surface/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Informasi akun</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Account Information</p>
                 <div className="mt-3 space-y-3 text-sm">
                   <div className="flex items-center justify-between border-b border-border pb-2">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <User size={15} />
-                      <span>Nama lengkap</span>
+                      <span>Full Name</span>
                     </div>
                     <span className="font-medium text-foreground">{user?.name ?? 'N/A'}</span>
                   </div>
@@ -132,22 +132,22 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <ShieldCheck size={15} />
-                      <span>Status akun</span>
+                      <span>Account Status</span>
                     </div>
-                    <span className="rounded-full border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-500">Aktif</span>
+                    <span className="rounded-full border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-500">Active</span>
                   </div>
                 </div>
               </div>
 
-              {/* Danger Zone (Hapus Akun) */}
+              {/* Danger Zone (Delete Account) */}
               <div className="rounded-xl border border-border bg-surface/70 p-4">
                 <div className="flex items-start gap-3">
                   <div className="p-2 text-red-500 mt-0.5">
                     <AlertTriangle size={16} />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-red-500">Hapus Akun</h3>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">Tindakan ini bersifat permanen. Seluruh data Anda, profil, dan pengaturan aplikasi akan dihapus total dan tidak dapat dikembalikan.</p>
+                    <h3 className="text-sm font-semibold text-red-500">Delete Account</h3>
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">This action is permanent. All your data, profile, and application settings will be completely deleted and cannot be recovered.</p>
 
                     {!showConfirm ? (
                       <button
@@ -156,17 +156,17 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                         className="mt-3 flex items-center gap-2 rounded-lg border border-red-500/20 px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-500 hover:text-white transition duration-150 cursor-pointer"
                       >
                         <Trash2 size={13} />
-                        Hapus Akun Saya
+                        Delete My Account
                       </button>
                     ) : (
                       <div className="mt-3 rounded-lg border border-border bg-card p-3 space-y-3">
                         <p className="text-xs font-medium text-foreground">
-                          Ketik <span className="font-mono bg-surface px-1 py-0.5 rounded border border-red-500/30 text-red-500 font-bold select-none">hapus akun permanen</span> untuk konfirmasi:
+                          Type <span className="font-mono bg-surface px-1 py-0.5 rounded border border-red-500/30 text-red-500 font-bold select-none">delete permanent account</span> to confirm:
                         </p>
 
                         <input
                           type="text"
-                          placeholder="Masukkan teks konfirmasi"
+                          placeholder="Enter confirmation text"
                           value={confirmText}
                           onChange={(e) => setConfirmText(e.target.value)}
                           disabled={isDeleting}
@@ -183,21 +183,21 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                             disabled={isDeleting}
                             className="rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-foreground hover:bg-surface disabled:opacity-50 transition cursor-pointer"
                           >
-                            Batal
+                            Cancel
                           </button>
                           <button
                             type="button"
                             onClick={handleDeleteAccount}
-                            disabled={confirmText !== 'hapus akun permanen' || isDeleting}
+                            disabled={confirmText !== 'delete permanent account' || isDeleting}
                             className="flex items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-red-500/60 disabled:border-border disabled:bg-transparent disabled:text-muted disabled:cursor-not-allowed disabled:hover:bg-transparent cursor-pointer"
                           >
                             {isDeleting ? (
                               <>
                                 <Loader2 size={12} className="animate-spin" />
-                                Menghapus...
+                                Deleting...
                               </>
                             ) : (
-                              'Ya, Hapus'
+                              'Yes, Delete'
                             )}
                           </button>
                         </div>
@@ -212,26 +212,26 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
               <div className="rounded-xl border border-border bg-surface/70 p-4">
                 <div className="flex items-center gap-2">
                   <ShieldCheck size={18} className="text-accent" />
-                  <h3 className="text-base font-semibold text-foreground">Keamanan akun</h3>
+                  <h3 className="text-base font-semibold text-foreground">Account Security</h3>
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">Akun Anda sudah terlindungi dengan sesi masuk yang aman dan data pengguna yang tersimpan secara lokal di browser.</p>
+                <p className="mt-2 text-sm text-muted-foreground">Your account is protected with a secure login session and user data stored locally in your browser.</p>
               </div>
 
               <div className="rounded-xl border border-border bg-surface/70 p-4">
                 <div className="space-y-3 text-sm text-foreground">
                   <div className="flex items-start gap-2">
                     <KeyRound size={16} className="mt-0.5 text-accent" />
-                    <span>Pastikan password Anda kuat dan jangan bagikan kode login ke siapa pun.</span>
+                    <span>Ensure your password is strong and do not share login credentials with anyone.</span>
                   </div>
 
                   <div className="flex items-start gap-2">
                     <Clock3 size={16} className="mt-0.5 text-accent" />
-                    <span>Logout dari perangkat lain jika Anda merasa ada aktivitas yang mencurigakan.</span>
+                    <span>Log out from other devices if you notice any suspicious activity.</span>
                   </div>
 
                   <div className="flex items-start gap-2">
                     <ShieldCheck size={16} className="mt-0.5 text-accent" />
-                    <span>Gunakan koneksi internet yang aman saat mengakses akun Anda.</span>
+                    <span>Use a secure internet connection when accessing your account.</span>
                   </div>
                 </div>
               </div>
@@ -243,12 +243,12 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                   <MessageSquare size={18} className="text-accent" />
                   <h3 className="text-base font-semibold text-foreground">Feedback</h3>
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">Berikan feedback Anda untuk membantu kami meningkatkan layanan.</p>
+                <p className="mt-2 text-sm text-muted-foreground">Provide your feedback to help us improve our services.</p>
 
                 <div className="mt-3 flex items-start gap-2 rounded-lg border border-border bg-surface px-3 py-2.5">
                   <ShieldCheck size={14} className="mt-0.5 text-accent shrink-0" />
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Feedback ini bersifat <span className="font-bold text-foreground">anonim</span> kami tidak dapat mengetahui identitas pengirim, jadi silakan sampaikan dengan jujur dan terbuka.
+                    This feedback is <span className="font-bold text-foreground">anonymous</span>, we cannot identify the sender, so please feel free to share honestly and openly.
                   </p>
                 </div>
               </div>
@@ -257,7 +257,7 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                 <form onSubmit={handleFeedbackSubmit} className="space-y-4">
                   <div>
                     <label htmlFor="feedback-category" className="text-xs font-medium text-muted-foreground">
-                      Kategori
+                      Category
                     </label>
                     <select
                       id="feedback-category"
@@ -265,23 +265,23 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                       onChange={(e) => setFeedbackCategory(e.target.value)}
                       className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-accent"
                     >
-                      <option value="">Pilih kategori</option>
-                      <option value="bug">Laporan Bug</option>
-                      <option value="feature">Saran Fitur</option>
-                      <option value="other">Lainnya</option>
+                      <option value="">Select category</option>
+                      <option value="bug">Bug Report</option>
+                      <option value="feature">Feature Suggestion</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
 
                   <div>
                     <label htmlFor="feedback-message" className="text-xs font-medium text-muted-foreground">
-                      Pesan
+                      Message
                     </label>
                     <textarea
                       id="feedback-message"
                       value={feedbackMessage}
                       onChange={(e) => setFeedbackMessage(e.target.value)}
                       rows={4}
-                      placeholder="Tulis feedback Anda di sini..."
+                      placeholder="Write your feedback here..."
                       className="mt-1.5 w-full resize-none rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-accent"
                     />
                   </div>
@@ -294,7 +294,7 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                           <Loader2 size={14} className="animate-spin w-full" /> Processing...
                         </>
                       ) : (
-                        'Kirim Feedback'
+                        'Submit Feedback'
                       )}
                     </button>
                   </div>

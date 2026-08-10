@@ -78,7 +78,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     } catch (err: unknown) {
       // 401 = not logged in, silently ignore (redirect handled by page)
       if ((err as { response?: { status?: number } })?.response?.status !== 401) {
-        toast.error('Gagal memuat data dari server');
+        toast.error('Failed to load data from server');
       }
     } finally {
       setLoading(false);

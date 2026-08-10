@@ -121,7 +121,7 @@ export function LoginPage() {
           {/* Divider */}
           <div className="flex items-center gap-3 my-6">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-xs text-muted">atau lanjutkan dengan</span>
+            <span className="text-xs text-muted">or continue with</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
@@ -134,7 +134,7 @@ export function LoginPage() {
             className="w-full flex items-center justify-center gap-3 h-10 rounded-md border border-border bg-white text-sm font-medium text-neutral-700 hover:bg-neutral-50 active:bg-neutral-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
             <GoogleIcon />
-            {googleLoading ? 'Menghubungkan...' : 'Sign in dengan Google'}
+            {googleLoading ? 'Connecting...' : 'Sign in with Google'}
           </button>
 
           <p className="text-xs text-muted text-center mt-5">

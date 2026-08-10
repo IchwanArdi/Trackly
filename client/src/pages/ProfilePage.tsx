@@ -37,7 +37,7 @@ export function ProfilePage() {
       navigate('/');
     } catch (error) {
       console.error('Error deleting account:', error);
-      toast.error('Gagal menghapus akun. Silakan coba lagi.');
+      toast.error('Failed to delete account. Please try again.');
     } finally {
       setIsDeleting(false);
     }
@@ -160,7 +160,7 @@ export function ProfilePage() {
       {/* delete account */}
       <div>
         <div className="bg-card border border-border rounded-xl p-4">
-          <p className="text-xs text-muted leading-relaxed mb-3">Menghapus akun akan menghilangkan seluruh data kamu secara permanen termasuk kategori dan riwayat aktivitas. Tindakan ini tidak bisa dibatalkan.</p>
+          <p className="text-xs text-muted leading-relaxed mb-3">Deleting your account will permanently remove all your data including categories and activity history. This action cannot be undone.</p>
           <button
             id="btn-profile-delete"
             onClick={() => setOpenDeleteModal(true)}
@@ -184,7 +184,7 @@ export function ProfilePage() {
             <form onSubmit={handleFeedbackSubmit} className="space-y-4">
               <div>
                 <label htmlFor="feedback-category" className="text-xs font-medium text-muted">
-                  Kategori
+                  Category
                 </label>
                 <select
                   id="feedback-category"
@@ -192,23 +192,23 @@ export function ProfilePage() {
                   onChange={(e) => setFeedbackCategory(e.target.value)}
                   className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-accent"
                 >
-                  <option value="">Pilih kategori</option>
-                  <option value="bug">Laporan Bug</option>
-                  <option value="feature">Saran Fitur</option>
-                  <option value="other">Lainnya</option>
+                  <option value="">Select category</option>
+                  <option value="bug">Bug Report</option>
+                  <option value="feature">Feature Suggestion</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
 
               <div>
                 <label htmlFor="feedback-message" className="text-xs font-medium text-muted">
-                  Pesan
+                  Message
                 </label>
                 <textarea
                   id="feedback-message"
                   value={feedbackMessage}
                   onChange={(e) => setFeedbackMessage(e.target.value)}
                   rows={4}
-                  placeholder="Tulis feedback Anda di sini..."
+                  placeholder="Write your feedback here..."
                   className="mt-1.5 w-full resize-none rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-accent"
                 />
               </div>
@@ -220,7 +220,7 @@ export function ProfilePage() {
                       <Loader2 size={14} className="animate-spin" /> Processing...
                     </>
                   ) : (
-                    'Kirim Feedback'
+                    'Submit Feedback'
                   )}
                 </button>
               </div>
@@ -245,17 +245,17 @@ export function ProfilePage() {
 
             <div className="flex items-center gap-2.5 mb-1">
               <AlertTriangle size={18} className="text-red-500" />
-              <h3 className="text-lg font-semibold text-foreground">Hapus akun secara permanen?</h3>
+              <h3 className="text-lg font-semibold text-foreground">Permanently delete account?</h3>
             </div>
             <p className="text-sm text-muted mb-4 leading-relaxed">
-              Tindakan ini tidak bisa dibatalkan. Ketik <span className="font-mono font-medium text-foreground">hapus akun permanen</span> untuk konfirmasi.
+              This action cannot be undone. Type <span className="font-mono font-medium text-foreground">delete permanent account</span> to confirm.
             </p>
 
             <input
               type="text"
               value={deleteConfirmText}
               onChange={(e) => setDeleteConfirmText(e.target.value)}
-              placeholder="hapus akun permanen"
+              placeholder="delete permanent account"
               className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:outline-none focus:border-red-500"
             />
 
@@ -267,21 +267,21 @@ export function ProfilePage() {
                 }}
                 className="flex-1 rounded-lg border border-border py-2 text-xs font-medium text-foreground hover:bg-surface transition cursor-pointer"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
                 onClick={handleDeleteAccount}
-                disabled={deleteConfirmText !== 'hapus akun permanen' || isDeleting}
+                disabled={deleteConfirmText !== 'delete permanent account' || isDeleting}
                 className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-red-500 py-2 text-xs font-medium text-white transition hover:bg-red-600 disabled:bg-transparent disabled:border disabled:border-border disabled:text-muted disabled:cursor-not-allowed disabled:hover:bg-transparent cursor-pointer"
               >
                 {isDeleting ? (
                   <>
                     <Loader2 size={13} className="animate-spin" />
-                    Menghapus...
+                    Deleting...
                   </>
                 ) : (
-                  'Hapus akun'
+                  'Delete Account'
                 )}
               </button>
             </div>

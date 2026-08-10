@@ -16,7 +16,7 @@ export function AuthSuccessPage() {
     const email = searchParams.get('email') ?? '';
 
     if (!token) {
-      toast.error('Login Google gagal. Silakan coba lagi.');
+      toast.error('Authentication failed. Please try again.');
       navigate('/login', { replace: true });
       return;
     }
@@ -32,8 +32,8 @@ export function AuthSuccessPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
       <div className="text-center">
-        <p className="text-lg font-medium">Menyambungkan akun Anda...</p>
-        <p className="text-sm text-muted mt-2">Mohon tunggu sebentar.</p>
+        <p className="text-lg font-medium">Connecting your account...</p>
+        <p className="text-sm text-muted mt-2">Please wait a moment.</p>
       </div>
     </div>
   );
