@@ -1,13 +1,14 @@
 import express from 'express';
 import { prisma } from '../config/prisma.js';
 import { hashPassword, comparePassword } from '../utils/encryption.js';
+import { authLimiter } from '../middleware/rateLimit.js';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 
 const router = express.Router();
 
 // Route Register
-router.post('/register', async (req, res) => {
+router.post('/register', authLimiter, async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -53,7 +54,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Route Login
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -79,7 +80,7 @@ router.post('/login', async (req, res) => {
     }
 
     // 4. JWT Token
-    const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // 5. Kirim respons sukses ke client
     return res.status(200).json({
@@ -97,6 +98,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Konfigurasi Login dengan Google
+
 const frontendURL = process.env.NODE_ENV === 'production' ? 'https://thetrackly.vercel.app' : 'http://localhost:5173';
 
 // Route Login pake Google - INISIATOR (ini yang kepencet pas klik tombol)
@@ -106,7 +109,7 @@ router.get('/google', passport.authenticate('google', { scope: ['email', 'profil
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: `${frontendURL}/login` }), (req, res) => {
   try {
     // Generate JWT token
-    const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7h' });
 
     // Redirect ke frontend dengan token serta data user sebagai query parameter
     const redirectUrl = new URL('/auth/success', frontendURL);

@@ -3,10 +3,11 @@ import express from 'express';
 import { prisma } from '../config/prisma.js';
 import { hashPassword } from '../utils/encryption.js';
 import { sendResetPasswordEmail } from '../utils/sendEmail.js';
+import { authLimiter } from '../middleware/rateLimit.js';
 
 const router = express.Router();
 
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', authLimiter, async (req, res) => {
   try {
     const { email } = req.body;
 

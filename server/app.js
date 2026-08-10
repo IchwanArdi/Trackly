@@ -3,6 +3,7 @@ import cors from 'cors';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import passport from 'passport';
+import helmet from 'helmet';
 import './src/config/passport.js';
 import authRoutes from './src/routes/auth.js';
 import categoriesRoutes from './src/routes/categories.js';
@@ -14,6 +15,8 @@ const app = express();
 dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';
+
+app.use(helmet());
 
 // Middleware untuk parsing JSON
 app.use(express.json());
@@ -67,6 +70,5 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/entries', entriesRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/reset-password', resetPasswordRoutes);
-
 
 export default app;
