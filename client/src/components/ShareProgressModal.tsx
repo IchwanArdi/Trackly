@@ -108,9 +108,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-accent" />
-            <h3 className="text-xs font-semibold text-foreground">
-              {isCategoryShare ? `Share ${category?.name} Card` : 'Share Progress Card'}
-            </h3>
+            <h3 className="text-xs font-semibold text-foreground">{isCategoryShare ? `Share ${category?.name} Card` : 'Share Progress Card'}</h3>
           </div>
           <button onClick={onClose} className="p-1 rounded-lg text-muted hover:text-foreground hover:bg-surface cursor-pointer transition-colors">
             <X size={18} />
@@ -132,8 +130,8 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
             {/* Top Brand & Date */}
             <div className="flex items-center justify-between z-10">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs" style={{ background: accentColor, color: '#fff' }}>
-                  T
+                <div className="w-10 h-10 bg-accent rounded-md flex items-center justify-center">
+                  <img src="/trackly-icon.webp" alt="Trackly Icon" />
                 </div>
                 <span className="text-xs font-bold tracking-wider uppercase text-white/90">TRACKLY</span>
               </div>
@@ -147,18 +145,14 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
                 <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: `${accentColor}30` }}>
                   {renderIcon(categoryIcon ?? 'Flame', { size: 16, style: { color: accentColor } })}
                 </div>
-                <span className="text-xs font-semibold text-white/80 uppercase tracking-wide">
-                  {category?.name || title}
-                </span>
+                <span className="text-xs font-semibold text-white/80 uppercase tracking-wide">{category?.name || title}</span>
               </div>
 
               {/* Display metric based on share type */}
               {isCategoryShare ? (
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-black text-white tabular-nums tracking-tight leading-none">
-                      {typeof stats.totalValue === 'number' ? stats.totalValue.toLocaleString() : (stats.totalValue ?? 0)}
-                    </span>
+                    <span className="text-5xl font-black text-white tabular-nums tracking-tight leading-none">{typeof stats.totalValue === 'number' ? stats.totalValue.toLocaleString() : (stats.totalValue ?? 0)}</span>
                     {cleanUnit && <span className="text-base text-white/70 font-medium">{cleanUnit}</span>}
                   </div>
                   <p className="text-xs text-white/60 mt-1.5 font-medium">{stats.periodLabel}</p>
@@ -166,9 +160,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
               ) : (
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-black text-white tabular-nums tracking-tight leading-none">
-                      {stats.totalLogs.toLocaleString()}
-                    </span>
+                    <span className="text-5xl font-black text-white tabular-nums tracking-tight leading-none">{stats.totalLogs.toLocaleString()}</span>
                     <span className="text-base text-white/70 font-medium">Sessions</span>
                   </div>
                   <p className="text-xs text-white/60 mt-1.5 font-medium">{stats.periodLabel}</p>
@@ -220,9 +212,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
 
               {/* User watermark */}
               <div className="flex items-center justify-between text-[11px] text-white/70">
-                <span className="font-semibold text-white truncate max-w-[150px]">
-                  @{user?.name ? user.name.toLowerCase().replace(/\s+/g, '') : 'trackly_user'}
-                </span>
+                <span className="font-semibold text-white truncate max-w-37.5">@{user?.name ? user.name.toLowerCase().replace(/\s+/g, '') : 'trackly_user'}</span>
                 <span className="text-white/50 text-[10px]">trackly.app</span>
               </div>
             </div>
@@ -256,4 +246,3 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
     </div>
   );
 }
-

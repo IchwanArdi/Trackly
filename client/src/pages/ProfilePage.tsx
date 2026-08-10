@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LogOut, User, Mail, ShieldCheck, Trash2, Loader2, MessageSquare, HelpCircle, X, ChevronRight, AlertTriangle } from 'lucide-react';
@@ -16,6 +16,17 @@ export function ProfilePage() {
   const [feedbackCategory, setFeedbackCategory] = useState('');
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (openFeedbackModal) {
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    } else {
+      document.body.style.overflow = 'unset'; // Restore scrolling
+    }
+    return () => {
+      document.body.style.overflow = 'unset'; // Restore scrolling on unmount
+    };
+  }, [openFeedbackModal]);
 
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
@@ -38,7 +49,6 @@ export function ProfilePage() {
       toast.error('Please fill in all fields');
       return;
     }
-
     setIsSubmitting(true);
     try {
       const response = await api.post('/api/users/feedback', {
@@ -164,7 +174,7 @@ export function ProfilePage() {
 
       {/* Feedback Modal */}
       {openFeedbackModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="relative bg-background border border-border rounded-xl p-6 max-w-md w-full">
             <button onClick={() => setOpenFeedbackModal(false)} className="absolute top-4 right-5 rounded-full text-muted hover:text-foreground transition-colors">
               <X size={16} />

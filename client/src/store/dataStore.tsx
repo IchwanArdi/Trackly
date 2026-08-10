@@ -20,6 +20,17 @@ export interface Entry {
   note?: string;
 }
 
+// Tambahkan interface untuk mencocokkan format paginated dari backend Express
+interface EntriesResponse {
+  data: Entry[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 interface DataStore {
   categories: Category[];
   entries: Entry[];
@@ -56,9 +67,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     setLoading(true);
     try {
-      const [catRes, entRes] = await Promise.all([api.get<Category[]>('/api/categories'), api.get<Entry[]>('/api/entries')]);
+      // PERBAIKAN: Gunakan EntriesResponse untuk tipe data Axios get /api/entries
+      const [catRes, entRes] = await Promise.all([api.get<Category[]>('/api/categories'), api.get<EntriesResponse>('/api/entries')]);
+
       setCategories(catRes.data);
-      setEntries(entRes.data);
+
+      // PERBAIKAN: Ambil entRes.data.data karena array asli dibungkus di dalam properti "data"
+      const incomingEntries = entRes.data?.data;
+      setEntries(Array.isArray(incomingEntries) ? incomingEntries : []);
     } catch (err: unknown) {
       // 401 = not logged in, silently ignore (redirect handled by page)
       if ((err as { response?: { status?: number } })?.response?.status !== 401) {
@@ -90,7 +106,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const deleteCategory = useCallback(async (id: string) => {
     await api.delete(`/api/categories/${id}`);
-    // Hapus juga entries yang terkait (cascade sudah ada di DB, tapi update state lokal)
     setCategories((prev) => prev.filter((c) => c.id !== id));
     setEntries((prev) => prev.filter((e) => e.categoryId !== id));
   }, []);
@@ -98,6 +113,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   // ── Entry actions ────────────────────────────────────────────
   const addEntry = useCallback(async (entry: Omit<Entry, 'id'>) => {
     const res = await api.post<Entry>('/api/entries', entry);
+    // Catatan: Karena POST backend langsung me-return objek entry tunggal (bukan paginated), ini tetap aman
     setEntries((prev) => [res.data, ...prev]);
   }, []);
 
