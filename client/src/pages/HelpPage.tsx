@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ChevronDown, Mail, FileText, Shield, Trash2, Activity, ArrowLeft } from 'lucide-react';
+import { Search, ChevronDown, Mail, FileText, Shield, Trash2, ArrowLeft } from 'lucide-react';
 
 const FAQS = [
   {
@@ -53,11 +53,9 @@ export function HelpPage() {
       {/* Simple top bar */}
       <header className="border-b border-border">
         <div className="max-w-3xl mx-auto px-6 md:px-8 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-6 h-6 bg-accent rounded-md flex items-center justify-center">
-              <Activity size={12} className="text-white" />
-            </div>
-            <span className="font-semibold text-sm tracking-tight text-foreground">Trackly</span>
+          <Link to="/" id="nav-logo" className="flex items-center gap-2.5">
+            <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-8 w-8" />
+            <span className="text-sm font-semibold tracking-tight text-foreground">Trackly</span>
           </Link>
           <Link to="/" className="flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors">
             <ArrowLeft size={13} />

@@ -416,19 +416,19 @@ export function DashboardPage() {
         stats={
           shareCategory
             ? {
-                totalValue:
-                  monthEntries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0) ||
-                  entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
-                totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
-                streakDays: streaks.current,
-                periodLabel: `Logged this month on Trackly`,
-              }
+              totalValue:
+                monthEntries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0) ||
+                entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
+              totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
+              streakDays: streaks.current,
+              periodLabel: `Logged this month on Trackly`,
+            }
             : {
-                totalLogs: monthCount,
-                streakDays: streaks.current,
-                periodLabel: `Logged ${monthCount} sessions across ${categories.length} categories this month`,
-                categoriesCount: categories.length,
-              }
+              totalLogs: monthCount,
+              streakDays: streaks.current,
+              periodLabel: `Logged ${monthCount} sessions across ${categories.length} categories this month`,
+              categoriesCount: categories.length,
+            }
         }
       />
 
