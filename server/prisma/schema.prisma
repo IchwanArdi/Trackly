@@ -46,6 +46,7 @@ model Entry {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, date])
+  @@index([userId, categoryId])
   @@index([categoryId])
 }
 
