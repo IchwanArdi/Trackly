@@ -3,9 +3,12 @@ import { motion, useInView, useScroll } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, BarChart3, CalendarDays, ShieldCheck, Sparkles, Zap, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import dashboard from '../assets/dashboard.webp';
+import dashboard from '../assets/image.png';
 import categories from '../assets/categories.webp';
 import logActivity from '../assets/log-activity.webp';
+import pic1 from '../assets/pic1.webp';
+import pic2 from '../assets/pic2.webp';
+import pic3 from '../assets/pic3.webp';
 import { isAuthenticated, clearAuthToken } from '../utils/auth';
 import { useData } from '../store/dataStore';
 
@@ -84,7 +87,7 @@ function Hero({ onInstallClick }: InstallButtonProps) {
   useScroll({ target: ref, offset: ['start start', 'end start'] });
 
   return (
-    <section ref={ref} id="hero" className="relative overflow-hidden px-4 pb-20 pt-28 sm:px-6 sm:pt-32 lg:px-8 lg:pb-28">
+    <section ref={ref} id="hero" className="relative overflow-hidden px-4 pt-28 sm:px-6 sm:pt-32 lg:px-8 pb-10 lg:pb-24">
       <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
           <div className="mb-5 text-[11px] font-medium uppercase tracking-[0.24em] text-muted">Track what matters</div>
@@ -105,8 +108,31 @@ function Hero({ onInstallClick }: InstallButtonProps) {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="rounded-lg border border-border py-4 px-2">
-            <img src={dashboard} alt="Trackly dashboard preview" className="block w-full rounded-[18px] " />
+          <div className="group relative mx-auto flex max-w-[340px] items-start justify-center py-6 sm:max-w-md">
+            {/* Ambient glow — anchors the device cluster */}
+            <div className="absolute left-1/2 top-1/2 -z-10 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-3xl sm:h-64 sm:w-64" />
+
+            {/* Left phone — categories */}
+            <div className="absolute left-0 top-11 w-[36%] -rotate-[10deg] rounded-[1.5rem] border border-border bg-background p-1.5 opacity-80 transition-transform duration-500 ease-out group-hover:-translate-x-1.5 group-hover:-rotate-[6deg] sm:top-14">
+              <div className="overflow-hidden rounded-[1.05rem] border border-border">
+                <img src={pic3} alt="Trackly categories preview" className="block aspect-[9/19.5] w-full object-cover object-top" />
+              </div>
+            </div>
+
+            {/* Right phone — activity history */}
+            <div className="absolute right-0 top-11 w-[36%] rotate-[10deg] rounded-[1.5rem] border border-border bg-background p-1.5 opacity-80 transition-transform duration-500 ease-out group-hover:translate-x-1.5 group-hover:rotate-[6deg] sm:top-14">
+              <div className="overflow-hidden rounded-[1.05rem] border border-border">
+                <img src={pic1} alt="Trackly activity history preview" className="block aspect-[9/19.5] w-full object-cover object-top" />
+              </div>
+            </div>
+
+            {/* Center phone — dashboard (hero device) */}
+            <div className="relative z-10 w-[46%] rounded-[1.75rem] border border-border bg-background p-1.5 transition-transform duration-500 ease-out group-hover:-translate-y-1">
+              <div className="absolute left-1/2 top-3 z-20 h-1.5 w-9 -translate-x-1/2 rounded-full bg-border" />
+              <div className="overflow-hidden rounded-[1.35rem] border border-border">
+                <img src={pic2} alt="Trackly dashboard preview" className="block aspect-[9/19.5] w-full object-cover object-top" />
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -120,15 +146,27 @@ const ACTIVITIES = ['Morning Run', 'Reading', 'Meditation', 'Workout', 'Journali
 function Marquee() {
   const doubled = [...ACTIVITIES, ...ACTIVITIES];
   return (
-    <div className="relative overflow-hidden w-full py-3 border-t border-border/50">
-      <div className="flex gap-0 animate-marquee whitespace-nowrap">
+    <div className="relative w-full overflow-hidden border-y border-border py-5">
+      <div className="flex w-max animate-marquee items-center">
         {doubled.map((act, i) => (
-          <span key={i} className="inline-flex items-center gap-2 px-5 text-xs font-medium text-muted/70">
-            <span className="h-1 w-1 rounded-full bg-accent/50 shrink-0" />
+          <span key={i} className="flex shrink-0 items-center gap-3 whitespace-nowrap px-7 text-sm font-medium text-foreground">
+            <Activity size={16} className="shrink-0 text-accent" />
             {act}
+            <span className="ml-7 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
           </span>
         ))}
       </div>
+
+      <style>{`
+        @keyframes marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 32s linear infinite;
+          will-change: transform;
+        }
+      `}</style>
     </div>
   );
 }
@@ -136,36 +174,82 @@ function Marquee() {
 function IntroSection() {
   const points = [
     {
+      number: '01',
       title: 'Quiet by design',
       description: 'No clutter, no noise, and no pressure to overthink your routine.',
     },
     {
+      number: '02',
       title: 'Clear enough to trust',
       description: 'Your log becomes a simple record of what mattered and how it changed over time.',
     },
     {
+      number: '03',
       title: 'Easy to come back to',
       description: 'The experience stays light so consistency feels natural instead of forced.',
     },
   ];
 
+  const [active, setActive] = useState(0);
+
   return (
-    <section className="px-4 pb-2 pt-4 sm:px-6 lg:px-8">
+    <section className="px-4 pb-2 pt-4 md:pt-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl rounded-3xl border border-border px-5 py-8 sm:px-8 sm:py-10">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted">Why it feels different</p>
             <h2 className="mt-3 text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">A place for your routines that stays calm and useful.</h2>
             <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">Trackly is built to help you return to the things that matter without making the process feel heavy.</p>
+
+            {/* Big number preview — visible from tablet up */}
+            <div className="mt-8 hidden md:block">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="text-6xl font-semibold tracking-[-0.04em] text-border lg:text-7xl"
+              >
+                {points[active].number}
+              </motion.div>
+            </div>
           </div>
 
-          <div className="space-y-3">
-            {points.map((item) => (
-              <div key={item.title} className="rounded-[18px] border border-border px-4 py-4">
-                <div className="text-sm font-medium text-foreground">{item.title}</div>
-                <div className="mt-1 text-sm leading-6 text-muted">{item.description}</div>
-              </div>
-            ))}
+          <div className="relative space-y-0">
+            {points.map((item, index) => {
+              const isActive = index === active;
+              return (
+                <div key={item.title} className="relative">
+                  {index !== points.length - 1 && <div className="absolute left-[19px] top-[42px] h-full w-px bg-border" />}
+
+                  <button
+                    onMouseEnter={() => setActive(index)}
+                    onFocus={() => setActive(index)}
+                    onClick={() => setActive(index)}
+                    className="group relative flex w-full items-start gap-4 rounded-[18px] px-2 py-4 text-left transition-colors duration-300"
+                  >
+                    <span
+                      className={`z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition-colors duration-300 ${isActive ? 'border-accent bg-accent text-white' : 'border-border bg-background text-muted'
+                        }`}
+                    >
+                      {item.number}
+                    </span>
+
+                    <div className="pt-1.5">
+                      <div className={`text-sm font-medium transition-colors duration-300 ${isActive ? 'text-foreground' : 'text-muted'}`}>{item.title}</div>
+                      <motion.p
+                        initial={false}
+                        animate={{ opacity: isActive ? 1 : 0.55 }}
+                        transition={{ duration: 0.25 }}
+                        className="mt-1 text-sm leading-6 text-muted"
+                      >
+                        {item.description}
+                      </motion.p>
+                    </div>
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -180,14 +264,14 @@ function Features() {
       description: 'Create categories for work, wellness, learning, and everything else then let Trackly turn your routine into a visual story.',
       image: categories,
       alt: 'Categories view preview',
-      icon: <BarChart3 size={16} className="text-accent" />,
+      icon: <BarChart3 size={16} />,
     },
     {
       title: 'Log in seconds, not minutes',
       description: 'One touch, one note, one clear record. The experience stays fast so your momentum never breaks.',
       image: logActivity,
       alt: 'Activity logging preview',
-      icon: <Zap size={16} className="text-accent" />,
+      icon: <Zap size={16} />,
     },
   ];
 
@@ -195,17 +279,17 @@ function Features() {
     {
       title: 'Live heatmaps',
       description: 'See pattern and intensity at a glance.',
-      icon: <CalendarDays size={16} className="text-accent" />,
+      icon: <CalendarDays size={16} />,
     },
     {
       title: 'Streak motivation',
       description: 'Stay aware of your best and current streaks.',
-      icon: <Sparkles size={16} className="text-accent" />,
+      icon: <Sparkles size={16} />,
     },
     {
       title: 'Clean history',
       description: 'Review every entry with clarity and context.',
-      icon: <ShieldCheck size={16} className="text-accent" />,
+      icon: <ShieldCheck size={16} />,
     },
   ];
 
@@ -222,28 +306,68 @@ function Features() {
           <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-7 text-muted sm:text-base">Every surface is made to reduce noise and make your progress feel obvious.</p>
         </Reveal>
 
-        <div className="mt-12 space-y-6">
-          {highlights.map((item, index) => (
-            <Reveal key={item.title} delay={0.08 + index * 0.06}>
-              <div className={`grid items-center gap-8 rounded-3xl border border-border p-5 sm:p-8 lg:grid-cols-2 ${index % 2 === 1 ? 'lg:[&>*:first-child]:order-2' : ''}`}>
-                <div className="max-w-xl">
-                  <div className="mb-4 text-sm font-medium text-muted">{item.title}</div>
-                  <p className="text-sm leading-7 text-muted sm:text-base">{item.description}</p>
-                </div>
-                <div className="overflow-hidden rounded-[18px] border border-border p-2">
-                  <img src={item.image} alt={item.alt} className="block w-full" />
+        {/* Dashboard — hero showcase paired with the feature pillars */}
+        <div className="mt-12 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
+          <Reveal delay={0.08}>
+            <div className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-background">
+              <div className="border-b border-border p-6 sm:p-8">
+                <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                  <Activity size={14} />
+                  Your day, at a glance
+                </span>
+                <h3 className="mt-3 text-lg font-medium text-foreground sm:text-xl">Every habit, one dashboard.</h3>
+                <p className="mt-2 max-w-md text-sm leading-6 text-muted">Progress, streaks, and trends the moment you open the app, no digging required.</p>
+              </div>
+              <div className="flex flex-1 items-end p-3 sm:p-4">
+                <div className="w-full overflow-hidden">
+                  <img
+                    src={dashboard}
+                    alt="Trackly dashboard overview"
+                    className="block w-full transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                  />
                 </div>
               </div>
-            </Reveal>
-          ))}
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.14}>
+            <div className="flex h-full flex-col divide-y divide-border rounded-3xl border border-border bg-background">
+              {pillars.map((item) => (
+                <div key={item.title} className="flex items-start gap-3 p-6">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-accent">
+                    {item.icon}
+                  </span>
+                  <div>
+                    <div className="text-sm font-medium text-foreground">{item.title}</div>
+                    <p className="mt-1 text-sm leading-6 text-muted">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {pillars.map((item, index) => (
-            <Reveal key={item.title} delay={0.08 + index * 0.05}>
-              <div className="rounded-lg border border-border p-5">
-                <div className="mb-3 text-sm font-medium text-foreground">{item.title}</div>
-                <p className="text-sm leading-6 text-muted">{item.description}</p>
+        {/* Supporting features */}
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {highlights.map((item, index) => (
+            <Reveal key={item.title} delay={0.18 + index * 0.06}>
+              <div className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-background">
+                <div className="p-6 sm:p-7">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-accent">
+                    {item.icon}
+                  </span>
+                  <div className="mt-4 text-sm font-medium text-foreground">{item.title}</div>
+                  <p className="mt-1.5 text-sm leading-6 text-muted">{item.description}</p>
+                </div>
+                <div className="mt-auto p-3 pt-0 sm:p-4 sm:pt-0">
+                  <div className="overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.alt}
+                      className="block w-full transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </div>
               </div>
             </Reveal>
           ))}
