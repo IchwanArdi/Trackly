@@ -181,6 +181,12 @@ export function ProfilePage() {
             </button>
             <h3 className="text-lg font-semibold text-foreground mb-1">Provide Feedback</h3>
             <p className="text-sm text-muted mb-4">We value your feedback! Please fill out the form below.</p>
+            <div className="mt-3 flex items-start gap-2 rounded-lg border border-border bg-surface px-3 py-2.5">
+              <ShieldCheck size={14} className="mt-0.5 text-accent shrink-0" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                This feedback is <span className="font-bold text-foreground">anonymous</span>, we cannot identify the sender, so please feel free to share honestly and openly.
+              </p>
+            </div>
             <form onSubmit={handleFeedbackSubmit} className="space-y-4">
               <div>
                 <label htmlFor="feedback-category" className="text-xs font-medium text-muted">

@@ -71,14 +71,7 @@ function CategoryForm({
 
           {customMode && (
             <div className="mt-2">
-              <Input
-                id="input-cat-unit-custom"
-                placeholder="e.g. glasses, pages, push-ups"
-                value={form.unit}
-                onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
-                error={errors.unit}
-                autoFocus
-              />
+              <Input id="input-cat-unit-custom" placeholder="e.g. glasses, pages, push-ups" value={form.unit} onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))} error={errors.unit} autoFocus />
             </div>
           )}
         </div>
@@ -218,7 +211,7 @@ export function CategoriesPage() {
     <div className="space-y-4 pb-4">
       {/* Hero Header Banner */}
       <div className="relative rounded-2xl overflow-hidden h-36 border border-border bg-card p-4 flex flex-col justify-between select-none shadow-lg">
-        <img src="/images/categories_banner.webp" alt="Categories Hero" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+        <img src="/images/banner2.webp" alt="Categories Hero" className="absolute inset-0 w-full h-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/60 to-transparent" />
 
         <div className="relative flex items-center justify-between">
