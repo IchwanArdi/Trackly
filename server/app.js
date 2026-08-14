@@ -16,11 +16,11 @@ dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+// KEAMANAN & PARSING DATA
 app.use(helmet());
-
-// Middleware untuk parsing JSON
 app.use(express.json());
 
+// KONFIGURASI CORS
 const allowedOrigins = ['http://localhost:5173', process.env.CLIENT_URL].filter(Boolean);
 
 const corsOptions = {
@@ -38,37 +38,56 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-// Middleware untuk CORS
 app.use(cors(corsOptions));
 app.options(/(.*)/, cors(corsOptions));
 
-// Wajib diaktifkan jika backend dideploy di platform seperti Render, Railway, Vercel, atau Heroku
 app.set('trust proxy', 1);
 
+// SESSION & PASSPORT LOGIN
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'supersecretkey',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: isProduction, // true jika di production (HTTPS), false jika di localhost (HTTP)
-      httpOnly: true, // Mencegah akses cookie dari JavaScript client-side (XSS Protection)
-      sameSite: isProduction ? 'none' : 'lax', // 'none' wajib untuk cross-domain cookies di production
+      secure: isProduction,
+      httpOnly: true,
+      sameSite: isProduction ? 'none' : 'lax',
     },
   }),
 );
 
 app.use(passport.initialize());
 
+// LOG PENCATAT KECEPATAN
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.url} ${res.statusCode} - ${duration}ms`);
+
+    if (duration > 1000) {
+      console.warn(`⚠️ SLOW REQUEST: ${req.method} ${req.url} took ${duration}ms`);
+    }
+  });
+  next();
+});
+
+// SEMUA ROUTE API UTAMA
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Trackly Backend Berjalan' });
 });
 
-// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/entries', entriesRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/reset-password', resetPasswordRoutes);
+
+// JARING PENGAMAN EROR
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal Server Error' });
+});
 
 export default app;

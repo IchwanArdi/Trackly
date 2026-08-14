@@ -1,4 +1,5 @@
 import express from 'express';
+import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { authenticateToken } from '../middleware/auth.js';
 
@@ -21,20 +22,30 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+// validasi schema menggunakan Zod
+// untuk memastikan data yang masuk sesuai dengan tipe data yang diharapkan
+const categorySchema = z.object({
+  name: z.string().min(1).max(50).trim(),
+  unit: z.string().min(1).max(20).trim(),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/), // valid hex color
+  icon: z.string().min(1).max(30),
+});
 // POST /api/categories — buat kategori baru
 router.post('/', async (req, res) => {
   try {
-    const { name, unit, color, icon } = req.body;
 
-    if (!name || !unit || !color || !icon) {
-      return res.status(400).json({ message: 'Semua kolom (name, unit, color, icon) wajib diisi' });
+    const result = categorySchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ errors: result.error.flatten() });
     }
+    const { name, unit, color, icon } = result.data; // type-safe!
 
     const category = await prisma.category.create({
       data: {
         userId: req.user.id,
-        name: name.trim(),
-        unit: unit.trim(),
+        name,
+        unit,
         color,
         icon,
       },
