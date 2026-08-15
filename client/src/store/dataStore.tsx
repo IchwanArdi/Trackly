@@ -1,7 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { api } from '../utils/auth';
+import { api, clearAuthToken } from '../utils/auth';
 import { toast } from 'react-toastify';
+
+export interface ApiResponse {
+  message: string;
+}
 
 // ── Types ────────────────────────────────────────────────────────
 export interface Category {
@@ -45,6 +49,9 @@ interface DataStore {
   addEntry: (entry: Omit<Entry, 'id'>) => Promise<void>;
   updateEntry: (id: string, updates: Partial<Omit<Entry, 'id'>>) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
+
+  // User
+  deleteUser: () => Promise<void>;
 
   // Manual refresh
   refreshAll: () => Promise<void>;
@@ -133,6 +140,21 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setEntries([]);
   }, []);
 
+  // ── User actions ─────────────────────────────────────────────
+  const deleteUser = useCallback(async () => {
+    try {
+      const res = await api.delete<ApiResponse>('/api/users/me');
+      toast.success(res.data.message || 'Account successfully deleted');
+      clearData();
+      clearAuthToken();
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      toast.error('Failed to delete account. Please try again.');
+      throw error;
+    }
+  }, [clearData]);
+
+
   return (
     <DataContext.Provider
       value={{
@@ -145,6 +167,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         addEntry,
         updateEntry,
         deleteEntry,
+        deleteUser,
         refreshAll,
         clearData,
       }}

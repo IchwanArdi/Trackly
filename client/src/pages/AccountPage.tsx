@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Clock3, KeyRound, Mail, ShieldCheck, User, X, Trash2, Loader2, AlertTriangle, MessageSquare } from 'lucide-react';
-import { getUser, api } from '../utils/auth';
+import { api, getUser } from '../utils/auth';
+import { useData } from '../store/dataStore';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,6 +20,7 @@ const navItems: { key: AccountTab; label: string }[] = [
 export const AccountPage = ({ onClose }: AccountPageProps) => {
   const [activeTab, setActiveTab] = useState<AccountTab>('account');
   const user = getUser();
+  const { deleteUser } = useData();
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState('');
@@ -55,21 +57,21 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
 
   // Func delete account
   const handleDeleteAccount = async () => {
-    if (!user?.id) return;
-
-    setIsDeleting(true); // Tambahkan ini
+    setIsDeleting(true);
     try {
-      await api.delete(`/api/users/${user.id}`);
-      toast.success('Account deleted successfully');
-      onClose();
-      navigate('/login');
+      await deleteUser();
+
+      if (!localStorage.getItem('token')) {
+        onClose();
+        navigate('/');
+      }
     } catch (error) {
       console.error('Error deleting account:', error);
-      toast.error('Failed to delete account');
     } finally {
-      setIsDeleting(false); // Tambahkan ini
+      setIsDeleting(false);
     }
   };
+
 
   return (
     <div className="w-full">

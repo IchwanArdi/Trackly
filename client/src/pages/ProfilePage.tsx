@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LogOut, User, Mail, ShieldCheck, Trash2, Loader2, MessageSquare, HelpCircle, X, ChevronRight, AlertTriangle } from 'lucide-react';
-import { clearAuthToken, getUser, api } from '../utils/auth';
+import { getUser, api, clearAuthToken } from '../utils/auth';
 import { useData } from '../store/dataStore';
 
 export function ProfilePage() {
   const navigate = useNavigate();
-  const { clearData } = useData();
+  const { deleteUser, clearData } = useData();
   const user = getUser();
   const [isDeleting, setIsDeleting] = useState(false);
   const [openFeedbackModal, setOpenFeedbackModal] = useState(false);
@@ -31,13 +31,13 @@ export function ProfilePage() {
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
     try {
-      await api.delete('/users/me');
-      clearData();
-      clearAuthToken();
-      navigate('/');
+      await deleteUser();
+
+      if (!localStorage.getItem('token')) {
+        navigate('/');
+      }
     } catch (error) {
       console.error('Error deleting account:', error);
-      toast.error('Failed to delete account. Please try again.');
     } finally {
       setIsDeleting(false);
     }
@@ -220,7 +220,11 @@ export function ProfilePage() {
               </div>
 
               <div className="flex justify-end">
-                <button disabled={isSubmitting} type="submit" className="rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white hover:bg-accent/90 transition cursor-pointer flex items-center gap-2 disabled:opacity-60">
+                <button
+                  disabled={isSubmitting || !feedbackCategory || feedbackMessage.trim().length < 3}
+                  type="submit"
+                  className="rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white hover:bg-accent/90 transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
                   {isSubmitting ? (
                     <>
                       <Loader2 size={14} className="animate-spin" /> Processing...
@@ -229,6 +233,7 @@ export function ProfilePage() {
                     'Submit Feedback'
                   )}
                 </button>
+
               </div>
             </form>
           </div>
