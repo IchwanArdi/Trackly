@@ -7,7 +7,7 @@ export const authenticateToken = async (req, res, next) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
 
         if (!token) {
-            return res.status(401).json({ message: 'Token tidak ditemukan, akses ditolak' });
+            return res.status(401).json({ message: 'Token not found, access denied' });
         }
 
         // 2. Verifikasi token menggunakan jsonwebtoken dan JWT_SECRET dari .env
@@ -25,7 +25,7 @@ export const authenticateToken = async (req, res, next) => {
 
         // 4. Jika user tidak ditemukan di database kita
         if (!user) {
-            return res.status(401).json({ message: 'Pengguna tidak ditemukan, akses ditolak' });
+            return res.status(401).json({ message: 'User not found, access denied' });
         }
 
         // 5. Simpan data user
@@ -37,9 +37,9 @@ export const authenticateToken = async (req, res, next) => {
 
         // Menangani error spesifik jika token kedaluwarsa
         if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token telah kedaluwarsa, silakan login ulang' });
+            return res.status(401).json({ message: 'Token has expired, please login again' });
         }
 
-        return res.status(401).json({ message: 'Token tidak valid' });
+        return res.status(401).json({ message: 'Invalid token' });
     }
 };

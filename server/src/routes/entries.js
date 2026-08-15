@@ -71,7 +71,7 @@ router.get('/', async (req, res) => {
     });
   } catch (error) {
     console.error('GET /entries error:', error.message);
-    return res.status(500).json({ message: 'Gagal mengambil data entries' });
+    return res.status(500).json({ message: 'Failed to fetch entries' });
   }
 });
 
@@ -81,11 +81,11 @@ router.post('/', async (req, res) => {
     const { categoryId, date, value, note } = req.body;
 
     if (!categoryId || !date || value === undefined || value === null) {
-      return res.status(400).json({ message: 'categoryId, date, dan value wajib diisi' });
+      return res.status(400).json({ message: 'categoryId, date, and value are required!' });
     }
 
     if (typeof value !== 'number' || value <= 0) {
-      return res.status(400).json({ message: 'value harus berupa angka positif' });
+      return res.status(400).json({ message: 'value must be a positive number!' });
     }
 
     // Pastikan kategori milik user ini
@@ -94,7 +94,7 @@ router.post('/', async (req, res) => {
     });
 
     if (!category) {
-      return res.status(404).json({ message: 'Kategori tidak ditemukan' });
+      return res.status(404).json({ message: 'Category not found!' });
     }
 
     const entry = await prisma.entry.create({
@@ -116,7 +116,7 @@ router.post('/', async (req, res) => {
     });
   } catch (error) {
     console.error('POST /entries error:', error.message);
-    return res.status(500).json({ message: 'Gagal menyimpan entry' });
+    return res.status(500).json({ message: 'Failed to save entry!' });
   }
 });
 
@@ -131,7 +131,7 @@ router.put('/:id', async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: 'Entry tidak ditemukan' });
+      return res.status(404).json({ message: 'Entry not found!' });
     }
 
     const updated = await prisma.entry.update({
@@ -143,6 +143,8 @@ router.put('/:id', async (req, res) => {
       },
     });
 
+    console.log('Entry updated:', updated.date.toISOString().slice(0, 10));
+
     return res.status(200).json({
       id: updated.id,
       categoryId: updated.categoryId,
@@ -152,7 +154,7 @@ router.put('/:id', async (req, res) => {
     });
   } catch (error) {
     console.error('PUT /entries/:id error:', error.message);
-    return res.status(500).json({ message: 'Gagal mengupdate entry' });
+    return res.status(500).json({ message: 'Failed to update entry!' });
   }
 });
 
@@ -166,15 +168,15 @@ router.delete('/:id', async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: 'Entry tidak ditemukan' });
+      return res.status(404).json({ message: 'Entry not found!' });
     }
 
     await prisma.entry.delete({ where: { id } });
 
-    return res.status(200).json({ message: 'Entry berhasil dihapus' });
+    return res.status(200).json({ message: 'Entry deleted successfully!' });
   } catch (error) {
     console.error('DELETE /entries/:id error:', error.message);
-    return res.status(500).json({ message: 'Gagal menghapus entry' });
+    return res.status(500).json({ message: 'Failed to delete entry!' });
   }
 });
 

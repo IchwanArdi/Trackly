@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     return res.status(200).json(categories);
   } catch (error) {
     console.error('GET /categories error:', error.message);
-    return res.status(500).json({ message: 'Gagal mengambil data kategori' });
+    return res.status(500).json({ message: 'Failed to fetch categories' });
   }
 });
 
@@ -55,10 +55,10 @@ router.post('/', async (req, res) => {
   } catch (error) {
     // Unique constraint: userId + name
     if (error.code === 'P2002') {
-      return res.status(409).json({ message: `Kategori "${req.body.name}" sudah ada` });
+      return res.status(409).json({ message: `Category "${req.body.name}" already exists` });
     }
     console.error('POST /categories error:', error.message);
-    return res.status(500).json({ message: 'Gagal membuat kategori' });
+    return res.status(500).json({ message: 'Failed to create category' });
   }
 });
 
@@ -66,34 +66,40 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, unit, color, icon } = req.body;
 
-    // Pastikan kategori milik user ini
+    const result = categorySchema.partial().safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({ errors: result.error.flatten() });
+    }
+    const { name, unit, color, icon } = result.data;
+
+    // cek category berdasarkan id dan id user
     const existing = await prisma.category.findFirst({
       where: { id, userId: req.user.id },
     });
 
     if (!existing) {
-      return res.status(404).json({ message: 'Kategori tidak ditemukan' });
+      return res.status(404).json({ message: 'Category not found!' });
     }
 
     const updated = await prisma.category.update({
       where: { id },
       data: {
-        ...(name && { name: name.trim() }),
-        ...(unit && { unit: unit.trim() }),
-        ...(color && { color }),
-        ...(icon && { icon }),
+        ...(name !== undefined && { name }),
+        ...(unit !== undefined && { unit }),
+        ...(color !== undefined && { color }),
+        ...(icon !== undefined && { icon }),
       },
     });
 
     return res.status(200).json(updated);
   } catch (error) {
     if (error.code === 'P2002') {
-      return res.status(409).json({ message: `Kategori "${req.body.name}" sudah ada` });
+      return res.status(409).json({ message: `Category name already exists` });
     }
     console.error('PUT /categories/:id error:', error.message);
-    return res.status(500).json({ message: 'Gagal mengupdate kategori' });
+    return res.status(500).json({ message: 'Failed to update category' });
   }
 });
 
@@ -107,15 +113,15 @@ router.delete('/:id', async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: 'Kategori tidak ditemukan' });
+      return res.status(404).json({ message: 'Category not found!' });
     }
 
     await prisma.category.delete({ where: { id } });
 
-    return res.status(200).json({ message: 'Kategori berhasil dihapus' });
+    return res.status(200).json({ message: 'Category deleted successfully!' });
   } catch (error) {
     console.error('DELETE /categories/:id error:', error.message);
-    return res.status(500).json({ message: 'Gagal menghapus kategori' });
+    return res.status(500).json({ message: 'Failed to delete category' });
   }
 });
 

@@ -25,7 +25,7 @@ const allowedOrigins = ['http://localhost:5173', process.env.CLIENT_URL].filter(
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || /^https:\/\/.*\.vercel\.app$/i.test(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || /^https:\/\/trackly[\w-]*\.vercel\.app$/i.test(origin)) {
       callback(null, true);
     } else {
       callback(new Error(`CORS policy does not allow access from ${origin}`));
