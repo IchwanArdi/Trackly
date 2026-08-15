@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LogOut, User, Mail, ShieldCheck, Trash2, Loader2, MessageSquare, HelpCircle, X, ChevronRight, AlertTriangle } from 'lucide-react';
-import { getUser, api, clearAuthToken } from '../utils/auth';
+import { getUser, clearAuthToken } from '../utils/auth';
 import { useData } from '../store/dataStore';
 
 export function ProfilePage() {
   const navigate = useNavigate();
-  const { deleteUser, clearData } = useData();
+  const { deleteUser, clearData, sendFeedback } = useData();
   const user = getUser();
   const [isDeleting, setIsDeleting] = useState(false);
   const [openFeedbackModal, setOpenFeedbackModal] = useState(false);
@@ -51,18 +51,12 @@ export function ProfilePage() {
     }
     setIsSubmitting(true);
     try {
-      const response = await api.post('/api/users/feedback', {
-        category: feedbackCategory,
-        message: feedbackMessage,
-      });
-
-      toast.success(`${response.data.message}`);
+      await sendFeedback({ category: feedbackCategory, message: feedbackMessage });
       setFeedbackCategory('');
       setFeedbackMessage('');
       setOpenFeedbackModal(false);
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      toast.error('Failed to submit feedback');
     } finally {
       setIsSubmitting(false);
     }

@@ -3,11 +3,12 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import { api, clearAuthToken } from '../utils/auth';
 import { toast } from 'react-toastify';
 
+
+// ── Types ────────────────────────────────────────────────────────
 export interface ApiResponse {
   message: string;
 }
 
-// ── Types ────────────────────────────────────────────────────────
 export interface Category {
   id: string;
   name: string;
@@ -52,6 +53,9 @@ interface DataStore {
 
   // User
   deleteUser: () => Promise<void>;
+
+  // Feedback
+  sendFeedback: (feedback: { category: string; message: string }) => Promise<void>;
 
   // Manual refresh
   refreshAll: () => Promise<void>;
@@ -154,6 +158,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }, [clearData]);
 
+  // ── Feedback actions ─────────────────────────────────────────
+  const sendFeedback = useCallback(async (feedback: { category: string; message: string }) => {
+    try {
+      const res = await api.post<ApiResponse>('/api/users/feedback', feedback);
+      toast.success(res.data.message || 'Feedback sent successfully');
+    } catch (error) {
+      console.error('Error sending feedback:', error);
+      toast.error('Failed to send feedback. Please try again.');
+      throw error;
+    }
+  }, []);
+
 
   return (
     <DataContext.Provider
@@ -168,6 +184,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         updateEntry,
         deleteEntry,
         deleteUser,
+        sendFeedback,
         refreshAll,
         clearData,
       }}

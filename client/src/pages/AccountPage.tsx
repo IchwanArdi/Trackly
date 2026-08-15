@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Clock3, KeyRound, Mail, ShieldCheck, User, X, Trash2, Loader2, AlertTriangle, MessageSquare } from 'lucide-react';
-import { api, getUser } from '../utils/auth';
+import { getUser } from '../utils/auth';
 import { useData } from '../store/dataStore';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ const navItems: { key: AccountTab; label: string }[] = [
 export const AccountPage = ({ onClose }: AccountPageProps) => {
   const [activeTab, setActiveTab] = useState<AccountTab>('account');
   const user = getUser();
-  const { deleteUser } = useData();
+  const { deleteUser, sendFeedback } = useData();
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState('');
@@ -36,20 +36,13 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
       toast.error('Please fill in all fields');
       return;
     }
-
     setIsSubmitting(true);
     try {
-      const response = await api.post('/api/users/feedback', {
-        category: feedbackCategory,
-        message: feedbackMessage,
-      });
-
-      toast.success(`${response.data.message}`);
+      await sendFeedback({ category: feedbackCategory, message: feedbackMessage });
       setFeedbackCategory('');
       setFeedbackMessage('');
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      toast.error('Failed to submit feedback');
     } finally {
       setIsSubmitting(false);
     }
