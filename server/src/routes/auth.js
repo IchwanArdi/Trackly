@@ -99,8 +99,7 @@ router.post('/login', authLimiter, async (req, res) => {
 });
 
 // Konfigurasi Login dengan Google
-
-const frontendURL = process.env.NODE_ENV === 'production' ? 'https://thetrackly.vercel.app' : 'http://localhost:5173';
+const frontendURL = process.env.CLIENT_URL;
 
 // Route Login pake Google - INISIATOR (ini yang kepencet pas klik tombol)
 router.get('/google', passport.authenticate('google', { scope: ['email', 'profile'], session: false }));

@@ -1,7 +1,7 @@
 {
   "name": "Trackly_Backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
     "start": "nodemon server.js",
@@ -20,11 +20,9 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.6.2",
-    "express-session": "^1.19.0",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "passport": "^0.7.0",
-    "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.22.0",
     "resend": "^6.18.1",

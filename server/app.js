@@ -1,6 +1,6 @@
+
 import express from 'express';
 import cors from 'cors';
-import session from 'express-session';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import helmet from 'helmet';
@@ -11,8 +11,8 @@ import entriesRoutes from './src/routes/entries.js';
 import userRoutes from './src/routes/user.js';
 import resetPasswordRoutes from './src/routes/resetPassword.js';
 
-const app = express();
 dotenv.config();
+const app = express();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -42,20 +42,6 @@ app.use(cors(corsOptions));
 app.options(/(.*)/, cors(corsOptions));
 
 app.set('trust proxy', 1);
-
-// SESSION & PASSPORT LOGIN
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: isProduction,
-      httpOnly: true,
-      sameSite: isProduction ? 'none' : 'lax',
-    },
-  }),
-);
 
 app.use(passport.initialize());
 
