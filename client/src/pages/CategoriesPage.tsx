@@ -367,17 +367,17 @@ export function CategoriesPage() {
         stats={
           shareCategory
             ? {
-                totalValue: entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
-                totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
-                streakDays: 7,
-                periodLabel: `Logged on Trackly`,
-              }
+              totalValue: entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
+              totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
+              streakDays: 7,
+              periodLabel: `Logged on Trackly`,
+            }
             : {
-                totalLogs: entries.length,
-                streakDays: 7,
-                periodLabel: 'Category Highlights Overview',
-                categoriesCount: categories.length,
-              }
+              totalLogs: entries.length,
+              streakDays: 7,
+              periodLabel: 'Category Highlights Overview',
+              categoriesCount: categories.length,
+            }
         }
       />
     </div>

@@ -151,9 +151,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
       toast.success(res.data.message || 'Account successfully deleted');
       clearData();
       clearAuthToken();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting account:', error);
-      toast.error('Failed to delete account. Please try again.');
+      toast.error(`${error.response.data.message}`);
       throw error;
     }
   }, [clearData]);
@@ -163,9 +163,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     try {
       const res = await api.post<ApiResponse>('/api/users/feedback', feedback);
       toast.success(res.data.message || 'Feedback sent successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending feedback:', error);
-      toast.error('Failed to send feedback. Please try again.');
+      toast.error(`${error.response.data.message}`);
       throw error;
     }
   }, []);
