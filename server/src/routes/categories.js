@@ -9,13 +9,38 @@ const router = express.Router();
 router.use(authenticateToken);
 
 // GET /api/categories — ambil semua kategori milik user
+// Menggunakan Pagination
 router.get('/', async (req, res) => {
   try {
-    const categories = await prisma.category.findMany({
-      where: { userId: req.user.id },
-      orderBy: { createdAt: 'asc' },
+    const { page = 1, limit = 50 } = req.query;
+    const where = { userId: req.user.id };
+
+    // Sanitasi & batasi page/limit biar gak disalahgunakan
+    const pageNum = Math.max(parseInt(page) || 1, 1);
+    const limitNum = Math.min(Math.max(parseInt(limit) || 50, 1), 100);
+    const skip = (pageNum - 1) * limitNum;
+
+    // ambil data sekaligus hitung total
+    const [categories, total] = await prisma.$transaction([
+      prisma.category.findMany({
+        where,
+        orderBy: { createdAt: 'asc' },
+        take: limitNum,
+        skip,
+      }),
+      prisma.category.count({ where }),
+    ]);
+
+    // kembalikan data dalam bentuk JSON
+    return res.status(200).json({
+      data: categories,
+      meta: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      },
     });
-    return res.status(200).json(categories);
   } catch (error) {
     console.error('GET /categories error:', error.message);
     return res.status(500).json({ message: 'Failed to fetch categories' });

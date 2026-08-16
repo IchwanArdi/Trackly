@@ -43,6 +43,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      // proxy: true,   // <--- Tambahkan ini untuk
     },
     // Callback function untuk menangani login dengan Google
     async (accessToken, refreshToken, profile, done) => {
