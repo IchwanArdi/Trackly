@@ -39,13 +39,7 @@ export default function FeedbackForm({ onSuccess, className = '' }: FeedbackForm
             onSuccess?.();
         } catch (error: unknown) {
             console.error('Error submitting feedback:', error);
-            const errMsg = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
-            toast.update(idToast, {
-                render: errMsg || 'Failed to send feedback. Please try again.',
-                type: 'error',
-                isLoading: false,
-                autoClose: 2000,
-            });
+            toast.dismiss(idToast);
         } finally {
             setIsSubmitting(false);
         }

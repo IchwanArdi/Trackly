@@ -20,6 +20,7 @@ export default function DeleteAccountSection({ onDeleted, variant = 'card' }: De
 
     const handleDeleteAccount = async () => {
         setIsDeleting(true);
+
         const idToast = toast.loading('Deleting account...');
 
         try {
@@ -38,14 +39,7 @@ export default function DeleteAccountSection({ onDeleted, variant = 'card' }: De
             }
         } catch (error: unknown) {
             console.error('Error deleting account:', error);
-
-            const errMsg = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
-            toast.update(idToast, {
-                render: errMsg || 'Failed to delete account. Please try again.',
-                type: 'error',
-                isLoading: false,
-                autoClose: 2000,
-            });
+            toast.dismiss(idToast);
         } finally {
             setIsDeleting(false);
         }

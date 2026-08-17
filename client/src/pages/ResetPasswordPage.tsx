@@ -2,7 +2,7 @@ import { api } from '../utils/auth';
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ArrowLeft, ArrowRight, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, CheckCircle2, Loader2 } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 
@@ -93,6 +93,7 @@ export const ResetPasswordPage = () => {
                   id="input-new-password"
                   label="New password"
                   type={showPassword ? 'text' : 'password'}
+                  disabled={loading}
                   placeholder="••••••••"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -110,6 +111,7 @@ export const ResetPasswordPage = () => {
                 id="input-confirm-password"
                 label="Confirm password"
                 type={showPassword ? 'text' : 'password'}
+                disabled={loading}
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -121,8 +123,12 @@ export const ResetPasswordPage = () => {
 
               <p className="text-xs text-muted">At least 8 characters.</p>
 
-              <Button id="btn-reset-submit" type="submit" variant="primary" size="md" className="w-full" icon={<ArrowRight size={14} />}>
-                {loading ? 'Saving...' : 'Reset password'}
+              <Button disabled={loading} id="btn-reset-submit" type="submit" variant="primary" size="md" className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> Saving...
+                  </>
+                ) : 'Reset password'}
               </Button>
             </form>
           </>

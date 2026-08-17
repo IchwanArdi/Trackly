@@ -4,6 +4,7 @@ import { api } from '../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
+import { Loader2 } from 'lucide-react';
 
 export function RegisterPage() {
   // 1. State untuk menyimpan input user
@@ -83,9 +84,9 @@ export function RegisterPage() {
           <p className="text-sm text-muted mb-7">Start building your activity history.</p>
 
           <form id="form-register" onSubmit={handleSubmit} className="space-y-4">
-            <Input id="input-name" label="Full name" type="text" placeholder="Alex Kim" value={name} onChange={(e) => setName(e.target.value)} required />
-            <Input id="input-email" label="Email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
-            <Input id="input-password" label="Password" type="password" placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+            <Input id="input-name" label="Full name" type="text" disabled={loading} placeholder="Alex Kim" value={name} onChange={(e) => setName(e.target.value)} required />
+            <Input id="input-email" label="Email" type="email" disabled={loading} placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+            <Input id="input-password" label="Password" type="password" disabled={loading} placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
 
             <p className="text-[11px] text-muted leading-relaxed">
               By creating an account, you agree to our{' '}
@@ -99,8 +100,12 @@ export function RegisterPage() {
               .
             </p>
 
-            <Button id="btn-register-submit" type="submit" variant="primary" size="md" className="w-full" disabled={loading}>
-              {loading ? 'Loading...' : 'Create account'}
+            <Button disabled={loading} id="btn-register-submit" type="submit" variant="primary" size="md" className="w-full">
+              {loading ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Loading...
+                </>
+              ) : 'Create account'}
             </Button>
           </form>
 

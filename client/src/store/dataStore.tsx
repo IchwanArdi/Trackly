@@ -89,7 +89,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
 
-      // PERBAIKAN: Gunakan EntriesResponse & CategoryResponse untuk tipe data Axios get /api/entries & /api/categories
+      // Gunakan EntriesResponse & CategoryResponse untuk tipe data Axios get /api/entries & /api/categories
       const [catRes, entRes] = await Promise.all([
         api.get<CategoryResponse>('/api/categories'),
         api.get<EntriesResponse>('/api/entries')]);
@@ -97,7 +97,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       // Ambil kategori dan simpan ke state
       setCategories(catRes.data.data);
 
-      // PERBAIKAN: Ambil entRes.data.data karena array asli dibungkus di dalam properti "data"
+      // Ambil entRes.data.data karena array asli dibungkus di dalam properti "data"
       const incomingEntries = entRes.data?.data;
       setEntries(Array.isArray(incomingEntries) ? incomingEntries : []);
     } catch (err: unknown) {
