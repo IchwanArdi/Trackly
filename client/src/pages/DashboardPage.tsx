@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, subDays, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
 import { Plus, Check, Share2, BarChart2 } from 'lucide-react';
 import { useData } from '../store/dataStore';
 import { computeStreaks } from '../utils/stats';
 import { getIcon } from '../utils/icons';
-import { isAuthenticated, getUser } from '../utils/auth';
+import { getUser } from '../utils/auth';
 import { getUnit } from '../utils/format';
 import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
@@ -29,10 +29,6 @@ export function DashboardPage() {
     color: string;
     icon: string;
   } | null>(null);
-
-  useEffect(() => {
-    if (!isAuthenticated()) navigate('/login');
-  }, [navigate]);
 
   const today = new Date();
   const todayStr = format(today, 'yyyy-MM-dd');

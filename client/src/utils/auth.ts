@@ -1,4 +1,5 @@
 import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const api = axios.create({
@@ -38,7 +39,7 @@ api.interceptors.response.use(
       localStorage.removeItem('user');
 
       // Beri informasi ke user agar tidak bingung mengapa mereka terlempar keluar
-      alert('Your session has expired. Please log in again.');
+      toast.error('Your session has expired. Please log in again.');
 
       // Paksa browser mengalihkan halaman ke login
       window.location.href = '/login';

@@ -20,18 +20,37 @@ export default function FeedbackForm({ onSuccess, className = '' }: FeedbackForm
             toast.error('Please fill in all fields');
             return;
         }
+
         setIsSubmitting(true);
+        const idToast = toast.loading('Sending feedback...');
+
         try {
-            await sendFeedback({ category, message });
+            const response = await sendFeedback({ category, message });
+
+            toast.update(idToast, {
+                render: response.message || 'Feedback sent successfully',
+                type: 'success',
+                isLoading: false,
+                autoClose: 2000,
+            });
+
             setCategory('');
             setMessage('');
             onSuccess?.();
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error submitting feedback:', error);
+            const errMsg = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+            toast.update(idToast, {
+                render: errMsg || 'Failed to send feedback. Please try again.',
+                type: 'error',
+                isLoading: false,
+                autoClose: 2000,
+            });
         } finally {
             setIsSubmitting(false);
         }
     };
+
 
     return (
         <div className={className}>
