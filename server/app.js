@@ -68,7 +68,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/entries', entriesRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/reset-password', resetPasswordRoutes);
+app.use('/api/auth', resetPasswordRoutes);
 
 // JARING PENGAMAN EROR
 app.use((err, req, res, next) => {

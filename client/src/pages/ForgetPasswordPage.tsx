@@ -16,7 +16,7 @@ export function ForgetPasswordPage() {
     setLoading(true);
     const idToast = toast.loading('Sending...');
     try {
-      const response = await api.post('/api/reset-password/request-reset', { email });
+      const response = await api.post('/api/auth/request-reset', { email });
       toast.update(idToast, {
         render: response.data.message,
         type: 'success',
