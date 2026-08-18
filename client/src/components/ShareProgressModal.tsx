@@ -103,7 +103,11 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-up">
-      <div className="bg-card border border-border rounded-2xl w-full max-w-sm overflow-hidden flex flex-col max-h-[90vh]">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={isCategoryShare ? `Share ${category?.name} Card` : 'Share Progress Card'}
+        className="bg-card border border-border rounded-2xl w-full max-w-sm overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div className="flex items-center gap-2">

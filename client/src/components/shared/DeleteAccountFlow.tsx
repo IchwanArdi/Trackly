@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Trash2, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useData } from '../../store/dataStore';
 
 const CONFIRM_TEXT = 'delete permanent account';
@@ -19,15 +20,26 @@ export default function DeleteAccountSection({ onDeleted, variant = 'card' }: De
 
     const handleDeleteAccount = async () => {
         setIsDeleting(true);
+
+        const idToast = toast.loading('Deleting account...');
+
         try {
-            await deleteUser();
+            const response = await deleteUser();
+
+            toast.update(idToast, {
+                render: response?.message || 'Account successfully deleted',
+                type: 'success',
+                isLoading: false,
+                autoClose: 2000,
+            });
 
             if (!localStorage.getItem('token')) {
                 onDeleted?.();
                 navigate('/');
             }
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error deleting account:', error);
+            toast.dismiss(idToast);
         } finally {
             setIsDeleting(false);
         }

@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 import { api } from '../utils/auth';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, MailCheck } from 'lucide-react';
+import { ArrowLeft, Loader2, MailCheck } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 
@@ -67,10 +67,14 @@ export function ForgetPasswordPage() {
             <p className="text-sm text-muted mb-7">Enter your email address and we will send you a link to reset your password.</p>
 
             <form id="form-forgot-password" onSubmit={handleSubmit} className="space-y-4">
-              <Input id="input-email" label="Email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" autoFocus />
+              <Input id="input-email" label="Email" type="email" disabled={loading} placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" autoFocus />
 
-              <Button id="btn-forgot-submit" type="submit" variant="primary" size="md" className="w-full" disabled={loading} icon={<ArrowRight size={14} />}>
-                {loading ? 'Sending...' : 'Send reset link'}
+              <Button disabled={loading} id="btn-forgot-submit" type="submit" variant="primary" size="md" className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> Sending...
+                  </>
+                ) : 'Send reset link'}
               </Button>
             </form>
           </>

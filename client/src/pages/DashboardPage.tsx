@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, subDays, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
 import { Plus, Check, Share2, BarChart2 } from 'lucide-react';
 import { useData } from '../store/dataStore';
 import { computeStreaks } from '../utils/stats';
 import { getIcon } from '../utils/icons';
-import { isAuthenticated, getUser } from '../utils/auth';
+import { getUser } from '../utils/auth';
 import { getUnit } from '../utils/format';
 import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
@@ -17,11 +17,19 @@ function getFirstName(fullName?: string) {
 }
 
 export function DashboardPage() {
-  const { entries, categories } = useData();
+  const { entries, categories, loading } = useData();
   const navigate = useNavigate();
   const user = getUser();
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareCategory, setShareCategory] = useState<ShareCategoryData | null>(null);
+  const today = new Date();
+  const todayStr = format(today, 'yyyy-MM-dd');
+  const monthStart = startOfMonth(today);
+  const monthEnd = endOfMonth(today);
+  const streaks = computeStreaks(entries);
+  const monthEntries = entries.filter((e) => isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd }));
+  const monthCount = monthEntries.length;
+  const todayEntries = entries.filter((e) => e.date === todayStr);
   const [selectedCategoryDetail, setSelectedCategoryDetail] = useState<{
     id: string;
     name: string;
@@ -29,20 +37,6 @@ export function DashboardPage() {
     color: string;
     icon: string;
   } | null>(null);
-
-  useEffect(() => {
-    if (!isAuthenticated()) navigate('/login');
-  }, [navigate]);
-
-  const today = new Date();
-  const todayStr = format(today, 'yyyy-MM-dd');
-  const monthStart = startOfMonth(today);
-  const monthEnd = endOfMonth(today);
-
-  const streaks = computeStreaks(entries);
-  const monthEntries = entries.filter((e) => isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd }));
-  const monthCount = monthEntries.length;
-  const todayEntries = entries.filter((e) => e.date === todayStr);
 
   // Calculate top category this month
   const catCounts: Record<string, number> = {};
@@ -72,6 +66,55 @@ export function DashboardPage() {
   const todayLoggedCatIds = new Set(todayEntries.map((e) => e.categoryId));
 
   const yesterday = format(subDays(today, 1), 'yyyy-MM-dd');
+
+
+  if (loading) {
+    return (
+      <div className="space-y-5 pb-4 animate-pulse">
+        {/* Skeleton Header */}
+        <div className="flex items-center justify-between pt-1">
+          <div className="space-y-2">
+            <div className="h-3 bg-muted rounded w-24" />
+            <div className="h-5 bg-muted rounded w-36" />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-8 bg-muted rounded-lg w-16" />
+            <div className="h-8 bg-muted rounded-lg w-14" />
+          </div>
+        </div>
+
+        {/* Skeleton Highlights Deck */}
+        <div className="h-28 bg-muted rounded-xl w-full" />
+
+        {/* Skeleton Streak Card */}
+        <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <div className="h-3 bg-muted rounded w-20" />
+              <div className="h-12 bg-muted rounded-md w-16" />
+            </div>
+            <div className="space-y-2 text-right">
+              <div className="h-3 bg-muted rounded w-8 ml-auto" />
+              <div className="h-4 bg-muted rounded w-12 ml-auto" />
+            </div>
+          </div>
+          {/* Skeleton WeekDots */}
+          <div className="h-6 bg-muted/60 rounded-md w-full" />
+        </div>
+
+        {/* Skeleton Today's Categories */}
+        <div className="space-y-2">
+          <div className="h-3 bg-muted rounded w-28" />
+          <div className="grid grid-cols-2 gap-2">
+            <div className="h-14 bg-muted rounded-xl" />
+            <div className="h-14 bg-muted rounded-xl" />
+            <div className="h-14 bg-muted rounded-xl" />
+            <div className="h-14 bg-muted rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 pb-4">
