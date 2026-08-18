@@ -59,7 +59,7 @@ router.post('/forgot-password', authLimiter, async (req, res) => {
 
 // EXECUTE RESET PASSWORD
 // token ditaruh di dalam body JSON agar tidak bocor ke log server
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', authLimiter, async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
@@ -67,10 +67,15 @@ router.post('/reset-password', async (req, res) => {
       return res.status(400).json({ message: 'Token and new password are required!' });
     }
 
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters long!' });
+    }
+
     // Hash token dari user terlebih dahulu sebelum dicocokkan dengan database
     const secureHashedToken = hashToken(token);
 
     const user = await prisma.user.findUnique({ where: { resetToken: secureHashedToken } });
+
 
     if (!user) {
       return res.status(400).json({ message: 'Token is invalid or has been used.' });
