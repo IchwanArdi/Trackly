@@ -106,7 +106,7 @@ router.post('/login', authLimiter, async (req, res) => {
 const frontendURL = process.env.CLIENT_URL;
 
 // Route Login pake Google - INISIATOR (ini yang kepencet pas klik tombol)
-router.get('/google', passport.authenticate('google', { scope: ['email', 'profile'], session: false }));
+router.get('/google', passport.authenticate('google', { scope: ['email', 'profile'], prompt: 'select_account', session: false }));
 
 // Route Login pake Google - CALLBACK (dipanggil otomatis oleh Google, bukan manual)
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: `${frontendURL}/login` }), (req, res) => {

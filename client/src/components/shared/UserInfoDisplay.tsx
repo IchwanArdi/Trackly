@@ -1,7 +1,6 @@
 import { getUser } from "../../utils/auth";
 import { Mail, ShieldCheck, User } from "lucide-react";
 
-const user = getUser();
 const getInitials = (name: string | undefined) => {
     if (!name) return 'US';
     const parts = name.split(' ').filter(p => p.length > 0);
@@ -10,6 +9,7 @@ const getInitials = (name: string | undefined) => {
 };
 
 export default function UserInfoDisplay() {
+    const user = getUser();
     return (
         <div className="bg-card border border-border rounded-xl p-4">
             <div className="flex items-center gap-3.5 pb-4 border-b border-border/60">
