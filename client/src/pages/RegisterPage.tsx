@@ -6,7 +6,7 @@ import { api } from '../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
-import { Loader2, ArrowLeft, ShieldCheck, Zap, Layers } from 'lucide-react';
+import { Loader2, ArrowLeft, ShieldCheck, Layers } from 'lucide-react';
 
 export function RegisterPage() {
   const navigate = useNavigate();

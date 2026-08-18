@@ -7,7 +7,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useData } from '../store/dataStore';
-import { Loader2, ArrowLeft, ShieldCheck, Activity, BarChart3 } from 'lucide-react';
+import { Loader2, ArrowLeft, Activity, BarChart3 } from 'lucide-react';
 
 function GoogleIcon() {
   return (

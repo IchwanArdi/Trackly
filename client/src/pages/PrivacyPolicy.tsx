@@ -1,7 +1,7 @@
 /* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 */
 /* Hallmark · macrostructure: Long Document · tone: calm-focused · anchor hue: orange */
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ShieldCheck, Mail, Lock } from 'lucide-react';
+import { ArrowLeft, ShieldCheck } from 'lucide-react';
 
 const SECTIONS = [
   {
