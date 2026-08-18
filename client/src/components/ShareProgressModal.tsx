@@ -221,8 +221,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
               </div>
             </div>
 
-            {/* Background Decorative Glow */}
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-40 pointer-events-none" style={{ background: accentColor }} />
+
           </div>
 
           {/* Action Buttons */}

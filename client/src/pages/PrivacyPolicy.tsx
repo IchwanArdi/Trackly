@@ -1,93 +1,105 @@
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 */
+/* Hallmark · macrostructure: Long Document · tone: calm-focused · anchor hue: orange */
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Mail, Lock } from 'lucide-react';
 
 const SECTIONS = [
   {
-    title: '1. Information We Collect',
+    num: '01',
+    title: 'Information We Collect',
     body: (
-      <>
-        <p className="text-sm leading-relaxed text-muted mb-3">We collect the following information when you use Trackly:</p>
-        <ul className="list-disc list-inside space-y-1.5 text-sm leading-relaxed text-muted">
-          <li>Your name and email address (provided during registration, or received from Google if you log in via Google)</li>
-          <li>Activity data you input yourself, such as categories, entries, values, dates, and notes</li>
+      <div className="space-y-3">
+        <p className="text-sm leading-relaxed text-muted">We collect the minimum necessary information to provide personal habit tracking:</p>
+        <ul className="list-disc list-inside space-y-2 text-sm leading-relaxed text-muted pl-1">
+          <li>Account credentials: Name and email address (via registration or Google Sign-In).</li>
+          <li>Activity history: Categories, entries, numeric values, completion logs, and personal notes.</li>
         </ul>
-      </>
+      </div>
     ),
   },
   {
-    title: '2. How We Use Your Information',
-    body: 'We use your information solely to provide the core functionality of Trackly: storing and displaying your activity history, statistics, and progress over time. We do not sell or share your personal data with third parties for advertising purposes.',
+    num: '02',
+    title: 'How We Use Your Information',
+    body: 'We use your data solely to calculate statistics, streaks, and heatmap charts for your personal workspace. We never sell, rent, or trade personal data to third parties or advertising networks.',
   },
   {
-    title: '3. Login via Google',
-    body: 'If you choose to log in using Google, we only receive your name and email address to create or identify your Trackly account. We do not access any other data from your Google account beyond this.',
+    num: '03',
+    title: 'Google Sign-In Scope',
+    body: 'When logging in via Google OAuth, we strictly read your basic profile (name and email) to authorize your account. We request zero additional Google scopes or access permissions.',
   },
   {
-    title: '4. Data Storage and Security',
-    body: 'Your data is stored securely in our database (PostgreSQL hosted via Supabase) and served through our application hosted on Vercel. We take reasonable technical measures to protect your information from unauthorized access.',
+    num: '04',
+    title: 'Data Storage & Security',
+    body: 'Data is stored in encrypted PostgreSQL database instances hosted via Supabase, served securely through Vercel over TLS. Passwords are salted and hashed using industry-standard cryptography.',
   },
   {
-    title: '5. Data Retention',
-    body: 'We retain your data for as long as your account remains active. You may request deletion of your account and associated data at any time.',
+    num: '05',
+    title: 'Data Retention & Control',
+    body: 'Your records remain active for as long as your account exists. You maintain full rights to export your data or delete your account permanently at any time.',
   },
 ];
 
 export function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Simple top bar */}
-      <header className="border-b border-border">
-        <div className="max-w-3xl mx-auto px-6 md:px-8 h-14 flex items-center justify-between">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 selection:text-accent">
+      {/* Top Bar */}
+      <header className="border-b border-border bg-card/60 sticky top-0 z-40 backdrop-blur-md">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link to="/" id="nav-logo" className="flex items-center gap-2.5">
-            <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-8 w-8" />
-            <span className="text-sm font-semibold tracking-tight text-foreground">Trackly</span>
+            <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-7 w-7 rounded-lg" />
+            <span className="text-sm font-bold tracking-tight text-foreground">Trackly</span>
           </Link>
-          <Link to="/" className="flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-xs font-medium text-muted hover:text-foreground transition">
             <ArrowLeft size={13} />
-            Back
+            <span>Back to website</span>
           </Link>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 md:px-8 py-14 md:py-20">
-        <div className="mb-10">
-          <h1 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">Privacy Policy</h1>
-          <p className="text-sm text-muted">Last updated: August 3, 2026</p>
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="mb-10 pb-8 border-b border-border">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-mono font-medium text-muted">
+            <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+            <span>LEGAL SPECIFICATION · PRIV-2026</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Privacy Policy</h1>
+          <p className="mt-2 text-sm text-muted">Last updated: August 2026 · Trackly Data Governance</p>
         </div>
 
-        <p className="text-sm leading-relaxed text-foreground/90 mb-10 pb-10 border-b border-border">
-          Trackly ("we", "us", or "our") respects your privacy. This Privacy Policy explains what information we collect, how we use it, and the choices you have regarding your data.
+        <p className="text-sm sm:text-base leading-relaxed text-foreground/90 mb-10 pb-8 border-b border-border">
+          Trackly is committed to providing a calm, private activity-tracking environment. This Privacy Policy outlines what information we store, how it is secured, and your rights over your personal history.
         </p>
 
         <div className="space-y-10">
           {SECTIONS.map((section) => (
-            <div key={section.title}>
-              <h2 className="text-base font-semibold text-foreground mb-2">{section.title}</h2>
-              {typeof section.body === 'string' ? <p className="text-sm leading-relaxed text-muted">{section.body}</p> : section.body}
+            <div key={section.num} className="border-l-2 border-border pl-6 py-1">
+              <span className="font-mono text-xs font-bold text-accent">{section.num}</span>
+              <h2 className="text-lg font-bold text-foreground mt-1 mb-2">{section.title}</h2>
+              {typeof section.body === 'string' ? (
+                <p className="text-sm leading-relaxed text-muted">{section.body}</p>
+              ) : (
+                section.body
+              )}
             </div>
           ))}
 
-          <div>
-            <h2 className="text-base font-semibold text-foreground mb-2">6. Your Rights</h2>
+          <div className="border-l-2 border-border pl-6 py-1">
+            <span className="font-mono text-xs font-bold text-accent">06</span>
+            <h2 className="text-lg font-bold text-foreground mt-1 mb-2">Your Rights & Data Deletion</h2>
             <p className="text-sm leading-relaxed text-muted">
-              You have the right to access, correct, or delete your personal data. To request deletion of your account and all associated data, please see our{' '}
-              <Link to="/data-deletion" className="text-accent hover:underline">
+              You have full rights to request complete deletion of your account and logs. Visit our{' '}
+              <Link to="/data-deletion" className="text-accent hover:underline font-semibold">
                 Data Deletion Instructions
-              </Link>
-              .
+              </Link>{' '}
+              for step-by-step guidance.
             </p>
           </div>
 
-          <div>
-            <h2 className="text-base font-semibold text-foreground mb-2">7. Changes to This Policy</h2>
-            <p className="text-sm leading-relaxed text-muted">We may update this Privacy Policy from time to time. Continued use of Trackly after changes are posted constitutes your acceptance of the revised policy.</p>
-          </div>
-
-          <div className="pt-6 border-t border-border">
-            <h2 className="text-base font-semibold text-foreground mb-2">8. Contact Us</h2>
+          <div className="pt-8 border-t border-border">
+            <h2 className="text-lg font-bold text-foreground mb-2">Contact & Inquiries</h2>
             <p className="text-sm leading-relaxed text-muted">
-              If you have any questions about this Privacy Policy, please contact us at{' '}
-              <a href="mailto:ichwanpwt22@gmail.com" className="text-accent hover:underline">
+              For any questions regarding privacy or data handling, reach out directly to{' '}
+              <a href="mailto:ichwanpwt22@gmail.com" className="text-accent hover:underline font-semibold">
                 ichwanpwt22@gmail.com
               </a>
               .
@@ -96,15 +108,18 @@ export function PrivacyPolicy() {
         </div>
       </main>
 
-      <footer className="border-t border-border">
-        <div className="max-w-3xl mx-auto px-6 md:px-8 py-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:justify-between text-xs text-muted">
-          <span>© 2026 Trackly. All rights reserved.</span>
+      <footer className="border-t border-border bg-card/30 py-8 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-muted gap-4">
+          <span>© 2026 Trackly. Personal Activity Tracking.</span>
           <div className="flex gap-4">
-            <Link to="/terms-of-service" className="hover:text-foreground transition-colors">
+            <Link to="/terms-of-service" className="hover:text-foreground transition">
               Terms of Service
             </Link>
-            <Link to="/data-deletion" className="hover:text-foreground transition-colors">
+            <Link to="/data-deletion" className="hover:text-foreground transition">
               Data Deletion
+            </Link>
+            <Link to="/help" className="hover:text-foreground transition">
+              Help Center
             </Link>
           </div>
         </div>

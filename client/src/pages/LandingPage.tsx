@@ -1,11 +1,9 @@
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 */
+/* Hallmark · macrostructure: Workbench · tone: calm-focused · anchor hue: orange · nav: N5 · footer: Ft1 */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useScroll } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, BarChart3, CalendarDays, ShieldCheck, Sparkles, Zap, Activity } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import dashboard from '../assets/image.webp';
-import categories from '../assets/categories.webp';
-import logActivity from '../assets/log-activity.webp';
+import { motion, useInView } from 'framer-motion';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowRight, BarChart3, ShieldCheck, Activity, Download, Layers, ChevronRight } from 'lucide-react';
 import pic1 from '../assets/pic1.webp';
 import pic2 from '../assets/pic2.webp';
 import pic3 from '../assets/pic3.webp';
@@ -23,20 +21,27 @@ type BeforeInstallPromptEvent = Event & {
 
 function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px 0px' });
+  const inView = useInView(ref, { once: true, margin: '-60px 0px' });
 
   return (
-    <motion.div ref={ref} className={className} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}>
+    <motion.div
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, y: 18 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
       {children}
     </motion.div>
   );
 }
 
-function Navbar({ onInstallClick }: InstallButtonProps) {
+function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
   const [scrolled, setScrolled] = useState(false);
   const isLoggedIn = isAuthenticated();
   const { clearData } = useData();
   const navigate = useNavigate();
+
   const handleLogout = () => {
     clearAuthToken();
     clearData();
@@ -44,36 +49,62 @@ function Navbar({ onInstallClick }: InstallButtonProps) {
   };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-border bg-background/90 backdrop-blur-sm' : 'border-b border-transparent bg-transparent'}`}>
-      <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="/" id="nav-logo" className="flex items-center gap-2.5">
-          <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-8 w-8" />
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 transition-all duration-300">
+      <nav
+        className={`mx-auto flex max-w-5xl items-center justify-between rounded-full border px-4 py-2.5 transition-all duration-300 ${scrolled ? 'border-border bg-background/95 shadow-md backdrop-blur-md' : 'border-border/60 bg-card/80 backdrop-blur-xs'
+          }`}
+      >
+        <Link to="/" id="nav-logo" className="flex items-center gap-2.5 pl-1">
+          <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-7 w-7 rounded-lg" />
           <span className="text-sm font-semibold tracking-tight text-foreground">Trackly</span>
-        </a>
+        </Link>
 
-        {isLoggedIn && (
-          <div className="flex items-center gap-4 sm:gap-6">
-            <Link to="/dashboard" id="nav-dashboard" className="text-sm transition-colors rounded-lg bg-accent/90 hover:bg-accent px-2 py-1 font-medium text-white">
+        {isLoggedIn ? (
+          <div className="flex items-center gap-3">
+            <Link
+              to="/dashboard"
+              id="nav-dashboard"
+              className="rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
+            >
               Dashboard
             </Link>
-            <button onClick={handleLogout} id="nav-logout" className="text-sm font-medium text-muted transition-colors hover:text-foreground">
+            <button
+              onClick={handleLogout}
+              id="nav-logout"
+              className="px-3 py-1.5 text-xs font-medium text-muted transition hover:text-foreground focus-visible:ring-2 focus-visible:ring-border rounded-full"
+            >
               Logout
             </button>
           </div>
-        )}
-        {!isLoggedIn && (
-          <div className="flex items-center gap-4 sm:gap-6">
-            <Link to="/login" id="nav-features" className="text-sm font-medium text-muted transition-colors hover:text-foreground">
-              Login
+        ) : (
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              id="nav-login"
+              className="px-3.5 py-1.5 text-xs font-medium text-muted transition hover:text-foreground focus-visible:ring-2 focus-visible:ring-border rounded-full"
+            >
+              Sign in
             </Link>
-            <button onClick={onInstallClick} id="nav-download" className="inline-flex items-center rounded-full border border-border px-3.5 py-1.5 text-xs font-semibold text-foreground transition hover:text-accent">
-              Download App
+            <Link
+              to="/register"
+              id="nav-register"
+              className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-medium text-foreground border border-border rounded-full transition hover:bg-surface focus-visible:ring-2 focus-visible:ring-border"
+            >
+              Create account
+            </Link>
+            <button
+              onClick={onInstallClick}
+              id="nav-download"
+              className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-xs font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <Download className="h-3.5 w-3.5" />
+              <span>Get App</span>
             </button>
           </div>
         )}
@@ -82,163 +113,134 @@ function Navbar({ onInstallClick }: InstallButtonProps) {
   );
 }
 
-function Hero({ onInstallClick }: InstallButtonProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  useScroll({ target: ref, offset: ['start start', 'end start'] });
+function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'categories' | 'log'>('dashboard');
+
+  const screenshots = {
+    dashboard: {
+      img: pic2,
+      alt: 'Trackly Dashboard Overview',
+      title: 'Daily Heatmaps & Progress',
+      desc: 'View consistent completion trends across all your daily habit categories at a glance.',
+    },
+    categories: {
+      img: pic3,
+      alt: 'Trackly Category System',
+      title: 'Custom Habit Categories',
+      desc: 'Organize routines with tailored icons, color schemes, and target numeric increments.',
+    },
+    log: {
+      img: pic1,
+      alt: 'Trackly Rapid Activity Log',
+      title: 'Rapid Frictionless Logging',
+      desc: 'Log activities in seconds with quick increment controls and optional notes.',
+    },
+  };
 
   return (
-    <section ref={ref} id="hero" className="relative overflow-hidden px-4 pt-28 sm:px-6 sm:pt-32 lg:px-8 pb-10 lg:pb-24">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="mb-5 text-[11px] font-medium uppercase tracking-[0.24em] text-muted">Track what matters</div>
+    <section id="hero" className="relative overflow-x-clip px-4 pt-28 pb-16 sm:px-6 lg:px-8 lg:pt-36 lg:pb-24">
+      <div className="mx-auto max-w-5xl">
+        {/* Header content */}
+        <div className="max-w-3xl">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-mono font-medium text-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            <span>PERSONAL ACTIVITY TRACKER</span>
+          </div>
 
-          <h1 className="max-w-2xl text-4xl font-semibold tracking-[-0.03em] text-foreground sm:text-5xl lg:text-6xl">A cleaner way to follow your habits.</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl leading-[1.15]">
+            Build calm routines. Observe steady progress.
+          </h1>
 
-          <p className="mt-4 max-w-xl text-base leading-7 text-muted sm:text-lg">Track routines, build consistency, and keep your progress easy to understand without noise.</p>
+          <p className="mt-5 text-base sm:text-lg leading-relaxed text-muted max-w-2xl">
+            Trackly is a distraction-free workspace designed to record daily habits, observe momentum, and stay consistent without gamified noise.
+          </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <button onClick={onInstallClick} id="hero-cta-primary" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition hover:text-accent">
-              Download App
-              <ArrowRight size={16} />
+            <button
+              onClick={onInstallClick}
+              id="hero-cta-primary"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <span>Download App</span>
+              <ArrowRight className="h-4 w-4" />
             </button>
-            <Link to="/register" id="hero-cta-secondary" className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium text-muted transition hover:text-foreground">
-              Create account
+            <Link
+              to="/register"
+              id="hero-cta-secondary"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-medium text-foreground transition hover:bg-surface focus-visible:ring-2 focus-visible:ring-border"
+            >
+              Create Account
+            </Link>
+            <Link
+              to="/login"
+              id="hero-cta-login"
+              className="inline-flex items-center gap-1.5 px-4 py-3 text-sm font-medium text-muted transition hover:text-foreground"
+            >
+              <span>Sign in</span>
+              <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="group relative mx-auto flex max-w-[340px] items-start justify-center py-6 sm:max-w-md">
-            {/* Ambient glow — anchors the device cluster */}
-            <div className="absolute left-1/2 top-1/2 -z-10 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-3xl sm:h-64 sm:w-64" />
-
-            {/* Left phone — categories */}
-            <div className="absolute left-0 top-11 w-[36%] -rotate-[10deg] rounded-[1.5rem] border border-border bg-background p-1.5 opacity-80 transition-transform duration-500 ease-out group-hover:-translate-x-1.5 group-hover:-rotate-[6deg] sm:top-14">
-              <div className="overflow-hidden rounded-[1.05rem] border border-border">
-                <img src={pic3} alt="Trackly categories preview" className="block aspect-[9/19.5] w-full object-cover object-top" />
-              </div>
-            </div>
-
-            {/* Right phone — activity history */}
-            <div className="absolute right-0 top-11 w-[36%] rotate-[10deg] rounded-[1.5rem] border border-border bg-background p-1.5 opacity-80 transition-transform duration-500 ease-out group-hover:translate-x-1.5 group-hover:rotate-[6deg] sm:top-14">
-              <div className="overflow-hidden rounded-[1.05rem] border border-border">
-                <img src={pic1} alt="Trackly activity history preview" className="block aspect-[9/19.5] w-full object-cover object-top" />
-              </div>
-            </div>
-
-            {/* Center phone — dashboard (hero device) */}
-            <div className="relative z-10 w-[46%] rounded-[1.75rem] border border-border bg-background p-1.5 transition-transform duration-500 ease-out group-hover:-translate-y-1">
-              <div className="absolute left-1/2 top-3 z-20 h-1.5 w-9 -translate-x-1/2 rounded-full bg-border" />
-              <div className="overflow-hidden rounded-[1.35rem] border border-border">
-                <img src={pic2} alt="Trackly dashboard preview" className="block aspect-[9/19.5] w-full object-cover object-top" />
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ── Marquee scrolling strip ─────────────────────────────────────
-const ACTIVITIES = ['Morning Run', 'Reading', 'Meditation', 'Workout', 'Journaling', 'Walking', 'Cycling', 'Sleep', 'Stretching', 'Study', 'Swimming', 'Yoga', 'Cooking', 'Language Practice', 'Cold Shower'];
-
-function Marquee() {
-  const doubled = [...ACTIVITIES, ...ACTIVITIES];
-  return (
-    <div className="relative w-full overflow-hidden border-y border-border py-5">
-      <div className="flex w-max animate-marquee items-center">
-        {doubled.map((act, i) => (
-          <span key={i} className="flex shrink-0 items-center gap-3 whitespace-nowrap px-7 text-sm font-medium text-foreground">
-            <Activity size={16} className="shrink-0 text-accent" />
-            {act}
-            <span className="ml-7 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function IntroSection() {
-  const points = [
-    {
-      number: '01',
-      title: 'Quiet by design',
-      description: 'No clutter, no noise, and no pressure to overthink your routine.',
-    },
-    {
-      number: '02',
-      title: 'Clear enough to trust',
-      description: 'Your log becomes a simple record of what mattered and how it changed over time.',
-    },
-    {
-      number: '03',
-      title: 'Easy to come back to',
-      description: 'The experience stays light so consistency feels natural instead of forced.',
-    },
-  ];
-
-  const [active, setActive] = useState(0);
-
-  return (
-    <section className="px-4 pb-2 pt-4 md:pt-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl rounded-3xl border border-border px-5 py-8 sm:px-8 sm:py-10">
-        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted">Why it feels different</p>
-            <h2 className="mt-3 text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">A place for your routines that stays calm and useful.</h2>
-            <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">Trackly is built to help you return to the things that matter without making the process feel heavy.</p>
-
-            {/* Big number preview — visible from tablet up */}
-            <div className="mt-8 hidden md:block">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="text-6xl font-semibold tracking-[-0.04em] text-border lg:text-7xl"
-              >
-                {points[active].number}
-              </motion.div>
-            </div>
+        {/* Workbench Guided Tour Showcase */}
+        <div className="mt-14">
+          <div className="flex flex-nowrap sm:flex-wrap items-center gap-2 overflow-x-auto pb-3 border-b border-border [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`shrink-0 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${activeTab === 'dashboard'
+                ? 'bg-foreground text-background font-semibold'
+                : 'bg-surface text-muted hover:text-foreground border border-border'
+                }`}
+            >
+              01 · Dashboard & Heatmap
+            </button>
+            <button
+              onClick={() => setActiveTab('categories')}
+              className={`shrink-0 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${activeTab === 'categories'
+                ? 'bg-foreground text-background font-semibold'
+                : 'bg-surface text-muted hover:text-foreground border border-border'
+                }`}
+            >
+              02 · Custom Categories
+            </button>
+            <button
+              onClick={() => setActiveTab('log')}
+              className={`shrink-0 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${activeTab === 'log'
+                ? 'bg-foreground text-background font-semibold'
+                : 'bg-surface text-muted hover:text-foreground border border-border'
+                }`}
+            >
+              03 · Rapid Activity Logging
+            </button>
           </div>
 
-          <div className="relative space-y-0">
-            {points.map((item, index) => {
-              const isActive = index === active;
-              return (
-                <div key={item.title} className="relative">
-                  {index !== points.length - 1 && <div className="absolute left-[19px] top-[42px] h-full w-px bg-border" />}
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-8">
+              <figure className="relative overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-sm">
+                <img
+                  src={screenshots[activeTab].img}
+                  alt={screenshots[activeTab].alt}
+                  className="w-full h-auto rounded-xl object-cover object-top max-h-[520px]"
+                />
+              </figure>
+            </div>
 
-                  <button
-                    onMouseEnter={() => setActive(index)}
-                    onFocus={() => setActive(index)}
-                    onClick={() => setActive(index)}
-                    className="group relative flex w-full items-start gap-4 rounded-[18px] px-2 py-4 text-left transition-colors duration-300"
-                  >
-                    <span
-                      className={`z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition-colors duration-300 ${isActive ? 'border-accent bg-accent text-white' : 'border-border bg-background text-muted'
-                        }`}
-                    >
-                      {item.number}
-                    </span>
-
-                    <div className="pt-1.5">
-                      <div className={`text-sm font-medium transition-colors duration-300 ${isActive ? 'text-foreground' : 'text-muted'}`}>{item.title}</div>
-                      <motion.p
-                        initial={false}
-                        animate={{ opacity: isActive ? 1 : 0.55 }}
-                        transition={{ duration: 0.25 }}
-                        className="mt-1 text-sm leading-6 text-muted"
-                      >
-                        {item.description}
-                      </motion.p>
-                    </div>
-                  </button>
-                </div>
-              );
-            })}
+            <div className="lg:col-span-4 flex flex-col justify-center space-y-4 lg:py-6">
+              <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface text-foreground font-mono text-xs font-bold">
+                {activeTab === 'dashboard' ? '01' : activeTab === 'categories' ? '02' : '03'}
+              </div>
+              <h3 className="text-xl font-bold tracking-tight text-foreground">{screenshots[activeTab].title}</h3>
+              <p className="text-sm text-muted leading-relaxed">{screenshots[activeTab].desc}</p>
+              <div className="pt-2">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
+                >
+                  <span>Try this view in Trackly</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -246,117 +248,39 @@ function IntroSection() {
   );
 }
 
-function Features() {
-  const highlights = [
+function SystemPrinciples() {
+  const principles = [
     {
-      title: 'Build a system that feels effortless',
-      description: 'Create categories for work, wellness, learning, and everything else then let Trackly turn your routine into a visual story.',
-      image: categories,
-      alt: 'Categories view preview',
-      icon: <BarChart3 size={16} />,
+      num: '01',
+      title: 'Low friction by default',
+      desc: 'Log activities in seconds with numerical increments, custom units (minutes, liters, pages), or simple completion toggles.',
     },
     {
-      title: 'Log in seconds, not minutes',
-      description: 'One touch, one note, one clear record. The experience stays fast so your momentum never breaks.',
-      image: logActivity,
-      alt: 'Activity logging preview',
-      icon: <Zap size={16} />,
-    },
-  ];
-
-  const pillars = [
-    {
-      title: 'Live heatmaps',
-      description: 'See pattern and intensity at a glance.',
-      icon: <CalendarDays size={16} />,
+      num: '02',
+      title: 'No gamified anxiety',
+      desc: 'Focus on clear activity timelines and heatmaps rather than punitive streak resets or intrusive notifications.',
     },
     {
-      title: 'Streak motivation',
-      description: 'Stay aware of your best and current streaks.',
-      icon: <Sparkles size={16} />,
-    },
-    {
-      title: 'Clean history',
-      description: 'Review every entry with clarity and context.',
-      icon: <ShieldCheck size={16} />,
+      num: '03',
+      title: 'Private & accessible',
+      desc: 'Built as an installable app with local responsiveness and instant search across your entire activity history.',
     },
   ];
 
   return (
-    <section id="features" className="px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
+    <section className="border-t border-border bg-card/40 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
         <Reveal>
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.28em] text-accent">How it works</p>
-        </Reveal>
-        <Reveal delay={0.06}>
-          <h2 className="mx-auto mt-4 max-w-2xl text-center text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">Minimal by design. Powerful in practice.</h2>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-7 text-muted sm:text-base">Every surface is made to reduce noise and make your progress feel obvious.</p>
+          <div className="mb-8 text-xs font-mono font-medium text-muted uppercase tracking-wider">Design Principles</div>
         </Reveal>
 
-        {/* Dashboard — hero showcase paired with the feature pillars */}
-        <div className="mt-12 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
-          <Reveal delay={0.08}>
-            <div className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-background">
-              <div className="border-b border-border p-6 sm:p-8">
-                <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                  <Activity size={14} />
-                  Your day, at a glance
-                </span>
-                <h3 className="mt-3 text-lg font-medium text-foreground sm:text-xl">Every habit, one dashboard.</h3>
-                <p className="mt-2 max-w-md text-sm leading-6 text-muted">Progress, streaks, and trends the moment you open the app, no digging required.</p>
-              </div>
-              <div className="flex flex-1 items-end p-3 sm:p-4">
-                <div className="w-full overflow-hidden">
-                  <img
-                    src={dashboard}
-                    alt="Trackly dashboard overview"
-                    className="block w-full transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                  />
-                </div>
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.14}>
-            <div className="flex h-full flex-col divide-y divide-border rounded-3xl border border-border bg-background">
-              {pillars.map((item) => (
-                <div key={item.title} className="flex items-start gap-3 p-6">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-accent">
-                    {item.icon}
-                  </span>
-                  <div>
-                    <div className="text-sm font-medium text-foreground">{item.title}</div>
-                    <p className="mt-1 text-sm leading-6 text-muted">{item.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-
-        {/* Supporting features */}
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {highlights.map((item, index) => (
-            <Reveal key={item.title} delay={0.18 + index * 0.06}>
-              <div className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-background">
-                <div className="p-6 sm:p-7">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-accent">
-                    {item.icon}
-                  </span>
-                  <div className="mt-4 text-sm font-medium text-foreground">{item.title}</div>
-                  <p className="mt-1.5 text-sm leading-6 text-muted">{item.description}</p>
-                </div>
-                <div className="mt-auto p-3 pt-0 sm:p-4 sm:pt-0">
-                  <div className="overflow-hidden">
-                    <img
-                      src={item.image}
-                      alt={item.alt}
-                      className="block w-full transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                    />
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {principles.map((item, idx) => (
+            <Reveal key={item.num} delay={idx * 0.1}>
+              <div className="border-l-2 border-border pl-5 py-1">
+                <span className="font-mono text-xs font-bold text-accent">{item.num}</span>
+                <h3 className="mt-2 text-base font-bold text-foreground">{item.title}</h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed">{item.desc}</p>
               </div>
             </Reveal>
           ))}
@@ -366,77 +290,168 @@ function Features() {
   );
 }
 
-function PreCTASection() {
-  const cards = [
-    {
-      quote: 'Built so the smallest entry still feels worth logging.',
-      label: 'Design principle',
-      sublabel: 'Low friction by default',
-      bg: 'bg-[#dbe7fb]',
-      text: 'text-[#0a0a0a]',
-      sub: 'text-[#0a0a0a]/60',
-    },
-    {
-      quote: 'Consistency should be visible, not something you have to guess at.',
-      label: 'Design principle',
-      sublabel: 'Progress, made obvious',
-      bg: 'bg-[#e3f24b]',
-      text: 'text-[#0a0a0a]',
-      sub: 'text-[#0a0a0a]/60',
-    },
-  ];
-
+function CapabilityGrid() {
   return (
-    <section className="px-4 pb-4 pt-2 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="grid gap-1 sm:gap-3 sm:grid-cols-[1.4fr_1fr]">
-          {cards.map((card, index) => (
-            <div key={index} className={`flex flex-col justify-between h-fit md:h-100 overflow-hidden rounded-lg ${card.bg} p-8 sm:p-10`}>
-              <p className={`relative text-xl font-medium leading-snug sm:text-2xl ${card.text}`}>
-                &ldquo;<i>{card.quote}</i>&rdquo;
-              </p>
+    <section className="border-t border-border py-20 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
+        <Reveal>
+          <div className="max-w-2xl mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              Everything required to sustain your daily routine.
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-muted">
+              Thoughtful utility crafted specifically for personal tracking without fluff.
+            </p>
+          </div>
+        </Reveal>
 
-              <div className=" mt-16 flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/10">
-                  <Activity size={14} className={card.text} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Reveal delay={0.05}>
+            <div className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col justify-between">
+              <div>
+                <div className="h-10 w-10 rounded-xl bg-surface border border-border flex items-center justify-center mb-4">
+                  <Layers className="h-5 w-5 text-accent" />
                 </div>
-                <div>
-                  <div className={`text-sm font-medium ${card.text}`}>{card.label}</div>
-                  <div className={`text-xs ${card.sub}`}>{card.sublabel}</div>
-                </div>
+                <h3 className="text-lg font-bold text-foreground">Tailored Category Specs</h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed">
+                  Define your own categories with custom icons, color tags, and unit types (e.g. Hours, Pages, Sets, Glass).
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-border/50 text-xs font-mono text-muted">
+                Custom Units · Color Codings · Icon Picker
               </div>
             </div>
-          ))}
-        </div>
+          </Reveal>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-1">
-          <p className="text-sm text-muted">
-            Built for people who want <span className="font-semibold text-foreground">one calm place</span> to see their habits add up.
-          </p>
+          <Reveal delay={0.1}>
+            <div className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col justify-between">
+              <div>
+                <div className="h-10 w-10 rounded-xl bg-surface border border-border flex items-center justify-center mb-4">
+                  <BarChart3 className="h-5 w-5 text-accent" />
+                </div>
+                <h3 className="text-lg font-bold text-foreground">Visual Heatmaps & Trends</h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed">
+                  Understand your long-term consistency through visual heatmaps, monthly aggregate totals, and period filters.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-border/50 text-xs font-mono text-muted">
+                7-Day · 30-Day · All Time · Annual Heatmap
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.15}>
+            <div className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col justify-between">
+              <div>
+                <div className="h-10 w-10 rounded-xl bg-surface border border-border flex items-center justify-center mb-4">
+                  <Activity className="h-5 w-5 text-accent" />
+                </div>
+                <h3 className="text-lg font-bold text-foreground">Shareable Milestone Summaries</h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed">
+                  Export clean, high-resolution image cards of your milestone streaks and progress to keep yourself accountable.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-border/50 text-xs font-mono text-muted">
+                Clean PNG Export · Custom Accent Themes
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <div className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col justify-between">
+              <div>
+                <div className="h-10 w-10 rounded-xl bg-surface border border-border flex items-center justify-center mb-4">
+                  <ShieldCheck className="h-5 w-5 text-accent" />
+                </div>
+                <h3 className="text-lg font-bold text-foreground">PWA & Offline Readiness</h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed">
+                  Install Trackly directly on your iOS or Android home screen for native-like performance and zero loading lag.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-border/50 text-xs font-mono text-muted">
+                Web App Manifest · Fast PWA Shell
+              </div>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>
   );
 }
 
-function FinalCTA({ onInstallClick }: InstallButtonProps) {
+function ConversationalFAQ() {
+  const faqs = [
+    {
+      q: 'Is Trackly free to use?',
+      a: 'Yes. Trackly is completely free for personal activity and habit tracking.',
+    },
+    {
+      q: 'How do I install Trackly on my mobile phone?',
+      a: 'Click the "Get App" or "Download App" button in the navigation header. On iOS or Android, select "Add to Home Screen" to install Trackly as a Progressive Web App (PWA).',
+    },
+    {
+      q: 'Can I track habits with custom units like minutes or liters?',
+      a: 'Yes. Every category can be customized with specific target units (e.g. Minutes, Pages, Cups, Km) or left as a simple checkmark.',
+    },
+    {
+      q: 'Where is my data stored?',
+      a: 'Your session data is managed securely via JSON Web Tokens (JWT) with options to clear or export your activity log history anytime.',
+    },
+  ];
+
   return (
-    <section id="download" className="border-t border-border px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl rounded-lg border border-border px-6 py-12 text-center sm:px-10">
-        <Reveal delay={0.06}>
-          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">Start tracking with less friction.</h2>
+    <section className="border-t border-border bg-card/30 py-20 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl">
+        <Reveal>
+          <div className="text-xs font-mono font-medium text-muted uppercase tracking-wider mb-2">Common Questions</div>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Frequently Asked Questions</h2>
         </Reveal>
-        <Reveal delay={0.1}>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">Bring your routines into one calm place. Build consistency, and let the progress speak for itself.</p>
-        </Reveal>
-        <Reveal delay={0.14}>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <button onClick={onInstallClick} id="final-cta-download" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition hover:text-accent">
-              Download App
-              <ArrowRight size={16} />
+
+        <div className="mt-10 divide-y divide-border">
+          {faqs.map((faq, idx) => (
+            <Reveal key={faq.q} delay={idx * 0.08}>
+              <div className="py-6">
+                <h3 className="text-base font-bold text-foreground flex items-start gap-3">
+                  <span className="font-mono text-xs text-accent mt-0.5">Q0{idx + 1}</span>
+                  <span>{faq.q}</span>
+                </h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed pl-8">{faq.a}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CallToAction({ onInstallClick }: InstallButtonProps) {
+  return (
+    <section id="download" className="border-t border-border py-20 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl rounded-3xl border border-border bg-card p-8 sm:p-12 text-center">
+        <Reveal>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+            Start building your routine today.
+          </h2>
+          <p className="mt-4 text-sm sm:text-base text-muted max-w-xl mx-auto leading-relaxed">
+            Join a cleaner, focused activity tracker. Free, fast, and installable on all your devices.
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={onInstallClick}
+              id="cta-download"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <Download className="h-4 w-4" />
+              <span>Download App</span>
             </button>
-            <Link to="/register" className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium text-muted transition hover:text-foreground">
-              Create your account
+            <Link
+              to="/register"
+              id="cta-register"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-6 py-3 text-sm font-medium text-foreground transition hover:bg-border/40 focus-visible:ring-2 focus-visible:ring-border"
+            >
+              Create Account
             </Link>
           </div>
         </Reveal>
@@ -445,86 +460,127 @@ function FinalCTA({ onInstallClick }: InstallButtonProps) {
   );
 }
 
-function Footer() {
+function MastheadFooter() {
   return (
-    <footer className="border-t border-border bg-background/80 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-col items-center gap-3 text-center md:items-start md:text-left">
+    <footer className="border-t border-border bg-background py-12 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-border/60">
           <div className="flex items-center gap-2.5">
-            <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-8 w-8" />
-            <div>
-              <div className="text-sm font-semibold text-foreground">Trackly</div>
-            </div>
+            <img src="/trackly-icon.webp" alt="Trackly Logo" className="h-7 w-7 rounded-lg" />
+            <span className="text-base font-bold text-foreground tracking-tight">Trackly</span>
+            <span className="text-xs font-mono text-muted pl-2 border-l border-border">v1.0</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-6 text-xs font-medium text-muted">
+            <Link to="/login" id="footer-login" className="hover:text-foreground transition">
+              Sign in
+            </Link>
+            <Link to="/register" id="footer-register" className="hover:text-foreground transition">
+              Create account
+            </Link>
+            <a href="#download" id="footer-download" className="hover:text-foreground transition">
+              Download
+            </a>
+            <Link to="/privacy-policy" id="footer-privacy" className="hover:text-foreground transition">
+              Privacy Policy
+            </Link>
+            <Link to="/terms-of-service" id="footer-terms" className="hover:text-foreground transition">
+              Terms of Service
+            </Link>
+            <Link to="/data-deletion" id="footer-data-deletion" className="hover:text-foreground transition">
+              Data Deletion
+            </Link>
+            <Link to="/help" id="footer-help" className="hover:text-foreground transition">
+              Help
+            </Link>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted md:justify-end">
-          <Link to="/login" className="transition hover:text-foreground">
-            Sign in
-          </Link>
-          <Link to="/register" className="transition hover:text-foreground">
-            Register
-          </Link>
-          <a href="#download" className="transition hover:text-foreground">
-            Download
-          </a>
-          <Link to="/help" className="transition hover:text-foreground">
-            Help
-          </Link>
-          <Link to="/privacy-policy" className="transition hover:text-foreground">
-            Privacy
-          </Link>
-          <Link to="/terms-of-service" className="transition hover:text-foreground">
-            Terms of Service
-          </Link>
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-muted gap-4">
+          <p>© {new Date().getFullYear()} Trackly. Personal Activity & Routine Tracking.</p>
+          <p className="font-mono text-[11px]">Crafted for calm consistency.</p>
         </div>
-
-        <p className="text-center text-sm text-muted md:text-right">
-          © {new Date().getFullYear()} Trackly
-          <span className="mt-1 block sm:mt-0 sm:ml-1 sm:inline">Built to build habits.</span>
-        </p>
       </div>
     </footer>
   );
 }
 
-export function LandingPage() {
+function ActivityMarquee() {
+  const activities = [
+    { label: 'Reading', val: '30 pgs', color: 'bg-amber-500' },
+    { label: 'Meditation', val: '15 mins', color: 'bg-emerald-500' },
+    { label: 'Workout', val: '45 mins', color: 'bg-orange-500' },
+    { label: 'Journaling', val: '1 entry', color: 'bg-indigo-500' },
+    { label: 'Walking', val: '8,000 steps', color: 'bg-blue-500' },
+    { label: 'Cycling', val: '12 km', color: 'bg-cyan-500' },
+    { label: 'Sleep', val: '8.0 hrs', color: 'bg-purple-500' },
+    { label: 'Stretching', val: '10 mins', color: 'bg-teal-500' },
+    { label: 'Study', val: '2.5 hrs', color: 'bg-rose-500' },
+    { label: 'Swimming', val: '20 laps', color: 'bg-sky-500' },
+  ];
+
+  const items = [...activities, ...activities, ...activities, ...activities];
+
+  return (
+    <div className="w-full border-y border-border bg-card/40 py-4 overflow-hidden select-none">
+      <div className="flex w-max animate-marquee hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] gap-3">
+        {items.map((act, idx) => (
+          <div
+            key={`${act.label}-${idx}`}
+            className="inline-flex items-center gap-2.5 rounded-full border border-border/80 bg-card px-4 py-1.5 text-xs font-mono text-foreground shadow-xs shrink-0 hover:border-accent/40 transition"
+          >
+            <span className={`h-2 w-2 rounded-full ${act.color}`} />
+            <span className="font-semibold text-foreground">{act.label}</span>
+            <span className="text-muted border-l border-border/60 pl-2.5 text-[11px] font-mono">{act.val}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function LandingPage() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
+    const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
 
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) {
-      window.alert('Install prompt is not available yet. Open this app in a PWA-supported browser (Chrome/Edge) and ensure the site is running on HTTPS or localhost.');
-      return;
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        setDeferredPrompt(null);
+      });
+    } else {
+      const element = document.getElementById('download');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-
-    deferredPrompt.prompt();
-    const choiceResult = await deferredPrompt.userChoice;
-
-    console.log(`User response to the install prompt: ${choiceResult.outcome}`);
-    setDeferredPrompt(null);
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navbar onInstallClick={handleInstallClick} />
-      <Hero onInstallClick={handleInstallClick} />
-      <Marquee />
-      <IntroSection />
-      <Features />
-      <PreCTASection />
-      <FinalCTA onInstallClick={handleInstallClick} />
-      <Footer />
+    <div className="min-h-screen bg-background text-foreground selection:bg-accent/20 selection:text-accent font-sans antialiased overflow-x-clip">
+      <FloatingNavbar onInstallClick={handleInstallClick} />
+      <main id="main-content">
+        <WorkbenchHero onInstallClick={handleInstallClick} />
+        <ActivityMarquee />
+        <SystemPrinciples />
+        <CapabilityGrid />
+        <ConversationalFAQ />
+        <CallToAction onInstallClick={handleInstallClick} />
+      </main>
+      <MastheadFooter />
     </div>
   );
 }

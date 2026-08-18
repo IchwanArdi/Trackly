@@ -280,9 +280,6 @@ export function CategoriesPage() {
               <div
                 key={cat.id}
                 className={`bg-card border rounded-2xl overflow-hidden transition-all shadow-sm ${isEditing ? 'border-accent/60 ring-1 ring-accent/30' : isDeleting ? 'border-red-500/40 bg-red-500/5' : 'border-border'}`}
-                style={{
-                  background: `linear-gradient(135deg, ${cat.color}08 0%, var(--color-card) 60%)`,
-                }}
               >
                 <div className="flex items-center gap-3 p-4">
                   {/* Category icon with color halo */}

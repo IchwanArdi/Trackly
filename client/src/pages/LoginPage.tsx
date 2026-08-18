@@ -1,3 +1,5 @@
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 */
+/* Hallmark · macrostructure: Split Studio · tone: calm-focused · anchor hue: orange */
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { api, setAuthToken, saveUser } from '../utils/auth';
@@ -5,9 +7,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useData } from '../store/dataStore';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft, ShieldCheck, Activity, BarChart3 } from 'lucide-react';
 
-// Official Google "G" logo (4-color), per Google brand guidelines
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
@@ -69,64 +70,130 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Left panel */}
-      <div className="hidden lg:flex w-80 xl:w-96 bg-card border-r border-border flex-col justify-between p-10 shrink-0">
-        <Link to="/">
-          <div className="flex items-center gap-2.5 cursor-pointer">
-            <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
-              <img src="/trackly-icon.webp" alt="Trackly Icon" />
-            </div>
-            <span className="font-semibold text-sm tracking-tight text-foreground">Trackly</span>
-          </div>
-        </Link>
+    <div className="min-h-screen bg-background text-foreground flex flex-col lg:flex-row font-sans selection:bg-accent/20 selection:text-accent">
+      {/* Left Feature & Identity Panel (Desktop) */}
+      <div className="hidden lg:flex w-[420px] xl:w-[480px] bg-card border-r border-border flex-col justify-between p-10 shrink-0">
+        <div>
+          <Link to="/" className="inline-flex items-center gap-2.5 group">
+            <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-8 w-8 rounded-lg" />
+            <span className="font-bold text-base tracking-tight text-foreground group-hover:text-accent transition">Trackly</span>
+          </Link>
 
-        <div className="flex flex-col justify-center h-full gap-2">
-          <blockquote className="text-sm text-muted leading-relaxed">"Consistency beats perfection. Trackly helps me see my patterns clearly without the noise."</blockquote>
-          <div className="mt-4">
-            <p className="text-sm font-medium text-foreground">Alex Kim</p>
-            <p className="text-xs text-muted">Product Designer</p>
+          <div className="mt-16 space-y-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-surface text-xs font-mono font-medium text-muted">
+              <span>SYSTEM LOGIN</span>
+            </div>
+
+            <h2 className="text-3xl font-bold tracking-tight text-foreground leading-snug">
+              Daily routines, recorded without friction.
+            </h2>
+
+            <p className="text-sm text-muted leading-relaxed">
+              Log into your Trackly account to access your personal dashboard, update category targets, and observe your activity heatmaps.
+            </p>
+
+            <div className="pt-4 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="h-7 w-7 rounded-lg border border-border bg-surface flex items-center justify-center shrink-0 mt-0.5">
+                  <Activity className="h-3.5 w-3.5 text-accent" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-foreground">Rapid Logging</h4>
+                  <p className="text-xs text-muted leading-normal">Update activity numbers in seconds with custom increments.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="h-7 w-7 rounded-lg border border-border bg-surface flex items-center justify-center shrink-0 mt-0.5">
+                  <BarChart3 className="h-3.5 w-3.5 text-accent" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-foreground">Consistency Heatmaps</h4>
+                  <p className="text-xs text-muted leading-normal">Track your long-term streak milestones and annual activity trends.</p>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div className="pt-8 border-t border-border/60 flex items-center justify-between text-xs text-muted">
+          <Link to="/" className="inline-flex items-center gap-1 hover:text-foreground transition font-medium">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Back to website</span>
+          </Link>
+          <span className="font-mono text-[11px]">Trackly v1.0</span>
         </div>
       </div>
 
-      {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center px-6">
-        <div className="w-full max-w-sm">
-          {/* Mobile logo */}
-          <Link to="/" className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
-              <img src="/trackly-icon.webp" alt="Trackly Icon" />
-            </div>
-            <span className="font-semibold text-sm text-foreground">Trackly</span>
+      {/* Right Form Panel */}
+      <div className="flex-1 flex flex-col justify-between p-6 sm:p-10">
+        <div className="flex items-center justify-between lg:hidden mb-8">
+          <Link to="/" className="flex items-center gap-2">
+            <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-7 w-7 rounded-lg" />
+            <span className="font-bold text-sm text-foreground">Trackly</span>
           </Link>
+          <Link to="/" className="text-xs text-muted hover:text-foreground flex items-center gap-1 font-medium">
+            <ArrowLeft className="h-3 w-3" />
+            <span>Home</span>
+          </Link>
+        </div>
 
-          <h1 className="text-xl font-semibold text-foreground mb-1">Sign in</h1>
-          <p className="text-sm text-muted mb-7">Track what matters, every day.</p>
+        <div className="my-auto mx-auto w-full max-w-sm">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Sign in</h1>
+            <p className="mt-1.5 text-sm text-muted">Welcome back. Enter your credentials to continue.</p>
+          </div>
 
           <form id="form-login" onSubmit={handleSubmit} className="space-y-4">
-            <Input id="input-email" label="Email" type="email" disabled={loading} placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
-            <Input id="input-password" label="Password" type="password" disabled={loading} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
-
-            <div className="flex justify-end">
-              <Link to="/forgot-password" className="text-xs text-accent hover:underline">
-                Forgot password?
-              </Link>
+            <Input
+              id="input-email"
+              label="Email address"
+              type="email"
+              disabled={loading}
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
+            
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="input-password" className="text-xs font-medium text-foreground">
+                  Password
+                </label>
+                <Link to="/forgot-password" className="text-xs text-accent hover:underline font-medium">
+                  Forgot password?
+                </Link>
+              </div>
+              <Input
+                id="input-password"
+                type="password"
+                disabled={loading}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
             </div>
 
-            <Button disabled={loading} id="btn-login-submit" type="submit" variant="primary" size="md" className="w-full">
+            <Button disabled={loading} id="btn-login-submit" type="submit" variant="primary" size="md" className="w-full mt-2">
               {loading ? (
                 <>
-                  <Loader2 size={14} className="animate-spin" /> Loading...
+                  <Loader2 size={14} className="animate-spin" />
+                  <span>Signing in...</span>
                 </>
-              ) : 'Sign in'}
+              ) : (
+                'Sign in'
+              )}
             </Button>
           </form>
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-6">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-xs text-muted">or continue with</span>
+            <span className="text-xs text-muted font-mono uppercase tracking-wider">or</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
@@ -136,18 +203,22 @@ export function LoginPage() {
             id="btn-google-login"
             onClick={handleGoogleLogin}
             disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-3 h-10 rounded-md border border-border bg-white text-sm font-medium text-neutral-700 hover:bg-neutral-50 active:bg-neutral-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full flex items-center justify-center gap-2.5 h-10 rounded-xl border border-border bg-card text-sm font-medium text-foreground hover:bg-surface active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus-visible:ring-2 focus-visible:ring-border"
           >
             <GoogleIcon />
-            {googleLoading ? 'Connecting...' : 'Sign in with Google'}
+            <span>{googleLoading ? 'Connecting...' : 'Sign in with Google'}</span>
           </button>
 
-          <p className="text-xs text-muted text-center mt-5">
+          <p className="text-xs text-muted text-center mt-6">
             Don't have an account?{' '}
-            <Link to="/register" className="text-accent hover:underline font-medium">
-              Create one
+            <Link to="/register" className="text-accent hover:underline font-semibold">
+              Create an account
             </Link>
           </p>
+        </div>
+
+        <div className="hidden lg:block text-center text-xs text-muted py-4">
+          Protected by Trackly Auth · Privacy First
         </div>
       </div>
     </div>

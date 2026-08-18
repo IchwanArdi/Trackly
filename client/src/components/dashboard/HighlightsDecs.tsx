@@ -117,7 +117,7 @@ export default function HighlightsDeck({
                 </div>
 
                 {/* Slide 3: Today's Habit Progress */}
-                <div className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-linear-to-br from-card via-surface to-card border border-border flex flex-col justify-between p-4 select-none">
+                <div className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-card border border-border flex flex-col justify-between p-4 select-none">
                     <div className="flex items-center justify-between">
                         <span className="text-[10px] font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/20">Today's Goal</span>
                         <span className="text-xs font-bold text-foreground">

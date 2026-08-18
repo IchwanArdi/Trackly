@@ -9,7 +9,7 @@ import { LogEntryPage } from './pages/LogEntryPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { CategoriesPage } from './pages/CategoriesPage';
 import { ProfilePage } from './pages/ProfilePage';
-import { LandingPage } from './pages/LandingPage';
+import LandingPage from './pages/LandingPage';
 import { ForgetPasswordPage } from './pages/ForgetPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { HelpPage } from './pages/HelpPage';

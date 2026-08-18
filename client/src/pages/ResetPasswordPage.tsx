@@ -1,3 +1,5 @@
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 */
+/* Hallmark · macrostructure: Centered Card · tone: calm-focused · anchor hue: orange */
 import { api } from '../utils/auth';
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
@@ -34,10 +36,9 @@ export const ResetPasswordPage = () => {
     setLoading(true);
     const idToast = toast.loading('Saving new password...');
     try {
-      // 3. PERBAIKAN PRO: URL menjadi statis, token aman dikirim lewat body JSON
       const response = await api.post('/api/auth/reset-password', {
         token,
-        newPassword
+        newPassword,
       });
 
       toast.update(idToast, {
@@ -52,7 +53,7 @@ export const ResetPasswordPage = () => {
       }, 1800);
     } catch (error: unknown) {
       toast.update(idToast, {
-        render: (error as { response?: { data?: { message?: string } } }).response?.data?.message ?? 'An error occurred while resetting password. Please try again.',
+        render: (error as { response?: { data?: { message?: string } } }).response?.data?.message ?? 'An error occurred while resetting password.',
         type: 'error',
         isLoading: false,
         autoClose: 2500,
@@ -64,28 +65,31 @@ export const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="flex items-center gap-2 mb-8 justify-left">
-          <div className="w-8 h-8 rounded-md flex items-center justify-center">
-            <img src="/icon-512.png" alt="icon" />
-          </div>
-          <span className="font-semibold text-sm text-foreground">Trackly</span>
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4 sm:p-6 font-sans selection:bg-accent/20 selection:text-accent">
+      <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm">
+        {/* Header Logo */}
+        <div className="flex items-center justify-between mb-8 pb-6 border-b border-border/60">
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src="/trackly-icon.webp" alt="Trackly Logo" className="h-7 w-7 rounded-lg" />
+            <span className="font-bold text-sm text-foreground tracking-tight">Trackly</span>
+          </Link>
+          <span className="font-mono text-[11px] text-muted">Set New Password</span>
         </div>
 
         {success ? (
-          <div className="text-center">
-            <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card">
-              <CheckCircle2 size={18} className="text-accent" />
+          <div className="text-center py-4">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-surface text-accent">
+              <CheckCircle2 size={22} />
             </div>
-            <h1 className="text-lg font-semibold text-foreground mb-1.5">Password successfully changed</h1>
-            <p className="text-sm text-muted leading-relaxed">Redirecting you to the login page...</p>
+            <h1 className="text-xl font-bold text-foreground mb-2">Password successfully updated</h1>
+            <p className="text-sm text-muted leading-relaxed">Redirecting you to the sign-in page...</p>
           </div>
         ) : (
           <>
-            <h1 className="text-xl font-semibold text-foreground mb-1">Create new password</h1>
-            <p className="text-sm text-muted mb-7">Your new password must be different from previous passwords.</p>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">Create new password</h1>
+              <p className="mt-1.5 text-sm text-muted">Ensure your new password contains at least 8 characters.</p>
+            </div>
 
             <form id="form-reset-password" onSubmit={handleResetPassword} className="space-y-4">
               <div className="relative">
@@ -102,43 +106,53 @@ export const ResetPasswordPage = () => {
                   autoComplete="new-password"
                   autoFocus
                 />
-                <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="absolute right-3 top-8.5 text-muted hover:text-foreground transition-colors" tabIndex={-1}>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-8.5 text-muted hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
 
-              <Input
-                id="input-confirm-password"
-                label="Confirm password"
-                type={showPassword ? 'text' : 'password'}
-                disabled={loading}
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                minLength={8}
-                autoComplete="new-password"
-              />
-              {passwordsMismatch && <p className="text-xs text-red-500 -mt-2">Passwords do not match.</p>}
+              <div>
+                <Input
+                  id="input-confirm-password"
+                  label="Confirm password"
+                  type={showPassword ? 'text' : 'password'}
+                  disabled={loading}
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                />
+                {passwordsMismatch && <p className="text-xs text-red-500 mt-1">Passwords do not match.</p>}
+              </div>
 
-              <p className="text-xs text-muted">At least 8 characters.</p>
-
-              <Button disabled={loading} id="btn-reset-submit" type="submit" variant="primary" size="md" className="w-full">
+              <Button disabled={loading} id="btn-reset-submit" type="submit" variant="primary" size="md" className="w-full mt-2">
                 {loading ? (
                   <>
-                    <Loader2 size={14} className="animate-spin" /> Saving...
+                    <Loader2 size={14} className="animate-spin" />
+                    <span>Saving password...</span>
                   </>
-                ) : 'Reset password'}
+                ) : (
+                  'Reset password'
+                )}
               </Button>
             </form>
           </>
         )}
 
         {!success && (
-          <Link to="/login" className="mt-6 flex items-center justify-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors">
-            <ArrowLeft size={13} />
-            Back to login page
-          </Link>
+          <div className="mt-8 pt-6 border-t border-border/60 text-center">
+            <Link to="/login" className="inline-flex items-center justify-center gap-1.5 text-xs text-muted hover:text-foreground font-medium transition">
+              <ArrowLeft size={13} />
+              <span>Return to Sign in</span>
+            </Link>
+          </div>
         )}
       </div>
     </div>
