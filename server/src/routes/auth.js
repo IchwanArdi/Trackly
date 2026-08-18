@@ -84,7 +84,7 @@ router.post('/login', authLimiter, async (req, res) => {
     }
 
     // 4. JWT Token
-    const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     // 5. Kirim respons sukses ke client
     return res.status(200).json({
@@ -112,7 +112,7 @@ router.get('/google', passport.authenticate('google', { scope: ['email', 'profil
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: `${frontendURL}/login` }), (req, res) => {
   try {
     // Generate JWT token
-    const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     // Redirect ke frontend dengan token serta data user sebagai query parameter
     const redirectUrl = new URL('/auth/success', frontendURL);
