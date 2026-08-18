@@ -1,214 +1,35 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, subDays, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
-import { Plus, Check, ChevronRight, Flame, Trophy, Target, Share2, BarChart2 } from 'lucide-react';
-
+import { Plus, Check, Share2, BarChart2 } from 'lucide-react';
 import { useData } from '../store/dataStore';
 import { computeStreaks } from '../utils/stats';
 import { getIcon } from '../utils/icons';
-import { isAuthenticated, getUser } from '../utils/auth';
+import { getUser } from '../utils/auth';
 import { getUnit } from '../utils/format';
 import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
+import WeekDots from '../components/dashboard/WeekDots';
+import HighlightsDeck from '../components/dashboard/HighlightsDecs';
 
 function getFirstName(fullName?: string) {
   return fullName?.split(' ')[0] ?? '';
 }
 
-/** 7-dot week strip */
-function WeekDots({ entries }: { entries: { date: string }[] }) {
-  const today = new Date();
-  const days = Array.from({ length: 7 }).map((_, i) => {
-    const d = subDays(today, 6 - i);
-    const dateStr = format(d, 'yyyy-MM-dd');
-    const isToday = i === 6;
-    const hasEntry = entries.some((e) => e.date === dateStr);
-    return { label: format(d, 'EEE').slice(0, 1), dateStr, isToday, hasEntry };
-  });
-
-  return (
-    <div className="flex items-end justify-between mt-4">
-      {days.map(({ label, dateStr, isToday, hasEntry }) => (
-        <div key={dateStr} className="flex flex-col items-center gap-1.5">
-          <div
-            className={`rounded-full transition-colors ${isToday ? 'w-2.5 h-2.5' : 'w-2 h-2'}`}
-            style={{
-              background: hasEntry ? 'var(--color-accent)' : 'var(--color-surface)',
-              border: hasEntry ? 'none' : '1.5px solid var(--color-border)',
-              outline: isToday && !hasEntry ? '1.5px solid var(--color-accent)' : 'none',
-              outlineOffset: '1.5px',
-            }}
-          />
-          <span className={`text-[10px] ${isToday ? 'text-accent font-semibold' : 'text-muted'}`}>{label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** Horizontal Swipeable Highlights Deck */
-function HighlightsDeck({
-  streaks,
-  monthCount,
-  categoriesCount,
-  todayLoggedCount,
-  topCategory,
-  onOpenShare,
-}: {
-  streaks: { current: number; longest: number };
-  monthCount: number;
-  categoriesCount: number;
-  todayLoggedCount: number;
-  topCategory?: { name: string; icon: string; color: string; count: number; unit: string };
-  onOpenShare: () => void;
-}) {
-  const navigate = useNavigate();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const handleScroll = () => {
-    if (!scrollRef.current) return;
-    const { scrollLeft, clientWidth } = scrollRef.current;
-    if (clientWidth === 0) return;
-    const index = Math.round(scrollLeft / clientWidth);
-    setActiveIndex(index);
-  };
-
-  return (
-    <div className="space-y-2">
-      {/* Horizontal Carousel */}
-      <div ref={scrollRef} onScroll={handleScroll} className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-none py-1 -mx-4 px-4 sm:mx-0 sm:px-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        {/* Slide 1: Weekly Highlight Banner */}
-        <div onClick={onOpenShare} className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-card border border-border flex flex-col justify-between p-4 group select-none cursor-pointer">
-          <img src="/images/banner1.webp" alt="Highlight" className="absolute inset-0 w-full h-full object-cover opacity-65 group-hover:scale-105 transition-transform duration-500" />
-          <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
-
-          <div className="relative z-10 flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-white/90 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-              <Flame size={11} className="text-amber-400 fill-amber-400" />
-              Weekly Summary
-            </span>
-            <span className="text-[10px] text-white/80 bg-black/40 px-2 py-0.5 rounded-full flex items-center gap-1">
-              <Share2 size={10} /> Share
-            </span>
-          </div>
-
-          <div className="relative z-10">
-            <h3 className="text-base font-bold text-white leading-tight">{streaks.current > 0 ? `${streaks.current} Day Active Streak` : 'Start Your Habit Stream'}</h3>
-            <p className="text-xs text-white/80 mt-1 line-clamp-1">{monthCount} activities logged this month</p>
-
-            <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/10">
-              <span className="text-xs text-amber-300 font-medium flex items-center gap-1">
-                <Trophy size={13} /> Best: {streaks.longest} days
-              </span>
-              <span className="text-xs font-semibold text-white flex items-center gap-0.5 hover:underline">
-                Share Card <ChevronRight size={12} />
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Slide 2: Top Active Category */}
-        <div className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-card border border-border flex flex-col justify-between p-4 group select-none cursor-pointer">
-          <img src="/images/banner2.webp" alt="Category highlight" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" />
-          <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
-
-          <div className="relative z-10 flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-white/90 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-              <Target size={11} className="text-emerald-400" />
-              Top Focus
-            </span>
-            <span className="text-[10px] text-white/70">Category</span>
-          </div>
-
-          <div className="relative z-10">
-            {topCategory ? (
-              <>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: `${topCategory.color}35` }}>
-                    {(() => {
-                      const IconComponent = getIcon(topCategory.icon);
-                      return <IconComponent size={13} style={{ color: topCategory.color }} />;
-                    })()}
-                  </div>
-                  <h3 className="text-base font-bold text-white truncate">{topCategory.name}</h3>
-                </div>
-                <p className="text-xs text-white/80">
-                  Logged {topCategory.count} times this month {getUnit(topCategory.unit) ? `(${getUnit(topCategory.unit)})` : ''}
-                </p>
-              </>
-            ) : (
-              <>
-                <h3 className="text-base font-bold text-white">Explore Categories</h3>
-                <p className="text-xs text-white/80 mt-1">Set up custom habits & activities to track</p>
-              </>
-            )}
-
-            <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/10">
-              <span className="text-xs text-white/70">Quick log ready</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate('/log');
-                }}
-                className="text-xs font-semibold text-white bg-accent/90 hover:bg-accent px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
-              >
-                Log now
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Slide 3: Today's Habit Progress */}
-        <div className="snap-center shrink-0 w-[88%] sm:w-[320px] rounded-2xl relative overflow-hidden h-44 bg-linear-to-br from-card via-surface to-card border border-border flex flex-col justify-between p-4 select-none">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/20">Today's Goal</span>
-            <span className="text-xs font-bold text-foreground">
-              {todayLoggedCount} / {categoriesCount} Logged
-            </span>
-          </div>
-
-          <div>
-            <p className="text-xs text-muted mb-1.5">Daily Completion</p>
-            <div className="w-full bg-surface border border-border h-2.5 rounded-full overflow-hidden">
-              <div
-                className="bg-accent h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${categoriesCount > 0 ? Math.min(100, (todayLoggedCount / categoriesCount) * 100) : 0}%`,
-                }}
-              />
-            </div>
-            <p className="text-[11px] text-muted mt-2">
-              {todayLoggedCount === 0 ? 'No activities logged today yet' : todayLoggedCount === categoriesCount ? 'All categories logged for today!' : `${categoriesCount - todayLoggedCount} more to complete today`}
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between pt-2 border-t border-border">
-            <span className="text-[11px] text-muted">Keep building your stream</span>
-            <button onClick={() => navigate('/log')} className="text-xs font-semibold text-accent hover:underline cursor-pointer">
-              Add entry →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Indicator dots */}
-      <div className="flex items-center justify-center gap-1.5 pt-1">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${activeIndex === i ? 'w-5 bg-accent' : 'w-1.5 bg-border'}`} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function DashboardPage() {
-  const { entries, categories } = useData();
+  const { entries, categories, loading } = useData();
   const navigate = useNavigate();
   const user = getUser();
-
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareCategory, setShareCategory] = useState<ShareCategoryData | null>(null);
+  const today = new Date();
+  const todayStr = format(today, 'yyyy-MM-dd');
+  const monthStart = startOfMonth(today);
+  const monthEnd = endOfMonth(today);
+  const streaks = computeStreaks(entries);
+  const monthEntries = entries.filter((e) => isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd }));
+  const monthCount = monthEntries.length;
+  const todayEntries = entries.filter((e) => e.date === todayStr);
   const [selectedCategoryDetail, setSelectedCategoryDetail] = useState<{
     id: string;
     name: string;
@@ -216,20 +37,6 @@ export function DashboardPage() {
     color: string;
     icon: string;
   } | null>(null);
-
-  useEffect(() => {
-    if (!isAuthenticated()) navigate('/login');
-  }, [navigate]);
-
-  const today = new Date();
-  const todayStr = format(today, 'yyyy-MM-dd');
-  const monthStart = startOfMonth(today);
-  const monthEnd = endOfMonth(today);
-
-  const streaks = computeStreaks(entries);
-  const monthEntries = entries.filter((e) => isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd }));
-  const monthCount = monthEntries.length;
-  const todayEntries = entries.filter((e) => e.date === todayStr);
 
   // Calculate top category this month
   const catCounts: Record<string, number> = {};
@@ -259,6 +66,55 @@ export function DashboardPage() {
   const todayLoggedCatIds = new Set(todayEntries.map((e) => e.categoryId));
 
   const yesterday = format(subDays(today, 1), 'yyyy-MM-dd');
+
+
+  if (loading) {
+    return (
+      <div className="space-y-5 pb-4 animate-pulse">
+        {/* Skeleton Header */}
+        <div className="flex items-center justify-between pt-1">
+          <div className="space-y-2">
+            <div className="h-3 bg-muted rounded w-24" />
+            <div className="h-5 bg-muted rounded w-36" />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-8 bg-muted rounded-lg w-16" />
+            <div className="h-8 bg-muted rounded-lg w-14" />
+          </div>
+        </div>
+
+        {/* Skeleton Highlights Deck */}
+        <div className="h-28 bg-muted rounded-xl w-full" />
+
+        {/* Skeleton Streak Card */}
+        <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <div className="h-3 bg-muted rounded w-20" />
+              <div className="h-12 bg-muted rounded-md w-16" />
+            </div>
+            <div className="space-y-2 text-right">
+              <div className="h-3 bg-muted rounded w-8 ml-auto" />
+              <div className="h-4 bg-muted rounded w-12 ml-auto" />
+            </div>
+          </div>
+          {/* Skeleton WeekDots */}
+          <div className="h-6 bg-muted/60 rounded-md w-full" />
+        </div>
+
+        {/* Skeleton Today's Categories */}
+        <div className="space-y-2">
+          <div className="h-3 bg-muted rounded w-28" />
+          <div className="grid grid-cols-2 gap-2">
+            <div className="h-14 bg-muted rounded-xl" />
+            <div className="h-14 bg-muted rounded-xl" />
+            <div className="h-14 bg-muted rounded-xl" />
+            <div className="h-14 bg-muted rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 pb-4">

@@ -62,10 +62,10 @@ interface DataStore {
   deleteEntry: (id: string) => Promise<void>;
 
   // User
-  deleteUser: () => Promise<void>;
+  deleteUser: () => Promise<ApiResponse>; // 🔄 Diubah untuk mengembalikan data respons
 
   // Feedback
-  sendFeedback: (feedback: { category: string; message: string }) => Promise<void>;
+  sendFeedback: (feedback: { category: string; message: string }) => Promise<ApiResponse>; // 🔄 Diubah untuk mengembalikan data respons
 
   // Manual refresh
   refreshAll: () => Promise<void>;
@@ -89,7 +89,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
 
-      // PERBAIKAN: Gunakan EntriesResponse & CategoryResponse untuk tipe data Axios get /api/entries & /api/categories
+      // Gunakan EntriesResponse & CategoryResponse untuk tipe data Axios get /api/entries & /api/categories
       const [catRes, entRes] = await Promise.all([
         api.get<CategoryResponse>('/api/categories'),
         api.get<EntriesResponse>('/api/entries')]);
@@ -97,7 +97,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       // Ambil kategori dan simpan ke state
       setCategories(catRes.data.data);
 
-      // PERBAIKAN: Ambil entRes.data.data karena array asli dibungkus di dalam properti "data"
+      // Ambil entRes.data.data karena array asli dibungkus di dalam properti "data"
       const incomingEntries = entRes.data?.data;
       setEntries(Array.isArray(incomingEntries) ? incomingEntries : []);
     } catch (err: unknown) {
@@ -162,12 +162,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const deleteUser = useCallback(async () => {
     try {
       const res = await api.delete<ApiResponse>('/api/users/me');
-      toast.success(res.data.message || 'Account successfully deleted');
       clearData();
       clearAuthToken();
-    } catch (error: any) {
+      return res.data;
+    } catch (error: unknown) {
       console.error('Error deleting account:', error);
-      toast.error(`${error.response.data.message}`);
+
+      const serverMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(serverMessage || 'Failed to delete account. Please check your connection.');
+
       throw error;
     }
   }, [clearData]);
@@ -176,10 +179,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const sendFeedback = useCallback(async (feedback: { category: string; message: string }) => {
     try {
       const res = await api.post<ApiResponse>('/api/users/feedback', feedback);
-      toast.success(res.data.message || 'Feedback sent successfully');
-    } catch (error: any) {
+      return res.data;
+    } catch (error: unknown) {
       console.error('Error sending feedback:', error);
-      toast.error(`${error.response.data.message}`);
+
+      const serverMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(serverMessage || 'Failed to send feedback. Please try again later.');
+
       throw error;
     }
   }, []);

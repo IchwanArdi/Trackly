@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 import { api } from '../utils/auth';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, MailCheck } from 'lucide-react';
+import { ArrowLeft, Loader2, MailCheck } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 
@@ -16,7 +16,7 @@ export function ForgetPasswordPage() {
     setLoading(true);
     const idToast = toast.loading('Sending...');
     try {
-      const response = await api.post('/api/auth/request-reset', { email });
+      const response = await api.post('/api/auth/forgot-password', { email });
       toast.update(idToast, {
         render: response.data.message,
         type: 'success',
@@ -47,7 +47,7 @@ export function ForgetPasswordPage() {
             </div>
             <h1 className="text-lg font-semibold text-foreground mb-1.5">Check your email</h1>
             <p className="text-sm text-muted leading-relaxed mb-6">
-              If <span className="text-foreground font-medium">{email}</span> is registered, we have sent a link to reset your password. The link is valid for 1 hour.
+              If <span className="text-foreground font-medium">{email}</span> is registered, we have sent a link to reset your password. The link is valid for 15 minutes.
             </p>
             <button type="button" onClick={() => setSubmitted(false)} className="text-xs text-accent hover:underline cursor-pointer">
               Wrong email address? Resend
@@ -67,10 +67,14 @@ export function ForgetPasswordPage() {
             <p className="text-sm text-muted mb-7">Enter your email address and we will send you a link to reset your password.</p>
 
             <form id="form-forgot-password" onSubmit={handleSubmit} className="space-y-4">
-              <Input id="input-email" label="Email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" autoFocus />
+              <Input id="input-email" label="Email" type="email" disabled={loading} placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" autoFocus />
 
-              <Button id="btn-forgot-submit" type="submit" variant="primary" size="md" className="w-full" disabled={loading} icon={<ArrowRight size={14} />}>
-                {loading ? 'Sending...' : 'Send reset link'}
+              <Button disabled={loading} id="btn-forgot-submit" type="submit" variant="primary" size="md" className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> Sending...
+                  </>
+                ) : 'Send reset link'}
               </Button>
             </form>
           </>

@@ -267,19 +267,19 @@ export function HistoryPage() {
         stats={
           shareCategory
             ? {
-                totalValue:
-                  filtered.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0) ||
-                  entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
-                totalLogs: filtered.filter((e) => e.categoryId === shareCategory.id).length || entries.filter((e) => e.categoryId === shareCategory.id).length,
-                streakDays: 7,
-                periodLabel: `Logged on Trackly`,
-              }
+              totalValue:
+                filtered.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0) ||
+                entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
+              totalLogs: filtered.filter((e) => e.categoryId === shareCategory.id).length || entries.filter((e) => e.categoryId === shareCategory.id).length,
+              streakDays: 7,
+              periodLabel: `Logged on Trackly`,
+            }
             : {
-                totalLogs: filtered.length,
-                streakDays: 7,
-                periodLabel: `${filtered.length} entries recorded in this period`,
-                categoriesCount: new Set(filtered.map((e) => e.categoryId)).size,
-              }
+              totalLogs: filtered.length,
+              streakDays: 7,
+              periodLabel: `${filtered.length} entries recorded in this period`,
+              categoriesCount: new Set(filtered.map((e) => e.categoryId)).size,
+            }
         }
       />
     </div>

@@ -1,8 +1,13 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
+import { isAuthenticated } from '../../utils/auth';
 
 export function AppLayout() {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       {/* Desktop sidebar — hidden on mobile */}

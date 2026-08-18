@@ -3,7 +3,7 @@ import { motion, useInView, useScroll } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, BarChart3, CalendarDays, ShieldCheck, Sparkles, Zap, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import dashboard from '../assets/image.png';
+import dashboard from '../assets/image.webp';
 import categories from '../assets/categories.webp';
 import logActivity from '../assets/log-activity.webp';
 import pic1 from '../assets/pic1.webp';
@@ -156,17 +156,6 @@ function Marquee() {
           </span>
         ))}
       </div>
-
-      <style>{`
-        @keyframes marquee {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 32s linear infinite;
-          will-change: transform;
-        }
-      `}</style>
     </div>
   );
 }

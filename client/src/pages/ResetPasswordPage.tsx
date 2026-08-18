@@ -1,13 +1,14 @@
 import { api } from '../utils/auth';
 import { useState } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ArrowLeft, ArrowRight, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, CheckCircle2, Loader2 } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 
 export const ResetPasswordPage = () => {
-  const { token } = useParams<{ token: string }>();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +21,11 @@ export const ResetPasswordPage = () => {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!token) {
+      toast.error('Reset token is missing or invalid.');
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       toast.error('Passwords do not match.');
       return;
@@ -28,7 +34,12 @@ export const ResetPasswordPage = () => {
     setLoading(true);
     const idToast = toast.loading('Saving new password...');
     try {
-      const response = await api.post(`/api/reset-password/reset-password/${token}`, { newPassword });
+      // 3. PERBAIKAN PRO: URL menjadi statis, token aman dikirim lewat body JSON
+      const response = await api.post('/api/auth/reset-password', {
+        token,
+        newPassword
+      });
+
       toast.update(idToast, {
         render: response.data.message,
         type: 'success',
@@ -58,7 +69,7 @@ export const ResetPasswordPage = () => {
         {/* Logo */}
         <div className="flex items-center gap-2 mb-8 justify-left">
           <div className="w-8 h-8 rounded-md flex items-center justify-center">
-            <img src="../../public/icon-512.png" alt="icon" />
+            <img src="/icon-512.png" alt="icon" />
           </div>
           <span className="font-semibold text-sm text-foreground">Trackly</span>
         </div>
@@ -82,6 +93,7 @@ export const ResetPasswordPage = () => {
                   id="input-new-password"
                   label="New password"
                   type={showPassword ? 'text' : 'password'}
+                  disabled={loading}
                   placeholder="••••••••"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -99,6 +111,7 @@ export const ResetPasswordPage = () => {
                 id="input-confirm-password"
                 label="Confirm password"
                 type={showPassword ? 'text' : 'password'}
+                disabled={loading}
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -110,8 +123,12 @@ export const ResetPasswordPage = () => {
 
               <p className="text-xs text-muted">At least 8 characters.</p>
 
-              <Button id="btn-reset-submit" type="submit" variant="primary" size="md" className="w-full" icon={<ArrowRight size={14} />}>
-                {loading ? 'Saving...' : 'Reset password'}
+              <Button disabled={loading} id="btn-reset-submit" type="submit" variant="primary" size="md" className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> Saving...
+                  </>
+                ) : 'Reset password'}
               </Button>
             </form>
           </>

@@ -274,6 +274,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .animate-marquee {
-  animation: marquee 28s linear infinite;
+  animation: marquee 32s linear infinite;
   will-change: transform;
 }

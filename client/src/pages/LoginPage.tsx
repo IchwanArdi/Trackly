@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useData } from '../store/dataStore';
+import { Loader2 } from 'lucide-react';
 
 // Official Google "G" logo (4-color), per Google brand guidelines
 function GoogleIcon() {
@@ -104,8 +105,8 @@ export function LoginPage() {
           <p className="text-sm text-muted mb-7">Track what matters, every day.</p>
 
           <form id="form-login" onSubmit={handleSubmit} className="space-y-4">
-            <Input id="input-email" label="Email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
-            <Input id="input-password" label="Password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
+            <Input id="input-email" label="Email" type="email" disabled={loading} placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+            <Input id="input-password" label="Password" type="password" disabled={loading} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
 
             <div className="flex justify-end">
               <Link to="/forgot-password" className="text-xs text-accent hover:underline">
@@ -113,8 +114,12 @@ export function LoginPage() {
               </Link>
             </div>
 
-            <Button id="btn-login-submit" type="submit" variant="primary" size="md" className="w-full">
-              {loading ? 'Loading...' : 'Sign in'}
+            <Button disabled={loading} id="btn-login-submit" type="submit" variant="primary" size="md" className="w-full">
+              {loading ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Loading...
+                </>
+              ) : 'Sign in'}
             </Button>
           </form>
 
