@@ -1,0 +1,58 @@
+name: Trackly Continuous Integration (CI)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  client-verification:
+    name: Client (Frontend) Type Check & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'client/package-lock.json'
+
+      - name: Install Client Dependencies
+        run: npm ci
+        working-directory: client
+
+      - name: TypeScript Compilation Check
+        run: npx tsc --noEmit
+        working-directory: client
+
+      - name: Build Client Bundle
+        run: npm run build
+        working-directory: client
+
+  server-verification:
+    name: Server (Backend) Syntax Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'server/package-lock.json'
+
+      - name: Install Server Dependencies
+        run: npm ci
+        working-directory: server
+
+      - name: Verify Server Syntax
+        run: node -c app.js
+        working-directory: server
