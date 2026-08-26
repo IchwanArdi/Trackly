@@ -65,7 +65,7 @@ export function LoginPage() {
 
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const apiBaseUrl = import.meta.env.VITE_API_URL;
     window.location.assign(`${apiBaseUrl}/api/auth/google`);
   };
 
@@ -156,7 +156,7 @@ export function LoginPage() {
               required
               autoComplete="email"
             />
-            
+
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label htmlFor="input-password" className="text-xs font-medium text-foreground">
