@@ -69,6 +69,12 @@ jobs:
     # job ini akan berjalan setelah job client-verification dan server-verification selesai
     needs: [client-verification, server-verification]
 
+    # izin akses untuk bisa push image ke GHCR
+    permissions:
+      contents: read
+      packages: write
+
+    # langkah-langkah yang akan dilakukan
     steps:
       # Step 1: Checkout code
       - name: Checkout Repository
@@ -82,8 +88,36 @@ jobs:
       - name: Build Client Docker Image
         run: |
           docker build -t trackly-client:ci ./client \
-            --build-arg VITE_API_URL=http://localhost:3000
+            --build-arg VITE_API_URL=http://202.155.90.183:3001
 
+      # Step 4: Login ke GHCR. Cuma jalan pas push ke branch (bukan pull request)
+      # karena PR gak dikasih izin write oleh GitHub demi keamanan.
+      - name: Login to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 5: Tag & push 2 image (server & client) ke GHCR.
+      # Tag ":latest" buat auto-pull VPS, tag ":git-sha" buat rollback/pelacakan.
+      # Nama registry harus huruf kecil semua, makanya ada konversi tr.
+      - name: Tag & Push Images to GHCR
+        if: github.event_name == 'push'
+        run: |
+          IMAGE_BASE=ghcr.io/${{ github.repository }}
+          IMAGE_BASE=$(echo $IMAGE_BASE | tr '[A-Z]' '[a-z]')
+
+          docker tag trackly-server:ci $IMAGE_BASE-server:latest
+          docker tag trackly-server:ci $IMAGE_BASE-server:${{ github.sha }}
+          docker tag trackly-client:ci $IMAGE_BASE-client:latest
+          docker tag trackly-client:ci $IMAGE_BASE-client:${{ github.sha }}
+
+          docker push $IMAGE_BASE-server:latest
+          docker push $IMAGE_BASE-server:${{ github.sha }}
+          docker push $IMAGE_BASE-client:latest
+          docker push $IMAGE_BASE-client:${{ github.sha }}
       
 
 
