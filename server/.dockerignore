@@ -1,0 +1,8 @@
+node_modules
+testing/
+.git
+.env
+.env*.local
+npm-debug.log*
+README.md
+vercel.json
