@@ -1,12 +1,15 @@
 name: Trackly Continuous Integration (CI)
 
+# Event pemicu: akan berjalan ketika ada push atau pull request ke branch main
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
+# Definisi jobs: akan berjalan secara paralel
 jobs:
+  # Job 1: Frontend Verification (Type Check & Build)
   client-verification:
     name: Client (Frontend) Type Check & Build
     runs-on: ubuntu-latest
@@ -34,6 +37,7 @@ jobs:
         run: npm run build
         working-directory: client
 
+  # Job 2: Server Verification (Syntax Check)
   server-verification:
     name: Server (Backend) Syntax Check
     runs-on: ubuntu-latest
@@ -56,3 +60,31 @@ jobs:
       - name: Verify Server Syntax
         run: node -c app.js
         working-directory: server
+
+  # Job 3: Docker Image Build Verification
+  docker-build:
+    name: Verify Docker Image Build
+    runs-on: ubuntu-latest
+
+    # job ini akan berjalan setelah job client-verification dan server-verification selesai
+    needs: [client-verification, server-verification]
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Build server docker image
+      - name: Build Server Docker Image
+        run: docker build -t trackly-server:ci ./server
+
+      # Step 3: Build client docker image
+      - name: Build Client Docker Image
+        run: |
+          docker build -t trackly-client:ci ./client \
+            --build-arg VITE_API_URL=http://localhost:3000
+
+      
+
+
+  
