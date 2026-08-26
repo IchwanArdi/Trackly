@@ -6,9 +6,12 @@ import 'dotenv/config'; // Memastikan file .env terbaca dengan baik
 // 1. Buat pool koneksi menggunakan driver 'pg' bawaan Node.js
 const pool = new pg.Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false // Diperlukan untuk Vercel/Render agar SSL/TLS berjalan otomatis
-    }
+    // SSL cuma diaktifkan di production (Vercel/Render + Supabase yang wajib SSL).
+    // Di development (Docker Compose lokal), Postgres container polos gak support SSL,
+    // jadi harus dimatikan supaya koneksi gak ditolak.
+    ssl: process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false
 });
 
 // 2. Bungkus pool tersebut menggunakan Driver Adapter dari Prisma

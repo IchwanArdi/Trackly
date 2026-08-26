@@ -1,0 +1,71 @@
+services:
+  # 1. SERVICE DATABASE (PostgreSQL) — tetap seperti semula
+  db:
+    image: postgres:17-alpine
+    container_name: trackly_postgres_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trackly_user -d trackly_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # SERVICE ADMINER (GUI buat lihat database)
+  adminer:
+    image: adminer:latest
+    container_name: trackly_adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # 2. SERVICE BACKEND (Node.js)
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: trackly_backend_server
+    env_file:
+      - ./server/.env
+    ports:
+      - "3001:3000"
+    # Memaksa server menunggu sampai status db "service_healthy"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # 3. SERVICE FRONTEND (Vite / React)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      # Mengirimkan variabel saat proses BUILD agar masuk ke bundle JS Vite
+      args:
+        VITE_API_URL: http://localhost:3001
+    container_name: trackly_frontend_client
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+# DEFINISI VOLUME & NETWORK
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
