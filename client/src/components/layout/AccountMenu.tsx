@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { User, HelpCircle, LogOut } from 'lucide-react';
 import { AccountPage } from '../../pages/AccountPage';
 
@@ -103,12 +104,13 @@ export function AccountMenu({ onClose, onLogout }: AccountMenuProps) {
         </div>
       </div>
 
-      {showAccountPage && (
-        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm" role="presentation" onClick={() => setShowAccountPage(false)}>
+      {showAccountPage && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm" role="presentation" onClick={() => setShowAccountPage(false)}>
           <div role="dialog" aria-modal="true" aria-label="Account modal" onClick={(event) => event.stopPropagation()} className="w-full max-w-2xl rounded-2xl border border-border bg-card p-5 shadow-2xl">
             <AccountPage onClose={() => setShowAccountPage(false)} />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

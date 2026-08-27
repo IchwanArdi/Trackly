@@ -17,7 +17,7 @@ export function AppLayout() {
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto isolate">
           <div className="max-w-5xl mx-auto px-4 py-5 md:px-6 md:py-8 pb-24 md:pb-8">
             <Outlet />
           </div>
