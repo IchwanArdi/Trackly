@@ -22,7 +22,7 @@ self.addEventListener('push', (event) => {
   const data = event.data.json();
 
   event.waitUntil(
-    self.ServiceWorkerRegistration.showNotification(data.title, {
+    self.registration.showNotification(data.title, {
       body: data.body,
       icon: '/trackly-icon.webp',
       badge: '/trackly-icon.webp',
