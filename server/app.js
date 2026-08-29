@@ -10,6 +10,8 @@ import categoriesRoutes from './src/routes/categories.js';
 import entriesRoutes from './src/routes/entries.js';
 import userRoutes from './src/routes/user.js';
 import resetPasswordRoutes from './src/routes/resetPassword.js';
+import pushRoutes from './src/routes/push.js';
+import cronRoutes from './src/routes/cron.js';
 
 dotenv.config();
 const app = express();
@@ -69,6 +71,8 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/entries', entriesRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', resetPasswordRoutes);
+app.use('/api/push', pushRoutes);
+app.use('/api/cron', cronRoutes);
 
 // JARING PENGAMAN EROR
 app.use((err, req, res, next) => {

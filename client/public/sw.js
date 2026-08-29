@@ -17,3 +17,21 @@ self.addEventListener('fetch', (event) => {
     }),
   );
 });
+
+self.addEventListener('push', (event) => {
+  const data = event.data.json();
+
+  event.waitUntil(
+    self.ServiceWorkerRegistration.showNotification(data.title, {
+      body: data.body,
+      icon: '/trackly-icon.webp',
+      badge: '/trackly-icon.webp',
+      data: { url: data.url || '/dashboard' },
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
+});
