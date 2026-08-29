@@ -3,6 +3,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
 import 'dotenv/config'; // Memastikan file .env terbaca dengan baik
 
+// Prisma Client generated successfully.
 // 1. Buat pool koneksi menggunakan driver 'pg' bawaan Node.js
 const pool = new pg.Pool({
     connectionString: process.env.DATABASE_URL,
