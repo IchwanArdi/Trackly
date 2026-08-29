@@ -17,6 +17,8 @@ model User {
   resetTokenExpiry  DateTime?
   categories        Category[]
   entries           Entry[]
+  notifications     Notification[]
+  subscriptions     PushSubscription[]
 }
 
 model Category {
@@ -55,4 +57,29 @@ model Feedback {
   category  String
   message   String   @db.Text
   createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String   // "reminder" | "streak" | dst
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

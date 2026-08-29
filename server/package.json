@@ -27,11 +27,12 @@
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.22.0",
     "resend": "^6.18.1",
+    "web-push": "^3.6.7",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/pg": "^8.20.0",
     "nodemon": "^3.1.14",
-    "prisma": "^7.9.1"
+    "prisma": "^6.12.0"
   }
 }
