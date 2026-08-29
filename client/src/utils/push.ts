@@ -16,25 +16,30 @@ export async function isPushSubscribed(): Promise<boolean> {
 }
 
 export async function subscribeToPush(): Promise<{ ok: boolean; reason?: string }> {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
         return { ok: false, reason: 'Browser ini tidak mendukung push notification' };
     }
 
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-        return { ok: false, reason: 'Izin notifikasi ditolak' };
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            return { ok: false, reason: 'Izin notifikasi ditolak' };
+        }
+
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        await navigator.serviceWorker.ready;
+
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
+        });
+
+        await api.post('/api/push/subscribe', subscription.toJSON());
+        return { ok: true };
+    } catch (error: any) {
+        console.error('Subscription push error:', error);
+        return { ok: false, reason: error.message || 'Gagal mengaktifkan push notification' };
     }
-
-    const registration = await navigator.serviceWorker.register('/sw.js');
-    await navigator.serviceWorker.ready;
-
-    const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY),
-    });
-
-    await api.post('/api/push/subscribe', subscription.toJSON());
-    return { ok: true };
 }
 
 export async function unsubscribeFromPush(): Promise<void> {
