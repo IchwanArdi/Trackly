@@ -3,9 +3,9 @@ name: Trackly Continuous Integration (CI)
 # Event pemicu: akan berjalan ketika ada push atau pull request ke branch main
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 # Definisi jobs: akan berjalan secara paralel
 jobs:
@@ -88,7 +88,7 @@ jobs:
       - name: Build Client Docker Image
         run: |
           docker build -t trackly-client:ci ./client \
-            --build-arg VITE_API_URL=http://202.155.90.183:3001
+            --build-arg VITE_API_URL=https://api.trackly.web.id
 
       # Step 4: Login ke GHCR. Cuma jalan pas push ke branch (bukan pull request)
       # karena PR gak dikasih izin write oleh GitHub demi keamanan.
@@ -118,7 +118,3 @@ jobs:
           docker push $IMAGE_BASE-server:${{ github.sha }}
           docker push $IMAGE_BASE-client:latest
           docker push $IMAGE_BASE-client:${{ github.sha }}
-      
-
-
-  
