@@ -13,7 +13,7 @@ export const sendResetPasswordEmail = async (toEmail, resetLink) => {
 
   try {
     await resend.emails.send({
-      from: 'Trackly <onboarding@resend.dev>',
+      from: 'Trackly <noreply@trackly.web.id>',
       to: toEmail,
       subject: 'Reset Password Trackly',
       html: `
@@ -98,7 +98,6 @@ export const sendResetPasswordEmail = async (toEmail, resetLink) => {
     throw new Error('Failed to send reset password email');
   }
 };
-
 
 export const sendReminderEmail = async (toEmail, userName) => {
   if (!resend) {
