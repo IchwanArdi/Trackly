@@ -29,20 +29,24 @@ api.interceptors.response.use(
     // Jika API sukses (status 2xx), langsung teruskan datanya
     return response;
   },
-  (error: any) => {
-    // Cek jika server mengembalikan error status 401 (Unauthorized)
-    if (error.response && error.response.status === 401) {
+  (error: { response?: { status?: number } } & Error) => {
+    // 401 hanya berarti "sesi habis" kalau request sebelumnya memang mengirim token.
+    // Tanpa token, jangan buang sesi / redirect paksa (mis. user memang belum login).
+    const wasAuthenticated = !!localStorage.getItem('token');
+
+    if (error.response?.status === 401 && wasAuthenticated) {
       console.warn('Session expired or invalid token. Clearing storage...');
 
-      // Bersihkan semua data autentikasi dari localStorage
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      // Bersihkan semua data autentikasi dari localStorage (sekaligus broadcast ke UI)
+      clearAuthToken();
 
       // Beri informasi ke user agar tidak bingung mengapa mereka terlempar keluar
       toast.error('Your session has expired. Please log in again.');
 
-      // Paksa browser mengalihkan halaman ke login
-      window.location.href = '/login';
+      // Paksa browser mengalihkan halaman ke login (hindari loop kalau sudah di sana)
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
 
     // Tetap kembalikan error agar tidak merusak chain Promise/catch lokal jika dibutuhkan
@@ -50,33 +54,43 @@ api.interceptors.response.use(
   },
 );
 
-// 3. Fungsi Manajemen Token
+// 3. Event internal: dipakai hook useAuthStatus supaya komponen React
+// (mis. navbar homepage) ikut re-render saat token ditambah/dihapus.
+export const AUTH_CHANGE_EVENT = 'trackly:auth-change';
+
+const notifyAuthChange = (): void => {
+  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+};
+
+// 4. Fungsi Manajemen Token
 export const setAuthToken = (token: string | null): void => {
   if (token) {
     localStorage.setItem('token', token);
   } else {
     localStorage.removeItem('token');
   }
+  notifyAuthChange();
 };
 
-// 4. Fungsi Hapus Token
+// 5. Fungsi Hapus Token
 export const clearAuthToken = (): void => {
   localStorage.removeItem('token');
   localStorage.removeItem('user'); // Ikut bersihkan user saat logout manual
+  notifyAuthChange();
 };
 
-// 5. Fungsi Cek Token
+// 6. Fungsi Cek Token
 export const isAuthenticated = (): boolean => {
   const token = localStorage.getItem('token');
   return !!token;
 };
 
-// 6. Simpan User Ke Local Storage
+// 7. Simpan User Ke Local Storage
 export const saveUser = (user: { id: string; name: string; email: string }): void => {
   localStorage.setItem('user', JSON.stringify(user));
 };
 
-// 7. Ambil User Dari Local Storage
+// 8. Ambil User Dari Local Storage
 export const getUser = (): { id: string; name: string; email: string } | null => {
   const user = localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
