@@ -7,7 +7,8 @@ import { ArrowRight, BarChart3, ShieldCheck, Activity, Download, Layers, Chevron
 import pic1 from '../assets/pic1.webp';
 import pic2 from '../assets/pic2.webp';
 import pic3 from '../assets/pic3.webp';
-import { isAuthenticated, clearAuthToken } from '../utils/auth';
+import { clearAuthToken } from '../utils/auth';
+import { useAuthStatus } from '../utils/useAuthStatus';
 import { useData } from '../store/dataStore';
 
 interface InstallButtonProps {
@@ -38,7 +39,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
 
 function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
   const [scrolled, setScrolled] = useState(false);
-  const isLoggedIn = isAuthenticated();
+  const isLoggedIn = useAuthStatus();
   const { clearData } = useData();
   const navigate = useNavigate();
 
