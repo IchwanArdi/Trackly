@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { ArrowLeft, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useData } from '../store/dataStore';
-import { getIcon } from '../utils/icons';
+import { getIcon, renderIcon } from '../utils/icons';
 import { getUnit } from '../utils/format';
 
 export function LogEntryPage() {
@@ -12,7 +12,9 @@ export function LogEntryPage() {
   const navigate = useNavigate();
   const today = format(new Date(), 'yyyy-MM-dd');
 
-  const [categoryId, setCategoryId] = useState(categories[0]?.id ?? '');
+  // '' = belum dipilih user; kategori efektif di-derive saat render (bukan setState
+  // di useEffect) supaya tetap auto-pilih kategori pertama begitu data selesai dimuat
+  const [categoryId, setCategoryId] = useState('');
   const [value, setValue] = useState('');
   const [date, setDate] = useState(today);
   const [note, setNote] = useState('');
@@ -20,12 +22,14 @@ export function LogEntryPage() {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const selectedCategory = categories.find((c) => c.id === categoryId);
+  const effectiveCategoryId = categoryId || categories[0]?.id || '';
+
+  const selectedCategory = categories.find((c) => c.id === effectiveCategoryId);
   const cleanUnit = getUnit(selectedCategory?.unit);
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!categoryId) errs.category = 'Select a category.';
+    if (!effectiveCategoryId) errs.category = 'Select a category.';
     if (!value || isNaN(Number(value)) || Number(value) <= 0) errs.value = 'Enter a valid number.';
     if (!date) errs.date = 'Required.';
     return errs;
@@ -41,7 +45,7 @@ export function LogEntryPage() {
 
     setSaving(true);
     try {
-      await addEntry({ categoryId, date, value: Number(value), note: note.trim() || undefined });
+      await addEntry({ categoryId: effectiveCategoryId, date, value: Number(value), note: note.trim() || undefined });
       setSubmitted(true);
     } catch (err: unknown) {
       toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Failed to save');
@@ -52,11 +56,10 @@ export function LogEntryPage() {
 
   // ── Success ────────────────────────────────────────────────────
   if (submitted && selectedCategory) {
-    const Icon = getIcon(selectedCategory.icon);
     return (
       <div className="flex flex-col items-center justify-center min-h-[55vh] text-center px-4 pb-8">
         <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style={{ background: `${selectedCategory.color}18` }}>
-          <Icon size={28} style={{ color: selectedCategory.color }} />
+          {renderIcon(selectedCategory.icon, { size: 28, style: { color: selectedCategory.color } })}
         </div>
 
         <p className="text-3xl font-bold text-foreground tabular-nums">
@@ -118,7 +121,7 @@ export function LogEntryPage() {
             <div className="grid grid-cols-2 gap-2">
               {categories.map((cat) => {
                 const Icon = getIcon(cat.icon);
-                const isSelected = categoryId === cat.id;
+                const isSelected = effectiveCategoryId === cat.id;
                 return (
                   <button
                     key={cat.id}

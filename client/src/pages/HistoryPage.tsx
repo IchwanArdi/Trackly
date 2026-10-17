@@ -3,6 +3,7 @@ import { format, parseISO, subDays, isWithinInterval } from 'date-fns';
 import { Trash2, FileText, Search, Calendar, Activity, Sparkles, ChevronRight } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useData } from '../store/dataStore';
+import { computeStreaks } from '../utils/stats';
 import { getIcon } from '../utils/icons';
 import { getUnit } from '../utils/format';
 import { ProgressDetailModal } from '../components/ProgressDetailModal';
@@ -52,6 +53,33 @@ export function HistoryPage() {
   const totalVolume = useMemo(() => {
     return filtered.reduce((acc, curr) => acc + curr.value, 0);
   }, [filtered]);
+
+  const streaks = useMemo(() => computeStreaks(entries), [entries]);
+  const currentStreak = streaks.current;
+
+  // Stats untuk Share Progress Modal — angka harus konsisten dengan label periode.
+  // Jangan pakai `reduce(...) || fallback` karena total 0 (falsy) akan salah jatuh ke all-time.
+  const shareStats = useMemo(() => {
+    if (shareCategory) {
+      const catFiltered = filtered.filter((e) => e.categoryId === shareCategory.id);
+      const catAllTime = entries.filter((e) => e.categoryId === shareCategory.id);
+      const source = catFiltered.length > 0 ? catFiltered : catAllTime;
+
+      return {
+        totalValue: source.reduce((sum, e) => sum + e.value, 0),
+        totalLogs: source.length,
+        streakDays: currentStreak,
+        periodLabel: catFiltered.length > 0 ? 'Logged in this period on Trackly' : 'Logged all time on Trackly',
+      };
+    }
+
+    return {
+      totalLogs: filtered.length,
+      streakDays: currentStreak,
+      periodLabel: `${filtered.length} entries recorded in this period`,
+      categoriesCount: new Set(filtered.map((e) => e.categoryId)).size,
+    };
+  }, [shareCategory, filtered, entries, currentStreak]);
 
   const groupedByDate = useMemo(() => {
     const map: Record<string, typeof filtered> = {};
@@ -264,23 +292,7 @@ export function HistoryPage() {
         }}
         title="Activity Stream History"
         category={shareCategory}
-        stats={
-          shareCategory
-            ? {
-              totalValue:
-                filtered.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0) ||
-                entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
-              totalLogs: filtered.filter((e) => e.categoryId === shareCategory.id).length || entries.filter((e) => e.categoryId === shareCategory.id).length,
-              streakDays: 7,
-              periodLabel: `Logged on Trackly`,
-            }
-            : {
-              totalLogs: filtered.length,
-              streakDays: 7,
-              periodLabel: `${filtered.length} entries recorded in this period`,
-              categoriesCount: new Set(filtered.map((e) => e.categoryId)).size,
-            }
-        }
+        stats={shareStats}
       />
     </div>
   );
