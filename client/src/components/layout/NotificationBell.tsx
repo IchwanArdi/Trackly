@@ -5,11 +5,11 @@ import { useNotifications } from '../../store/notificationStore';
 function timeAgo(dateString: string) {
     const diffMs = Date.now() - new Date(dateString).getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return 'Baru saja';
-    if (diffMins < 60) return `${diffMins}m lalu`;
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}j lalu`;
-    return `${Math.floor(diffHours / 24)}h lalu`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${Math.floor(diffHours / 24)}d ago`;
 }
 
 export function NotificationBell() {
@@ -57,7 +57,7 @@ export function NotificationBell() {
                     </div>
                     <div className="max-h-80 overflow-y-auto divide-y divide-border/60">
                         {notifications.length === 0 ? (
-                            <p className="px-3.5 py-6 text-xs text-muted text-center">Belum ada notifikasi</p>
+                            <p className="px-3.5 py-6 text-xs text-muted text-center">No notifications yet</p>
                         ) : (
                             notifications.map((n) => (
                                 <div key={n.id} className={`px-3.5 py-2.5 ${!n.isRead ? 'bg-accent/5' : ''}`}>

@@ -75,6 +75,29 @@ interface DataStore {
 
 const DataContext = createContext<DataStore | null>(null);
 
+// ── Helper: ambil SEMUA halaman entries ──────────────────────────
+// Backend membatasi limit per request (maks 100). Kalau hanya halaman pertama
+// yang diambil, streak/heatmap/total jadi salah untuk user dengan banyak entry.
+const ENTRY_PAGE_LIMIT = 100;
+
+async function fetchAllEntries(): Promise<Entry[]> {
+  const firstRes = await api.get<EntriesResponse>(`/api/entries?page=1&limit=${ENTRY_PAGE_LIMIT}`);
+  const firstPage = Array.isArray(firstRes.data?.data) ? firstRes.data.data : [];
+  const totalPages = firstRes.data?.meta?.totalPages ?? 1;
+
+  if (totalPages <= 1) return firstPage;
+
+  const restPages = await Promise.all(
+    Array.from({ length: totalPages - 1 }, (_, i) =>
+      api
+        .get<EntriesResponse>(`/api/entries?page=${i + 2}&limit=${ENTRY_PAGE_LIMIT}`)
+        .then((res) => (Array.isArray(res.data?.data) ? res.data.data : [])),
+    ),
+  );
+
+  return firstPage.concat(...restPages);
+}
+
 // ── Provider ─────────────────────────────────────────────────────
 export function DataProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -90,16 +113,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
     try {
 
       // Gunakan EntriesResponse & CategoryResponse untuk tipe data Axios get /api/entries & /api/categories
-      const [catRes, entRes] = await Promise.all([
-        api.get<CategoryResponse>('/api/categories'),
-        api.get<EntriesResponse>('/api/entries')]);
+      const [catRes, allEntries] = await Promise.all([
+        api.get<CategoryResponse>('/api/categories', { params: { limit: 100 } }),
+        fetchAllEntries(),
+      ]);
 
       // Ambil kategori dan simpan ke state
       setCategories(catRes.data.data);
 
-      // Ambil entRes.data.data karena array asli dibungkus di dalam properti "data"
-      const incomingEntries = entRes.data?.data;
-      setEntries(Array.isArray(incomingEntries) ? incomingEntries : []);
+      // Entries sudah lengkap dari semua halaman
+      setEntries(allEntries);
     } catch (err: unknown) {
       // 401 = not logged in, silently ignore (redirect handled by page)
       if ((err as { response?: { status?: number } })?.response?.status !== 401) {

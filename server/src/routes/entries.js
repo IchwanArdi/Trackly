@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
     const [entries, total] = await prisma.$transaction([
       prisma.entry.findMany({
         where,
-        orderBy: { date: 'desc' },
+        orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
         include: {
           category: {
             select: { name: true, unit: true, color: true, icon: true },
@@ -88,6 +88,11 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'value must be a positive number!' });
     }
 
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      return res.status(400).json({ message: 'Invalid date format!' });
+    }
+
     // Pastikan kategori milik user ini
     const category = await prisma.category.findFirst({
       where: { id: categoryId, userId: req.user.id },
@@ -101,7 +106,7 @@ router.post('/', async (req, res) => {
       data: {
         userId: req.user.id,
         categoryId,
-        date: new Date(date),
+        date: parsedDate,
         value,
         note: note?.trim() || null,
       },
@@ -126,6 +131,18 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { date, value, note } = req.body;
 
+    if (value !== undefined && value !== null && (typeof value !== 'number' || value <= 0)) {
+      return res.status(400).json({ message: 'value must be a positive number!' });
+    }
+
+    let parsedDate;
+    if (date !== undefined) {
+      parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) {
+        return res.status(400).json({ message: 'Invalid date format!' });
+      }
+    }
+
     const existing = await prisma.entry.findFirst({
       where: { id, userId: req.user.id },
     });
@@ -137,7 +154,7 @@ router.put('/:id', async (req, res) => {
     const updated = await prisma.entry.update({
       where: { id },
       data: {
-        ...(date && { date: new Date(date) }),
+        ...(parsedDate && { date: parsedDate }),
         ...(value !== undefined && value !== null && { value }),
         note: note !== undefined ? note?.trim() || null : existing.note,
       },
