@@ -13,6 +13,7 @@ import resetPasswordRoutes from './src/routes/resetPassword.js';
 import pushRoutes from './src/routes/push.js';
 import cronRoutes from './src/routes/cron.js';
 import notificationRoutes from './src/routes/notifications.js';
+import statsRoutes from './src/routes/stats.js';
 
 dotenv.config();
 const app = express();
@@ -75,6 +76,7 @@ app.use('/api/auth', resetPasswordRoutes);
 app.use('/api/push', pushRoutes);
 app.use('/api/cron', cronRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/stats', statsRoutes);
 
 // JARING PENGAMAN EROR
 app.use((err, req, res, next) => {

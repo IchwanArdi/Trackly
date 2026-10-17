@@ -1,15 +1,24 @@
 /* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 */
 /* Hallmark · macrostructure: Workbench · tone: calm-focused · anchor hue: orange · nav: N5 · footer: Ft1 */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, BarChart3, ShieldCheck, Activity, Download, Layers, ChevronRight } from 'lucide-react';
+import { format, subDays } from 'date-fns';
 import pic1 from '../assets/pic1.webp';
 import pic2 from '../assets/pic2.webp';
 import pic3 from '../assets/pic3.webp';
-import { clearAuthToken } from '../utils/auth';
+import { clearAuthToken, api } from '../utils/auth';
 import { useAuthStatus } from '../utils/useAuthStatus';
-import { useData } from '../store/dataStore';
+import { useData, type Entry } from '../store/dataStore';
+import { ContributionHeatmap } from '../components/dashboard/ContributionHeatmap';
+
+// Hormati preferensi aksesibilitas: kalau user minta reduced motion, semua animasi
+// (auto-rotate tour, count-up, isi heatmap bertahap) langsung tampil versi final.
+const PREFERS_REDUCED_MOTION =
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 interface InstallButtonProps {
   onInstallClick: () => void;
@@ -116,6 +125,20 @@ function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
 
 function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'categories' | 'log'>('dashboard');
+  const [tourPaused, setTourPaused] = useState(false);
+  const [tourStopped, setTourStopped] = useState(false);
+
+  // Auto-putar guided tour: tab berganti tiap 4,5 detik sampai user memilih manual.
+  // Berhenti sementara saat hover/disentuh, dan hormati prefers-reduced-motion.
+  useEffect(() => {
+    if (tourPaused || tourStopped || PREFERS_REDUCED_MOTION) return;
+
+    const timer = setInterval(() => {
+      setActiveTab((prev) => (prev === 'dashboard' ? 'categories' : prev === 'categories' ? 'log' : 'dashboard'));
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [tourPaused, tourStopped]);
 
   const screenshots = {
     dashboard: {
@@ -184,10 +207,18 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
         </div>
 
         {/* Workbench Guided Tour Showcase */}
-        <div className="mt-14">
+        <div
+          className="mt-14"
+          onMouseEnter={() => setTourPaused(true)}
+          onMouseLeave={() => setTourPaused(false)}
+          onTouchStart={() => setTourStopped(true)}
+        >
           <div className="flex flex-nowrap sm:flex-wrap items-center gap-2 overflow-x-auto pb-3 border-b border-border [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <button
-              onClick={() => setActiveTab('dashboard')}
+              onClick={() => {
+                setActiveTab('dashboard');
+                setTourStopped(true);
+              }}
               className={`shrink-0 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${activeTab === 'dashboard'
                 ? 'bg-foreground text-background font-semibold'
                 : 'bg-surface text-muted hover:text-foreground border border-border'
@@ -196,7 +227,10 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
               01 · Dashboard & Heatmap
             </button>
             <button
-              onClick={() => setActiveTab('categories')}
+              onClick={() => {
+                setActiveTab('categories');
+                setTourStopped(true);
+              }}
               className={`shrink-0 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${activeTab === 'categories'
                 ? 'bg-foreground text-background font-semibold'
                 : 'bg-surface text-muted hover:text-foreground border border-border'
@@ -205,7 +239,10 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
               02 · Custom Categories
             </button>
             <button
-              onClick={() => setActiveTab('log')}
+              onClick={() => {
+                setActiveTab('log');
+                setTourStopped(true);
+              }}
               className={`shrink-0 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${activeTab === 'log'
                 ? 'bg-foreground text-background font-semibold'
                 : 'bg-surface text-muted hover:text-foreground border border-border'
@@ -364,13 +401,13 @@ function CapabilityGrid() {
                 <div className="h-10 w-10 rounded-xl bg-surface border border-border flex items-center justify-center mb-4">
                   <ShieldCheck className="h-5 w-5 text-accent" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground">PWA & Offline Readiness</h3>
+                <h3 className="text-lg font-bold text-foreground">Installable PWA</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">
-                  Install Trackly directly on your iOS or Android home screen for native-like performance and zero loading lag.
+                  Install Trackly straight to your phone's home screen — it opens fullscreen like a native app, with the app shell cached for instant loads.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-border/50 text-xs font-mono text-muted">
-                Web App Manifest · Fast PWA Shell
+                Web App Manifest · Home Screen Install
               </div>
             </div>
           </Reveal>
@@ -384,7 +421,7 @@ function ConversationalFAQ() {
   const faqs = [
     {
       q: 'Is Trackly free to use?',
-      a: 'Yes. Trackly is completely free for personal activity and habit tracking.',
+      a: 'Yes. Trackly is completely free for personal activity and habit tracking — no premium tiers, no ads.',
     },
     {
       q: 'How do I install Trackly on my mobile phone?',
@@ -395,8 +432,24 @@ function ConversationalFAQ() {
       a: 'Yes. Every category can be customized with specific target units (e.g. Minutes, Pages, Cups, Km) or left as a simple checkmark.',
     },
     {
-      q: 'Where is my data stored?',
-      a: 'Your session data is managed securely via JSON Web Tokens (JWT) with options to clear or export your activity log history anytime.',
+      q: 'Can I sign in with Google?',
+      a: 'Yes. You can create an account with an email and password, or sign in instantly with your Google account.',
+    },
+    {
+      q: 'Can I use Trackly on multiple devices?',
+      a: 'Yes. Your data is tied to your account, so you can log activities on your phone and review your progress on your laptop — everything stays in sync.',
+    },
+    {
+      q: 'Is my activity data private?',
+      a: 'Your entries are only accessible when signed in with your account credentials. Your personal data is never sold or shared.',
+    },
+    {
+      q: 'Can I delete my data?',
+      a: 'Yes. You can delete individual entries anytime, or permanently remove your entire account and all associated data from your profile — no questions asked.',
+    },
+    {
+      q: 'Does Trackly work offline?',
+      a: 'After installing, the app shell is cached so Trackly opens instantly, even on a weak connection. Logging and syncing need an internet connection so your data stays safely stored with your account.',
     },
   ];
 
@@ -540,6 +593,249 @@ function ActivityMarquee() {
   );
 }
 
+// ── At a Glance: angka publik asli, dengan fallback fakta produk ──
+interface PublicStats {
+  users: number;
+  entries: number;
+  categories: number;
+}
+
+// Angka statistik hanya ditampilkan kalau sudah cukup besar untuk meyakinkan.
+// Kalau masih kecil (atau endpoint belum tersedia), tampilkan fakta produk — tanpa angka bohongan.
+const STATS_MIN_ENTRIES = 100;
+const STATS_MIN_USERS = 5;
+
+function useCountUp(target: number, active: boolean, duration = 1300) {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (!active || target <= 0 || PREFERS_REDUCED_MOTION) return;
+
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(target * eased));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active, target, duration]);
+
+  if (PREFERS_REDUCED_MOTION) return active ? target : 0;
+  return value;
+}
+
+function LiveStatsBand() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-40px 0px' });
+  const [stats, setStats] = useState<PublicStats | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get<{ data: PublicStats }>('/api/stats/public')
+      .then((res) => {
+        if (!cancelled) setStats(res.data?.data ?? null);
+      })
+      .catch(() => {
+        // Endpoint belum tersedia / offline — versi fallback di bawah yang tampil
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const showRealNumbers =
+    !!stats && stats.entries >= STATS_MIN_ENTRIES && stats.users >= STATS_MIN_USERS;
+
+  const entriesCount = useCountUp(showRealNumbers ? stats?.entries ?? 0 : 0, inView);
+  const categoriesCount = useCountUp(showRealNumbers ? stats?.categories ?? 0 : 0, inView);
+  const usersCount = useCountUp(showRealNumbers ? stats?.users ?? 0 : 0, inView);
+
+  return (
+    <section ref={ref} className="bg-card/40 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
+        <div className="text-center text-xs font-mono font-medium text-muted uppercase tracking-wider mb-6">
+          At a Glance
+        </div>
+
+        {showRealNumbers ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            <div>
+              <p className="text-3xl sm:text-4xl font-bold tabular-nums text-foreground">{entriesCount.toLocaleString()}</p>
+              <p className="mt-1.5 text-xs font-mono text-muted uppercase tracking-wider">activities logged</p>
+            </div>
+            <div>
+              <p className="text-3xl sm:text-4xl font-bold tabular-nums text-foreground">{categoriesCount.toLocaleString()}</p>
+              <p className="mt-1.5 text-xs font-mono text-muted uppercase tracking-wider">routine categories created</p>
+            </div>
+            <div>
+              <p className="text-3xl sm:text-4xl font-bold tabular-nums text-foreground">{usersCount.toLocaleString()}</p>
+              <p className="mt-1.5 text-xs font-mono text-muted uppercase tracking-wider">people building routines</p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
+            {['100% free', 'No ads, no noise', 'Installable PWA', 'Delete your data anytime'].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 text-xs font-mono text-muted">
+                <span className="h-1 w-1 rounded-full bg-accent" />
+                {item}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── How It Works: cerita 3 langkah pemakaian ─────────────────────
+function HowItWorks() {
+  const steps = [
+    {
+      num: '01',
+      title: 'Create a category',
+      desc: 'Pick an icon, a color, and a unit — pages, minutes, km, or anything you count.',
+    },
+    {
+      num: '02',
+      title: 'Log in seconds',
+      desc: 'One tap records today\'s progress. Add a note if you feel like it, then move on with your day.',
+    },
+    {
+      num: '03',
+      title: 'Watch momentum build',
+      desc: 'Heatmaps, streaks, and monthly totals fill in over time — quiet proof that you keep showing up.',
+    },
+  ];
+
+  return (
+    <section className="border-t border-border py-20 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
+        <Reveal>
+          <div className="max-w-2xl mb-12">
+            <div className="text-xs font-mono font-medium text-muted uppercase tracking-wider mb-2">How It Works</div>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              Three steps. Then just repeat.
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {steps.map((step, idx) => (
+            <Reveal key={step.num} delay={idx * 0.08}>
+              <div className="rounded-2xl border border-border bg-card p-6 h-full">
+                <span className="font-mono text-xs font-bold text-accent">{step.num}</span>
+                <h3 className="mt-3 text-base font-bold text-foreground">{step.title}</h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed">{step.desc}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Live heatmap demo: komponen heatmap asli dengan data contoh ──
+// Data contoh deterministik (bukan data user asli). Probabilitas hari terisi makin
+// tinggi di hari-hari terakhir — biar terlihat seperti momentum yang terbangun.
+function buildDemoEntries(): Entry[] {
+  const entries: Entry[] = [];
+  const today = new Date();
+  let seed = 20251017;
+
+  const nextRandom = () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+
+  for (let daysAgo = 0; daysAgo < 90; daysAgo++) {
+    const date = subDays(today, daysAgo);
+    const fillChance = 0.5 + 0.4 * (1 - daysAgo / 90);
+
+    if (nextRandom() < fillChance) {
+      const count = 1 + Math.floor(nextRandom() * 4); // 1–4 entry per hari
+      for (let i = 0; i < count; i++) {
+        entries.push({
+          id: `demo-${daysAgo}-${i}`,
+          categoryId: 'demo',
+          date: format(date, 'yyyy-MM-dd'),
+          value: 1,
+        });
+      }
+    }
+  }
+
+  return entries;
+}
+
+function LiveHeatmapDemo() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px 0px' });
+  const demoEntries = useMemo(() => buildDemoEntries(), []);
+  const [visibleCount, setVisibleCount] = useState(0);
+
+  // Isi heatmap bertahap dari hari terbaru ke belakang begitu masuk viewport.
+  useEffect(() => {
+    if (!inView || PREFERS_REDUCED_MOTION) return;
+
+    let raf = 0;
+    const duration = 1600;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      setVisibleCount(Math.round(demoEntries.length * progress));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, demoEntries]);
+
+  const displayEntries = PREFERS_REDUCED_MOTION ? demoEntries : demoEntries.slice(0, visibleCount);
+
+  return (
+    <section className="border-t border-border bg-card/30 py-20 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <div className="text-xs font-mono font-medium text-muted uppercase tracking-wider mb-2">The Heart of Trackly</div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                A living map of your consistency.
+              </h2>
+              <p className="mt-3 text-sm sm:text-base text-muted leading-relaxed">
+                Every logged day fills a cell — the deeper the color, the more active the day. Over weeks it becomes an honest picture of momentum, with no scores to game.
+              </p>
+              <div className="mt-6">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
+                >
+                  <span>Start your own map</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+
+          <div className="lg:col-span-7">
+            <div ref={ref} className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="text-[10px] sm:text-xs font-mono text-muted uppercase tracking-wider">Last 90 days</span>
+                <span className="text-[10px] font-mono text-muted/70 uppercase tracking-wider">Demo data</span>
+              </div>
+              <ContributionHeatmap entries={displayEntries} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function LandingPage() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
@@ -576,7 +872,10 @@ export default function LandingPage() {
       <main id="main-content">
         <WorkbenchHero onInstallClick={handleInstallClick} />
         <ActivityMarquee />
+        <LiveStatsBand />
+        <HowItWorks />
         <SystemPrinciples />
+        <LiveHeatmapDemo />
         <CapabilityGrid />
         <ConversationalFAQ />
         <CallToAction onInstallClick={handleInstallClick} />
