@@ -482,31 +482,50 @@ function ConversationalFAQ() {
 function CallToAction({ onInstallClick }: InstallButtonProps) {
   return (
     <section id="download" className="border-t border-border py-20 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl rounded-3xl border border-border bg-card p-8 sm:p-12 text-center">
-        <Reveal>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-            Start building your routine today.
-          </h2>
-          <p className="mt-4 text-sm sm:text-base text-muted max-w-xl mx-auto leading-relaxed">
-            Join a cleaner, focused activity tracker. Free, fast, and installable on all your devices.
-          </p>
+      {/* Kartu CTA orange — satu-satunya blok orange penuh di halaman sebagai penutup.
+          Motif: titik-titik ala heatmap (fade ke tepi) + glow lembut, semuanya dekoratif. */}
+      <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-accent via-[#d14e00] to-[#a83a00] p-8 sm:p-12 text-center">
+        {/* Motif titik heatmap */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-25"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.5) 1.5px, transparent 1.5px)',
+            backgroundSize: '24px 24px',
+            maskImage: 'radial-gradient(ellipse at center, black 35%, transparent 78%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at center, black 35%, transparent 78%)',
+          }}
+        />
+        {/* Glow lembut dua sudut untuk dimensi */}
+        <div aria-hidden className="pointer-events-none absolute -top-24 -right-20 h-64 w-64 rounded-full bg-white/15 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-black/20 blur-3xl" />
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={onInstallClick}
-              id="cta-download"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <Download className="h-4 w-4" />
-              <span>Download App</span>
-            </button>
-            <Link
-              to="/register"
-              id="cta-register"
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-6 py-3 text-sm font-medium text-foreground transition hover:bg-border/40 focus-visible:ring-2 focus-visible:ring-border"
-            >
-              Create Account
-            </Link>
+        <Reveal>
+          <div className="relative">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+              Start building your routine today.
+            </h2>
+            <p className="mt-4 text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed">
+              Join a cleaner, focused activity tracker. Free, fast, and installable on all your devices.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <button
+                onClick={onInstallClick}
+                id="cta-download"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-accent transition hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/70"
+              >
+                <Download className="h-4 w-4" />
+                <span>Download App</span>
+              </button>
+              <Link
+                to="/register"
+                id="cta-register"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/40 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70"
+              >
+                Create Account
+              </Link>
+            </div>
           </div>
         </Reveal>
       </div>
