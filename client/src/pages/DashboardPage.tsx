@@ -43,14 +43,18 @@ export function DashboardPage() {
   for (const e of monthEntries) {
     catCounts[e.categoryId] = (catCounts[e.categoryId] || 0) + 1;
   }
-  let topCategory: { name: string; icon: string; color: string; count: number; unit: string } | undefined = undefined;
+  let topCategory: { name: string; icon: string; color: string; count: number; unit: string; totalValue: number } | undefined = undefined;
   let maxCount = 0;
   for (const [catId, count] of Object.entries(catCounts)) {
     if (count > maxCount) {
       maxCount = count;
       const cat = categories.find((c) => c.id === catId);
       if (cat) {
-        topCategory = { name: cat.name, icon: cat.icon, color: cat.color, count, unit: cat.unit };
+        // totalValue dipakai Share Modal ("Top Focus") — count (sesi) tetap untuk HighlightsDeck
+        const totalValue = monthEntries
+          .filter((e) => e.categoryId === catId)
+          .reduce((sum, e) => sum + e.value, 0);
+        topCategory = { name: cat.name, icon: cat.icon, color: cat.color, count, unit: cat.unit, totalValue };
       }
     }
   }
@@ -67,6 +71,29 @@ export function DashboardPage() {
 
   const yesterday = format(subDays(today, 1), 'yyyy-MM-dd');
 
+  // Stats untuk Share Progress Modal — angka harus sinkron dengan label periode.
+  // Jangan pakai `reduce(...) || fallback`: total 0 (falsy) akan salah jatuh ke all-time.
+  const shareStats = (() => {
+    if (shareCategory) {
+      const catMonthEntries = monthEntries.filter((e) => e.categoryId === shareCategory.id);
+      const catAllTime = entries.filter((e) => e.categoryId === shareCategory.id);
+      const source = catMonthEntries.length > 0 ? catMonthEntries : catAllTime;
+
+      return {
+        totalValue: source.reduce((sum, e) => sum + e.value, 0),
+        totalLogs: source.length,
+        streakDays: streaks.current,
+        periodLabel: catMonthEntries.length > 0 ? 'Logged this month on Trackly' : 'Logged all time on Trackly',
+      };
+    }
+
+    return {
+      totalLogs: monthCount,
+      streakDays: streaks.current,
+      periodLabel: `Logged ${monthCount} sessions across ${categories.length} categories this month`,
+      categoriesCount: categories.length,
+    };
+  })();
 
   if (loading) {
     return (
@@ -268,24 +295,8 @@ export function DashboardPage() {
         }}
         title="Monthly Activity Stream"
         category={shareCategory}
-        topCategory={topCategory ? { name: topCategory.name, value: topCategory.count, unit: topCategory.unit, color: topCategory.color } : null}
-        stats={
-          shareCategory
-            ? {
-              totalValue:
-                monthEntries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0) ||
-                entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
-              totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
-              streakDays: streaks.current,
-              periodLabel: `Logged this month on Trackly`,
-            }
-            : {
-              totalLogs: monthCount,
-              streakDays: streaks.current,
-              periodLabel: `Logged ${monthCount} sessions across ${categories.length} categories this month`,
-              categoriesCount: categories.length,
-            }
-        }
+        topCategory={topCategory ? { name: topCategory.name, value: topCategory.totalValue, unit: topCategory.unit, color: topCategory.color } : null}
+        stats={shareStats}
       />
 
       {/* Progress Detail Modal */}

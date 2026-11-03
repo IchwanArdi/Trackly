@@ -29,6 +29,11 @@ router.post('/feedback', authLimiter, async (req, res) => {
 
   // Validasi Zod
   const feedbackSchema = z.object({
+    category: z
+      .string()
+      .min(1, 'Feedback category is required')
+      .max(50, 'Feedback category is too long')
+      .trim(),
 
     message: z.string()
       .min(3, 'Feedback must be at least 3 characters long')
@@ -36,7 +41,7 @@ router.post('/feedback', authLimiter, async (req, res) => {
       .trim(),
   });
 
-  const validation = feedbackSchema.safeParse({ message });
+  const validation = feedbackSchema.safeParse({ category, message });
 
   if (!validation.success) {
     const firstError = validation.error.issues?.[0]?.message || 'Invalid input data';
