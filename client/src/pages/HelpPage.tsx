@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ChevronDown, Mail, FileText, Shield, Trash2, ArrowLeft, HelpCircle } from 'lucide-react';
+import { useSeo, useTracklySchema } from '../lib/seo';
 
 const FAQS = [
   {
@@ -53,6 +54,18 @@ function FaqItem({ question, answer, index }: { question: string; answer: string
 
 export function HelpPage() {
   const [query, setQuery] = useState('');
+
+  useSeo({
+    title: 'Help Center | Trackly',
+    description:
+      'Answers to common questions about logging activities, building streaks, creating custom categories, privacy, and installing Trackly as an app.',
+    path: '/help',
+  });
+  useTracklySchema({
+    pageName: 'Trackly Help Center',
+    pagePath: '/help',
+    faq: FAQS,
+  });
 
   const filteredFaqs = FAQS.filter(
     (faq) => faq.question.toLowerCase().includes(query.toLowerCase()) || faq.answer.toLowerCase().includes(query.toLowerCase())

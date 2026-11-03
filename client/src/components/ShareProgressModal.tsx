@@ -6,6 +6,7 @@ import { getUser } from '../utils/auth';
 import { renderIcon } from '../utils/icons';
 import { getUnit } from '../utils/format';
 import { format } from 'date-fns';
+import { trackEvent } from '../utils/analytics';
 
 export interface ShareCategoryData {
   id?: string;
@@ -65,6 +66,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
       link.download = `trackly-progress-${format(new Date(), 'yyyy-MM-dd')}.png`;
       link.href = dataUrl;
       link.click();
+      trackEvent('share_card', { method: 'download', mode: isCategoryShare ? 'category' : 'summary' });
       toast.success('Card image saved to your device!');
     } catch (err) {
       console.error(err);
@@ -88,6 +90,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
           text: shareText,
           files: [file],
         });
+        trackEvent('share_card', { method: 'native', mode: isCategoryShare ? 'category' : 'summary' });
       } else {
         await handleDownload();
         await navigator.clipboard.writeText(shareText);

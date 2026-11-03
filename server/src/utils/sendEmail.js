@@ -107,7 +107,7 @@ export const sendReminderEmail = async (toEmail, userName) => {
 
   try {
     await resend.emails.send({
-      from: 'Trackly <onboarding@resend.dev>',
+      from: 'Trackly <noreply@trackly.web.id>',
       to: toEmail,
       subject: 'Jangan lupa log aktivitasmu hari ini!',
       html: `

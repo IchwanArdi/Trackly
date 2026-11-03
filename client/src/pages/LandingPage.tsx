@@ -12,6 +12,8 @@ import { clearAuthToken, api } from '../utils/auth';
 import { useAuthStatus } from '../utils/useAuthStatus';
 import { useData, type Entry } from '../store/dataStore';
 import { ContributionHeatmap } from '../components/dashboard/ContributionHeatmap';
+import { useSeo, useTracklySchema } from '../lib/seo';
+import { trackEvent } from '../utils/analytics';
 
 // Hormati preferensi aksesibilitas: kalau user minta reduced motion, semua animasi
 // (auto-rotate tour, count-up, isi heatmap bertahap) langsung tampil versi final.
@@ -80,6 +82,7 @@ function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
             <Link
               to="/dashboard"
               id="nav-dashboard"
+              onClick={() => trackEvent('cta_click', { cta_id: 'nav_dashboard', location: 'navbar' })}
               className="rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
             >
               Dashboard
@@ -97,6 +100,7 @@ function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
             <Link
               to="/login"
               id="nav-login"
+              onClick={() => trackEvent('cta_click', { cta_id: 'nav_login', location: 'navbar' })}
               className="px-3.5 py-1.5 text-xs font-medium text-muted transition hover:text-foreground focus-visible:ring-2 focus-visible:ring-border rounded-full"
             >
               Sign in
@@ -104,12 +108,16 @@ function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
             <Link
               to="/register"
               id="nav-register"
+              onClick={() => trackEvent('cta_click', { cta_id: 'nav_register', location: 'navbar' })}
               className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-medium text-foreground border border-border rounded-full transition hover:bg-surface focus-visible:ring-2 focus-visible:ring-border"
             >
               Create account
             </Link>
             <button
-              onClick={onInstallClick}
+              onClick={() => {
+                trackEvent('cta_click', { cta_id: 'nav_download', location: 'navbar' });
+                onInstallClick();
+              }}
               id="nav-download"
               className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-xs font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
             >
@@ -181,7 +189,10 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <button
-              onClick={onInstallClick}
+              onClick={() => {
+                trackEvent('cta_click', { cta_id: 'hero_download', location: 'hero' });
+                onInstallClick();
+              }}
               id="hero-cta-primary"
               className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
             >
@@ -191,6 +202,7 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
             <Link
               to="/register"
               id="hero-cta-secondary"
+              onClick={() => trackEvent('cta_click', { cta_id: 'hero_register', location: 'hero' })}
               className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-medium text-foreground transition hover:bg-surface focus-visible:ring-2 focus-visible:ring-border"
             >
               Create Account
@@ -198,6 +210,7 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
             <Link
               to="/login"
               id="hero-cta-login"
+              onClick={() => trackEvent('cta_click', { cta_id: 'hero_login', location: 'hero' })}
               className="inline-flex items-center gap-1.5 px-4 py-3 text-sm font-medium text-muted transition hover:text-foreground"
             >
               <span>Sign in</span>
@@ -417,8 +430,7 @@ function CapabilityGrid() {
   );
 }
 
-function ConversationalFAQ() {
-  const faqs = [
+const LANDING_FAQ = [
     {
       q: 'Is Trackly free to use?',
       a: 'Yes. Trackly is completely free for personal activity and habit tracking — no premium tiers, no ads.',
@@ -451,7 +463,10 @@ function ConversationalFAQ() {
       q: 'Does Trackly work offline?',
       a: 'After installing, the app shell is cached so Trackly opens instantly, even on a weak connection. Logging and syncing need an internet connection so your data stays safely stored with your account.',
     },
-  ];
+];
+
+function ConversationalFAQ() {
+  const faqs = LANDING_FAQ;
 
   return (
     <section className="border-t border-border bg-card/30 py-20 px-4 sm:px-6 lg:px-8">
@@ -511,7 +526,10 @@ function CallToAction({ onInstallClick }: InstallButtonProps) {
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <button
-                onClick={onInstallClick}
+                onClick={() => {
+                  trackEvent('cta_click', { cta_id: 'cta_download', location: 'footer_cta' });
+                  onInstallClick();
+                }}
                 id="cta-download"
                 className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-accent transition hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/70"
               >
@@ -521,6 +539,7 @@ function CallToAction({ onInstallClick }: InstallButtonProps) {
               <Link
                 to="/register"
                 id="cta-register"
+                onClick={() => trackEvent('cta_click', { cta_id: 'cta_register', location: 'footer_cta' })}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/40 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 Create Account
@@ -545,13 +564,28 @@ function MastheadFooter() {
           </div>
 
           <div className="flex flex-wrap items-center gap-6 text-xs font-medium text-muted">
-            <Link to="/login" id="footer-login" className="hover:text-foreground transition">
+            <Link
+              to="/login"
+              id="footer-login"
+              onClick={() => trackEvent('cta_click', { cta_id: 'footer_login', location: 'footer' })}
+              className="hover:text-foreground transition"
+            >
               Sign in
             </Link>
-            <Link to="/register" id="footer-register" className="hover:text-foreground transition">
+            <Link
+              to="/register"
+              id="footer-register"
+              onClick={() => trackEvent('cta_click', { cta_id: 'footer_register', location: 'footer' })}
+              className="hover:text-foreground transition"
+            >
               Create account
             </Link>
-            <a href="#download" id="footer-download" className="hover:text-foreground transition">
+            <a
+              href="#download"
+              id="footer-download"
+              onClick={() => trackEvent('cta_click', { cta_id: 'footer_download', location: 'footer' })}
+              className="hover:text-foreground transition"
+            >
               Download
             </a>
             <Link to="/privacy-policy" id="footer-privacy" className="hover:text-foreground transition">
@@ -831,6 +865,7 @@ function LiveHeatmapDemo() {
               <div className="mt-6">
                 <Link
                   to="/register"
+                  onClick={() => trackEvent('cta_click', { cta_id: 'heatmap_register', location: 'live_heatmap' })}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
                 >
                   <span>Start your own map</span>
@@ -858,6 +893,18 @@ function LiveHeatmapDemo() {
 export default function LandingPage() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
+  useSeo({
+    title: 'Trackly | Free Habit Tracker & Daily Progress',
+    description:
+      'Track daily habits, routines, and streaks with Trackly - a free, privacy-first activity tracker with heatmaps and progress insights. No ads, no gamified noise.',
+    path: '/',
+  });
+  useTracklySchema({
+    pageName: 'Trackly — Free Habit Tracker',
+    pagePath: '/',
+    faq: LANDING_FAQ.map(({ q, a }) => ({ question: q, answer: a })),
+  });
+
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
@@ -874,7 +921,10 @@ export default function LandingPage() {
   const handleInstallClick = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
+      deferredPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') {
+          trackEvent('install_pwa', { platform: 'web' });
+        }
         setDeferredPrompt(null);
       });
     } else {

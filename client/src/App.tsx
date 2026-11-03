@@ -19,6 +19,8 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { DataDeletion } from './pages/Datadeletion';
 import { AuthSuccessPage } from './pages/AuthSuccessPage';
 import { ScrollToTop } from './components/layout/ScrollToTop';
+import { AnalyticsPageView } from './components/AnalyticsPageView';
+import { RouteSeo } from './components/RouteSeo';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
       <NotificationProvider>
         <ToastContainer position="top-right" autoClose={2000} theme="colored" />
         <BrowserRouter>
+          <AnalyticsPageView />
+          <RouteSeo />
           <ScrollToTop />
           <Routes>
             {/* Public routes */}

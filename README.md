@@ -4,30 +4,37 @@
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-8.1-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Express.js](https://img.shields.io/badge/Express-5.2-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![Prisma](https://img.shields.io/badge/Prisma-7.9-2D3748?logo=prisma&logoColor=white)](https://www.prisma.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-DB-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
+**Live app:** [tracklyid.vercel.app](https://tracklyid.vercel.app) · **API:** [trackly-server.vercel.app](https://trackly-server.vercel.app) · **Author:** [Ichwan Ardi](https://github.com/IchwanArdi)
+
 ---
 
 ## 📌 Overview
 
-**Trackly** is a modern full-stack web application designed for recording daily activities, tracking personal target metrics, and visualizing long-term consistency. Built with a responsive React 19 single-page client and an Express + Prisma backend, Trackly enables rapid activity logging, custom category creation, and interactive timeline analytics without friction.
+**Trackly** is a modern full-stack web application for recording daily activities, tracking personal target metrics, and visualizing long-term consistency. It pairs a responsive React 19 single-page client with an Express + Prisma backend, so users can log activities quickly, create custom categories, and review streak and heatmap analytics without friction.
+
+The public site is also built to be discoverable: every marketing page is prerendered to static HTML, carries page-specific Open Graph and JSON-LD metadata, and is listed in a sitemap. Private app routes are explicitly excluded from search indexes.
 
 ---
 
 ## ✨ Key Features
 
-- **🔐 Dual Authentication**: Secure email/password login (with Bcrypt hashing and JWT session handling) alongside Google OAuth 2.0 integration via Passport.js.
-- **📧 Password Recovery**: Automated transactional password reset flow integrated with the Resend API.
-- **🏷️ Custom Categories**: Define custom activity categories with personalized measurement units, color badges, and icons.
-- **⚡ Rapid Daily Logging**: Update daily numbers in seconds with custom increments, notes, and date pickers.
-- **📊 Interactive Analytics & Heatmaps**: Visualize annual activity trends, summary totals, and streak history using Recharts data visualization.
-- **📸 Card Export**: Generate and download visual activity summary cards directly from the browser using `html-to-image`.
-- **🛡️ Rate-Limiting & Security**: API protection powered by Helmet HTTP headers and Express Rate Limit middleware.
+- **🔐 Dual Authentication**: Email/password login (Bcrypt + JWT) and Google OAuth 2.0 via Passport.js.
+- **📧 Password Recovery**: Transactional reset flow through the Resend API.
+- **🏷️ Custom Categories**: Personalized units, colors, and icons for each routine.
+- **⚡ Rapid Daily Logging**: Quick increments, notes, and date selection.
+- **📊 Analytics & Heatmaps**: Annual activity trends, totals, streaks, and contribution heatmaps with Recharts.
+- **📸 Share Cards**: Generate downloadable progress images with `html-to-image`.
+- **📱 Installable PWA**: Installable app shell with a custom service worker and push reminders.
+- **🔎 SEO & AI Discoverability**: Prerendered public pages, canonical URLs, Open Graph, Twitter Cards, FAQ/SoftwareApplication JSON-LD, `robots.txt`, `sitemap.xml`, `llms.txt`, and Markdown page versions.
+- **📈 Privacy-Friendly Measurement**: Optional GA4 events and real-user Core Web Vitals reporting.
+- **🛡️ Security**: Helmet headers, rate limiting, Zod validation, and JWT-protected API routes.
 
 ---
 
@@ -35,33 +42,35 @@
 
 ### Frontend
 - **Framework**: React 19, TypeScript, Vite
-- **Styling**: Tailwind CSS v4, Vanilla CSS design system
+- **Styling**: Tailwind CSS v4, custom CSS design system
 - **State & Routing**: Context API, React Router v7
-- **UI & Animations**: Lucide Icons, Framer Motion, React Toastify, Recharts
+- **UI & Animation**: Lucide Icons, Framer Motion, React Toastify, Recharts
+- **Head & Structured Data**: `@unhead/react`, `@unhead/schema-org`
+- **Analytics**: GA4 events and `web-vitals`
+- **Build-time SEO**: Puppeteer prerendering + Lighthouse CI
 
 ### Backend & Database
 - **Runtime**: Node.js (ES Modules), Express 5
 - **Database ORM**: Prisma 7 with PostgreSQL (`@prisma/adapter-pg`)
-- **Authentication**: Passport.js (Google OAuth 2.0), JSON Web Tokens (`jsonwebtoken`), Bcrypt
-- **Email Service**: Resend Mailer API
+- **Authentication**: Passport.js (Google OAuth 2.0), JSON Web Tokens, Bcrypt
+- **Email**: Resend
 - **Security & Validation**: Helmet, Express Rate Limit, Zod
 
 ### Deployment
-- **Platform**: Vercel (Frontend SPA & Serverless Node.js API)
+- **Platform**: Vercel (prerendered frontend + serverless Node.js API)
+- **CI**: GitHub Actions + Lighthouse CI
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+ recommended)
-- PostgreSQL Database instance (e.g., Supabase, Neon, or local PostgreSQL)
-
----
+- **Node.js 22+** (required by Puppeteer and Lighthouse CI)
+- PostgreSQL database (Supabase, Neon, or local)
 
 ### Environment Setup
 
-Create `.env` files in both the `server/` and `client/` directories based on the required variable names below:
+Create `.env` files in both `server/` and `client/`.
 
 #### Backend (`server/.env`)
 ```env
@@ -80,19 +89,22 @@ CLIENT_URL=http://localhost:5173
 #### Frontend (`client/.env`)
 ```env
 VITE_API_URL=http://localhost:5000
+VITE_SITE_URL=https://tracklyid.vercel.app
+VITE_GA_MEASUREMENT_ID=
+VITE_VAPID_PUBLIC_KEY=
 ```
 
----
+`VITE_GA_MEASUREMENT_ID` may stay empty locally. Analytics helpers become no-ops when it is not set.
 
 ### Installation & Local Execution
 
-1. **Clone the repository**:
+1. **Clone the repository**
    ```bash
    git clone https://github.com/IchwanArdi/Trackly.git
    cd Trackly
    ```
 
-2. **Start Backend Server**:
+2. **Start the backend**
    ```bash
    cd server
    npm install
@@ -101,14 +113,54 @@ VITE_API_URL=http://localhost:5000
    npm start
    ```
 
-3. **Start Frontend Client** (in a separate terminal window):
+3. **Start the frontend** (in a second terminal)
    ```bash
    cd client
    npm install
    npm run dev
    ```
 
-4. Open `http://localhost:5173` in your browser to view the application.
+4. Open `http://localhost:5173`.
+
+---
+
+## 🧪 Frontend Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start Vite with HMR |
+| `npm run build` | Type-check and build the SPA |
+| `npm run build:seo` | Build, then prerender public pages with Puppeteer |
+| `npm run prerender` | Re-run prerendering against an existing `dist/` |
+| `npm run preview` | Preview the built SPA |
+| `npm run lint` | Run ESLint |
+| `npx lhci autorun` | Run Lighthouse CI locally |
+
+`build:seo` is the production build command configured in `client/vercel.json`. It writes real HTML for `/`, `/help`, `/privacy-policy`, `/terms-of-service`, and `/data-deletion`, and refreshes `dist/sitemap.xml` with the build date.
+
+---
+
+## 🔎 SEO & Analytics Setup
+
+The public pages are prerendered, so search engines and AI crawlers receive complete HTML without executing JavaScript.
+
+1. **Set the production origin** in Vercel: `VITE_SITE_URL=https://tracklyid.vercel.app`.
+2. **Create a GA4 property** and set `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` in Vercel. Events tracked include `page_view`, `sign_up`, `login`, `create_category`, `log_entry`, `share_card`, `install_pwa`, `cta_click`, `password_reset_request`, and `web_vitals`.
+3. **Verify the site in Google Search Console** using the DNS or HTML tag method, then submit `https://tracklyid.vercel.app/sitemap.xml`.
+4. Optionally submit the sitemap to Bing Webmaster Tools.
+5. Run `npx lhci autorun` inside `client/` to check performance, accessibility, best practices, and SEO locally.
+
+Static discovery files live in `client/public/`:
+
+- `robots.txt` — allows public pages and excludes private app routes
+- `sitemap.xml` — regenerated during `build:seo`
+- `llms.txt` — short site guide for AI agents and tooling
+- `llms-full.txt` — all public content in one plain-text file
+- `*.md` — Markdown versions of each public page
+
+> `llms.txt` is an emerging convention, not a Google ranking factor. The real SEO wins come from prerendered HTML, canonical URLs, structured data, and a valid sitemap.
+
+Private routes (`/dashboard`, `/log`, `/history`, `/categories`, `/profile`, and auth pages) send `noindex` meta tags and `X-Robots-Tag` headers, and are excluded from the sitemap.
 
 ---
 
@@ -116,23 +168,29 @@ VITE_API_URL=http://localhost:5000
 
 ```
 Trackly/
-├── client/                 # React 19 + TypeScript Frontend (Vite)
-│   ├── public/             # Static assets, icons, and banners
+├── .github/workflows/      # Lighthouse CI workflow
+├── .agents/                # Shared agent skills (hallmark)
+├── client/                 # React 19 + TypeScript frontend
+│   ├── public/             # Static assets, robots.txt, sitemap, llms.txt, Markdown pages
+│   ├── scripts/            # Puppeteer prerender + static dist server
 │   ├── src/
-│   │   ├── components/     # UI components & layout structures
-│   │   ├── pages/          # Application routes & views
+│   │   ├── components/     # UI, layout, analytics page-view tracker, route SEO
+│   │   ├── lib/            # SEO helpers (meta, canonical, JSON-LD)
+│   │   ├── pages/          # Application routes and public pages
 │   │   ├── store/          # React Context state management
-│   │   └── utils/          # API client & auth helper utilities
+│   │   └── utils/          # API client, auth, analytics, web vitals
+│   ├── .lighthouserc.json
+│   ├── vercel.json
 │   └── package.json
-├── server/                 # Node.js + Express 5 Backend
-│   ├── prisma/             # Database schema & migrations
+├── server/                 # Node.js + Express 5 backend
+│   ├── prisma/             # Database schema and migrations
 │   ├── src/
-│   │   ├── config/         # Prisma client & Passport strategies
-│   │   ├── middleware/     # Rate limiter & security handlers
+│   │   ├── config/         # Prisma client and Passport strategies
+│   │   ├── middleware/     # Rate limiter and security handlers
 │   │   ├── routes/         # Express API endpoints
-│   │   └── utils/          # Hashing & email mailer utilities
+│   │   └── utils/          # Hashing and email utilities
 │   └── package.json
-└── api.json                # Postman API Collection
+└── api.json                # Postman API collection
 ```
 
 ---

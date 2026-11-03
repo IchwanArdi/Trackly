@@ -1,13 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { saveUser, setAuthToken } from '../utils/auth';
 import { useData } from '../store/dataStore';
+import { trackEvent } from '../utils/analytics';
 
 export function AuthSuccessPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { refreshAll } = useData();
+  const tracked = useRef(false);
 
   useEffect(() => {
     const token = searchParams.get('token');
@@ -23,6 +25,11 @@ export function AuthSuccessPage() {
 
     setAuthToken(token);
     saveUser({ id: userId, name, email });
+
+    if (!tracked.current) {
+      tracked.current = true;
+      trackEvent('login', { method: 'google' });
+    }
 
     refreshAll().finally(() => {
       navigate('/dashboard', { replace: true });
