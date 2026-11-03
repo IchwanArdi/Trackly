@@ -7,6 +7,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { Loader2, ArrowLeft, ShieldCheck, Layers } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export function RegisterPage() {
         email,
         password,
       });
+      trackEvent('sign_up', { method: 'email' });
       toast.update(idToast, {
         render: `${response.data.message}`,
         type: 'success',

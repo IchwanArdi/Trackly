@@ -1,0 +1,45 @@
+# Trackly
+
+> Trackly is a free, privacy-first habit and activity tracker for building calm routines with custom categories, numeric logs, streak analytics, and visual heatmaps. No ads, no gamification, no data selling.
+
+Trackly is a live web app at https://tracklyid.vercel.app. It is installable as a Progressive Web App (PWA) on desktop and mobile. Users can sign up with email and password or Google Sign-In.
+
+## Core features
+
+- Custom habit categories with names, units, colors, and icons.
+- Numeric activity logging (minutes, pages, cups, kilometers, or a simple checkmark).
+- Daily streaks and 90-day contribution heatmaps.
+- Progress summaries and shareable image cards.
+- Responsive dashboard for phone and desktop.
+- PWA install with an offline-cached app shell.
+- Account and data deletion controls.
+
+## Technology
+
+Trackly is built with React 19, TypeScript, Vite, Tailwind CSS, and React Router on the client. The API uses Node.js, Express, and PostgreSQL (Supabase). The web app is deployed on Vercel and the API on Vercel.
+
+## Author
+
+Created by Ichwan Ardi — https://github.com/IchwanArdi
+
+## Pages
+
+- [Home](https://tracklyid.vercel.app/): Product overview, features, live heatmap demo, and FAQ.
+- [Help Center](https://tracklyid.vercel.app/help): Answers about logging, streaks, categories, privacy, and installation.
+- [Privacy Policy](https://tracklyid.vercel.app/privacy-policy): What data is collected, how it is stored, and user rights.
+- [Terms of Service](https://tracklyid.vercel.app/terms-of-service): Account responsibilities, acceptable use, and data ownership.
+- [Data Deletion](https://tracklyid.vercel.app/data-deletion): Self-service and email-based account deletion instructions.
+
+## Markdown versions
+
+- [Home Markdown](https://tracklyid.vercel.app/index.md)
+- [Help Markdown](https://tracklyid.vercel.app/help.md)
+- [Privacy Markdown](https://tracklyid.vercel.app/privacy-policy.md)
+- [Terms Markdown](https://tracklyid.vercel.app/terms-of-service.md)
+- [Data Deletion Markdown](https://tracklyid.vercel.app/data-deletion.md)
+
+## Optional
+
+- [Full site content](https://tracklyid.vercel.app/llms-full.txt): All public page content in one plain-text file.
+- [Sitemap](https://tracklyid.vercel.app/sitemap.xml)
+- [Contact](mailto:ichwanpwt22@gmail.com)

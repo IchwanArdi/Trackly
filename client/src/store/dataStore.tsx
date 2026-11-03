@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { api, clearAuthToken } from '../utils/auth';
 import { toast } from 'react-toastify';
+import { trackEvent } from '../utils/analytics';
 
 
 // ── Types ────────────────────────────────────────────────────────
@@ -145,6 +146,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const addCategory = useCallback(async (cat: Omit<Category, 'id'>) => {
     const res = await api.post<Category>('/api/categories', cat);
     setCategories((prev) => [...prev, res.data]);
+    trackEvent('create_category', { unit: cat.unit });
   }, []);
 
   const updateCategory = useCallback(async (id: string, updates: Partial<Omit<Category, 'id'>>) => {
@@ -163,6 +165,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const res = await api.post<Entry>('/api/entries', entry);
     // Catatan: Karena POST backend langsung me-return objek entry tunggal (bukan paginated), ini tetap aman
     setEntries((prev) => [res.data, ...prev]);
+    trackEvent('log_entry', { has_note: Boolean(entry.note) });
   }, []);
 
   const updateEntry = useCallback(async (id: string, updates: Partial<Omit<Entry, 'id'>>) => {

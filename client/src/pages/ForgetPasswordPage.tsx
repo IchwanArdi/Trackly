@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Loader2, MailCheck } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
+import { trackEvent } from '../utils/analytics';
 
 export function ForgetPasswordPage() {
   const [email, setEmail] = useState('');
@@ -19,6 +20,7 @@ export function ForgetPasswordPage() {
     const idToast = toast.loading('Sending reset link...');
     try {
       const response = await api.post('/api/auth/forgot-password', { email });
+      trackEvent('password_reset_request', { method: 'email' });
       toast.update(idToast, {
         render: response.data.message,
         type: 'success',

@@ -8,6 +8,7 @@ import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useData } from '../store/dataStore';
 import { Loader2, ArrowLeft, Activity, BarChart3 } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 function GoogleIcon() {
   return (
@@ -40,6 +41,7 @@ export function LoginPage() {
       setAuthToken(response.data.token);
       saveUser(response.data.user);
       await refreshAll();
+      trackEvent('login', { method: 'email' });
 
       toast.update(idToast, {
         render: `${response.data.message}`,

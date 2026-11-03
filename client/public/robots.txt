@@ -1,0 +1,18 @@
+# robots.txt for Trackly
+# https://tracklyid.vercel.app
+
+User-agent: *
+Allow: /
+
+# Private, authenticated workspace routes. They also send noindex headers.
+Disallow: /dashboard
+Disallow: /log
+Disallow: /history
+Disallow: /categories
+Disallow: /profile
+Disallow: /auth/
+
+# Auth pages are crawlable so their noindex meta tags can be read.
+# They are intentionally excluded from the sitemap.
+
+Sitemap: https://tracklyid.vercel.app/sitemap.xml

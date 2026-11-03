@@ -2,6 +2,7 @@
 /* Hallmark · macrostructure: Long Document · tone: calm-focused · anchor hue: orange */
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { useSeo, useTracklySchema } from '../lib/seo';
 
 const SECTIONS = [
   {
@@ -40,6 +41,14 @@ const SECTIONS = [
 ];
 
 export function PrivacyPolicy() {
+  useSeo({
+    title: 'Privacy Policy | Trackly',
+    description:
+      'How Trackly collects, stores, and protects your account and activity data. Learn about your rights, data retention, and account deletion.',
+    path: '/privacy-policy',
+  });
+  useTracklySchema({ pageName: 'Trackly Privacy Policy', pagePath: '/privacy-policy' });
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 selection:text-accent">
       {/* Top Bar */}

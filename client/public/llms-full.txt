@@ -1,0 +1,199 @@
+# Trackly — full public site content
+
+Source: https://tracklyid.vercel.app
+Author: Ichwan Ardi (https://github.com/IchwanArdi)
+Contact: ichwanpwt22@gmail.com
+
+---
+
+## Home
+
+# Trackly — Build calm routines. Observe steady progress.
+
+Trackly is a distraction-free workspace designed to record daily habits, observe momentum, and stay consistent without gamified noise. It is free, privacy-first, and installable as a Progressive Web App.
+
+### What you can do
+
+- Record daily habits and activities in seconds.
+- Create custom categories with names, units, colors, and icons.
+- Track numeric values such as minutes, pages, cups, kilometers, or simple checkmarks.
+- Build consecutive-day streaks.
+- View a 90-day contribution heatmap of your consistency.
+- Share progress summaries as image cards.
+- Use the same account across phone and desktop.
+- Delete individual entries or your entire account at any time.
+
+### How it works
+
+1. Create an account with email and password or Google Sign-In.
+2. Add the routines you want to track, each with its own unit and color.
+3. Log an entry whenever you complete an activity.
+4. Review streaks, heatmaps, and progress summaries in the dashboard.
+
+### Frequently asked questions
+
+#### Is Trackly free to use?
+
+Yes. Trackly is completely free for personal activity and habit tracking — no premium tiers, no ads.
+
+#### How do I install Trackly on my mobile phone?
+
+Click the "Get App" or "Download App" button in the navigation header. On iOS or Android, select "Add to Home Screen" to install Trackly as a Progressive Web App (PWA).
+
+#### Can I track habits with custom units like minutes or liters?
+
+Yes. Every category can be customized with specific target units (e.g. Minutes, Pages, Cups, Km) or left as a simple checkmark.
+
+#### Can I sign in with Google?
+
+Yes. You can create an account with an email and password, or sign in instantly with your Google account.
+
+#### Can I use Trackly on multiple devices?
+
+Yes. Your data is tied to your account, so you can log activities on your phone and review your progress on your laptop — everything stays in sync.
+
+#### Is my activity data private?
+
+Your entries are only accessible when signed in with your account credentials. Your personal data is never sold or shared.
+
+#### Can I delete my data?
+
+Yes. You can delete individual entries anytime, or permanently remove your entire account and all associated data from your profile — no questions asked.
+
+#### Does Trackly work offline?
+
+After installing, the app shell is cached so Trackly opens instantly, even on a weak connection. Logging and syncing need an internet connection so your data stays safely stored with your account.
+
+---
+
+## Help Center
+
+# Help Center
+
+Search common questions or contact support directly.
+
+### How do I add a new activity entry?
+
+Click the "Log Entry" button in the sidebar or bottom navigation, select a category, enter the numeric value for that habit (e.g. minutes, pages, cups), and save.
+
+### How do I create a new custom category?
+
+Navigate to the "Categories" page from the sidebar, click "Add Category", then configure the name, unit type, color accent, and icon for your routine.
+
+### What is a streak and how is it calculated?
+
+A streak counts consecutive days where you recorded at least one activity. If a full calendar day passes without any entry, the current streak resets to 0.
+
+### Is my personal activity data secure?
+
+Yes. Your records are protected behind JWT authentication and stored in secure PostgreSQL database instances. Read our Privacy Policy for details.
+
+### How do I delete my account and data?
+
+Go to Profile settings, scroll to the Account Deletion section, and confirm deletion. You can also review our Data Deletion guide.
+
+### Can I install Trackly on my smartphone?
+
+Yes! Trackly is a Progressive Web App (PWA). Click "Download App" or select "Add to Home Screen" in your mobile browser.
+
+---
+
+## Privacy Policy
+
+Last updated: August 2026 · Trackly Data Governance
+
+Trackly is committed to providing a calm, private activity-tracking environment. This Privacy Policy outlines what information we store, how it is secured, and your rights over your personal history.
+
+### 01. Information We Collect
+
+We collect the minimum necessary information to provide personal habit tracking:
+
+- Account credentials: Name and email address (via registration or Google Sign-In).
+- Activity history: Categories, entries, numeric values, completion logs, and personal notes.
+
+### 02. How We Use Your Information
+
+We use your data solely to calculate statistics, streaks, and heatmap charts for your personal workspace. We never sell, rent, or trade personal data to third parties or advertising networks.
+
+### 03. Google Sign-In Scope
+
+When logging in via Google OAuth, we strictly read your basic profile (name and email) to authorize your account. We request zero additional Google scopes or access permissions.
+
+### 04. Data Storage & Security
+
+Data is stored in encrypted PostgreSQL database instances hosted via Supabase, served securely through Vercel over TLS. Passwords are salted and hashed using industry-standard cryptography.
+
+### 05. Data Retention & Control
+
+Your records remain active for as long as your account exists. You maintain full rights to export your data or delete your account permanently at any time.
+
+### 06. Your Rights & Data Deletion
+
+You have full rights to request complete deletion of your account and logs. Visit the Data Deletion Instructions for step-by-step guidance.
+
+### Contact & Inquiries
+
+For any questions regarding privacy or data handling, contact ichwanpwt22@gmail.com.
+
+---
+
+## Terms of Service
+
+Last updated: August 2026 · User Agreement
+
+Welcome to Trackly. Please review these Terms of Service governing your access to and use of our web application and services.
+
+### 01. Acceptance of Terms
+
+By registering or utilizing Trackly, you acknowledge and agree to be bound by these Terms of Service. If you disagree with any portion, please discontinue access.
+
+### 02. Service Description
+
+Trackly provides personal habit tracking, streak analytics, and visual activity heatmaps to assist users in building routines.
+
+### 03. Account Responsibilities
+
+You are responsible for safeguarding your credentials and for all activities conducted under your account. Promptly notify us of any security compromise.
+
+### 04. Ownership of User Content
+
+All categories, numeric logs, notes, and custom entries remain strictly your property. Trackly processes this data solely to render your personal workspace.
+
+### 05. Acceptable Conduct
+
+You agree not to reverse engineer, disrupt service availability, or attempt unauthorized access to infrastructure hosting Trackly.
+
+### 06. Third-Party Integration (Google OAuth)
+
+Google Sign-In is provided for authentication convenience. We fetch basic account attributes (name and email) strictly to match your user profile.
+
+### 07. Service Modifications
+
+We reserve the right to update, modify, or discontinue features of Trackly to improve performance, security, or maintainability.
+
+### Inquiries & Legal Contact
+
+Questions regarding these Terms should be directed to ichwanpwt22@gmail.com.
+
+---
+
+## Data Deletion Instructions
+
+Last updated: August 2026 · Account Removal Protocol
+
+Trackly provides straightforward mechanisms to permanently delete your profile, habit categories, and activity logs from our servers.
+
+### Option 01 — Self-Service Account Deletion
+
+1. Log in to your Trackly account at https://tracklyid.vercel.app/login
+2. Navigate to Profile / Settings in the main navigation.
+3. Scroll down to the Danger Zone section.
+4. Click Delete Account and confirm when prompted.
+
+### Option 02 — Manual Deletion Request via Email
+
+Send an email to ichwanpwt22@gmail.com with the subject line "Data Deletion Request". Specify the registered email address associated with your account. Requests are processed within 5 business days.
+
+### Scope of Permanent Removal
+
+Deletion is irreversible. Once processed, your account record, email address, custom category definitions, and daily activity logs will be permanently erased from PostgreSQL storage and backups.

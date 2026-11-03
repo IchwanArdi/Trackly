@@ -2,8 +2,17 @@
 /* Hallmark · macrostructure: Long Document · tone: calm-focused · anchor hue: orange */
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Trash2, ShieldAlert } from 'lucide-react';
+import { useSeo, useTracklySchema } from '../lib/seo';
 
 export function DataDeletion() {
+  useSeo({
+    title: 'Data Deletion Instructions | Trackly',
+    description:
+      'Step-by-step instructions to permanently delete your Trackly account and all associated activity data.',
+    path: '/data-deletion',
+  });
+  useTracklySchema({ pageName: 'Trackly Data Deletion Instructions', pagePath: '/data-deletion' });
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 selection:text-accent">
       {/* Top Bar */}

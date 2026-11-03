@@ -2,6 +2,7 @@
 /* Hallmark · macrostructure: Long Document · tone: calm-focused · anchor hue: orange */
 import { Link } from 'react-router-dom';
 import { ArrowLeft, FileText } from 'lucide-react';
+import { useSeo, useTracklySchema } from '../lib/seo';
 
 const SECTIONS = [
   {
@@ -42,6 +43,14 @@ const SECTIONS = [
 ];
 
 export function TermsOfService() {
+  useSeo({
+    title: 'Terms of Service | Trackly',
+    description:
+      'The terms that govern your use of Trackly, including account responsibilities, acceptable use, data ownership, and service changes.',
+    path: '/terms-of-service',
+  });
+  useTracklySchema({ pageName: 'Trackly Terms of Service', pagePath: '/terms-of-service' });
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 selection:text-accent">
       {/* Top Bar */}
