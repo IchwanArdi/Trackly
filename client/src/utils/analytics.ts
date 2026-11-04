@@ -27,8 +27,11 @@ export function initAnalytics() {
   initialized = true;
 
   window.dataLayer = window.dataLayer ?? [];
-  window.gtag = (...args: unknown[]) => {
-    window.dataLayer?.push(args);
+  window.gtag = function () {
+    // GTM expects an Arguments object, not a real array. Pushing an array
+    // makes gtag.js silently ignore the command.
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer?.push(arguments);
   };
 
   // Page views are sent manually by AnalyticsPageView so SPA navigations are
@@ -36,10 +39,14 @@ export function initAnalytics() {
   window.gtag('js', new Date());
   window.gtag('config', GA_MEASUREMENT_ID, { send_page_view: false });
 
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
-  document.head.appendChild(script);
+  // Pre-rendered pages already contain the gtag script tag. Avoid loading it
+  // twice while still injecting it for client-only development builds.
+  if (!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
+    document.head.appendChild(script);
+  }
 }
 
 export function trackEvent(name: string, params: AnalyticsParams = {}) {
