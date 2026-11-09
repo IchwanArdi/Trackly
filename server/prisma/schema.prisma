@@ -10,15 +10,20 @@ model User {
   id                String     @id @default(uuid())
   name              String
   email             String     @unique
+  // Legacy password/reset columns are kept only for rollback safety.
+  // The app now authenticates with Google OAuth or a one-time email code.
   password          String?
   createdAt         DateTime   @default(now())
   googleId          String?    @unique
   resetToken        String?    @unique
   resetTokenExpiry  DateTime?
+  // True once the email has been proven through OTP or a verified Google email.
+  emailVerified     Boolean    @default(false)
   categories        Category[]
   entries           Entry[]
   notifications     Notification[]
   subscriptions     PushSubscription[]
+  oauthCodes        OAuthCode[]
 }
 
 model Category {
@@ -82,4 +87,32 @@ model PushSubscription {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// A short-lived, single-use login code sent to an email address.
+// The raw code is never stored; only its HMAC hash is kept.
+model LoginCode {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  // Refreshed on resend; it doubles as the 60-second cooldown timer.
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
+// A short-lived, single-use code used to hand the Google OAuth result back to
+// the SPA without putting a 7-day JWT in the browser URL.
+model OAuthCode {
+  id        String   @id @default(uuid())
+  codeHash  String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }

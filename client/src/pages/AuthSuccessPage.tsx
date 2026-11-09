@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { saveUser, setAuthToken } from '../utils/auth';
+import { api, saveUser, setAuthToken } from '../utils/auth';
 import { useData } from '../store/dataStore';
 import { trackEvent } from '../utils/analytics';
 
@@ -9,31 +9,51 @@ export function AuthSuccessPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { refreshAll } = useData();
-  const tracked = useRef(false);
+  const exchangeStarted = useRef(false);
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const userId = searchParams.get('id') ?? '';
-    const name = searchParams.get('name') ?? '';
-    const email = searchParams.get('email') ?? '';
+    // React StrictMode can run effects twice in development. The exchange code
+    // is single-use, so guard it to avoid a false "already used" error.
+    if (exchangeStarted.current) return;
+    exchangeStarted.current = true;
 
-    if (!token) {
+    const code = searchParams.get('code');
+
+    if (!code) {
       toast.error('Authentication failed. Please try again.');
       navigate('/login', { replace: true });
       return;
     }
 
-    setAuthToken(token);
-    saveUser({ id: userId, name, email });
+    // Remove the one-time code from the address bar before the async exchange.
+    // This keeps it out of browser history and out of any third-party script's
+    // view; the value is already captured safely in memory.
+    window.history.replaceState(window.history.state, '', '/auth/success');
 
-    if (!tracked.current) {
-      tracked.current = true;
-      trackEvent('login', { method: 'google' });
-    }
+    const exchangeCode = async () => {
+      try {
+        // The 7-day JWT is returned in the response body. It never appears in
+        // the URL; only the short-lived, single-use OAuth code does.
+        const response = await api.post('/api/auth/google/exchange', { code });
 
-    refreshAll().finally(() => {
-      navigate('/dashboard', { replace: true });
-    });
+        setAuthToken(response.data.token);
+        saveUser(response.data.user);
+
+        // A failed data prefetch should not block a successful sign-in.
+        await refreshAll().catch(() => {});
+
+        trackEvent('login', { method: 'google' });
+        navigate('/dashboard', { replace: true });
+      } catch (error) {
+        const message =
+          (error as { response?: { data?: { message?: string } } }).response?.data?.message ||
+          'Google sign-in failed. Please try again.';
+        toast.error(message);
+        navigate('/login', { replace: true });
+      }
+    };
+
+    void exchangeCode();
   }, [navigate, refreshAll, searchParams]);
 
   return (

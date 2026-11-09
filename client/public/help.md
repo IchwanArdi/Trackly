@@ -6,6 +6,14 @@ Search common questions or contact support directly at ichwanpwt22@gmail.com.
 
 Click the "Log Entry" button in the sidebar or bottom navigation, select a category, enter the numeric value for that habit (e.g. minutes, pages, cups), and save.
 
+## How do I sign in without a password?
+
+Enter your email on the sign-in page and we will send a six-digit code. The code expires after 10 minutes and can be used once. You can also continue with Google.
+
+## Are email login codes secure?
+
+Yes. Codes are single-use, expire after 10 minutes, and are stored as keyed hashes. Never share a code with anyone; Trackly will never ask for it outside the sign-in page.
+
 ## How do I create a new custom category?
 
 Navigate to the "Categories" page from the sidebar, click "Add Category", then configure the name, unit type, color accent, and icon for your routine.

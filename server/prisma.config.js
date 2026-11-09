@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
 export default defineConfig({
     schema: "prisma/schema.prisma",
@@ -7,6 +7,9 @@ export default defineConfig({
         path: "prisma/migrations",
     },
     datasource: {
-        url: env("DIRECT_URL"),
+        // Prisma CLI/migrations prefer a direct database connection. Falling
+        // back to DATABASE_URL keeps local builds and Vercel deploys working
+        // even when DIRECT_URL is not configured.
+        url: process.env.DIRECT_URL || process.env.DATABASE_URL,
     },
 });

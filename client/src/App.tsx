@@ -4,15 +4,12 @@ import { DataProvider } from './store/dataStore';
 import { NotificationProvider } from './store/notificationStore';
 import { AppLayout } from './components/layout/AppLayout';
 import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { LogEntryPage } from './pages/LogEntryPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { CategoriesPage } from './pages/CategoriesPage';
 import { ProfilePage } from './pages/ProfilePage';
 import LandingPage from './pages/LandingPage';
-import { ForgetPasswordPage } from './pages/ForgetPasswordPage';
-import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { HelpPage } from './pages/HelpPage';
 import { TermsOfService } from './pages/TermsOfService';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
@@ -38,13 +35,16 @@ function App() {
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/data-deletion" element={<DataDeletion />} />
-            <Route path="/forgot-password" element={<ForgetPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
             {/* Auth routes */}
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
             <Route path="/auth/success" element={<AuthSuccessPage />} />
+
+            {/* Old password routes now point to the passwordless login page.
+                Keeping redirects avoids broken bookmarks and old search links. */}
+            <Route path="/register" element={<Navigate to="/login" replace />} />
+            <Route path="/forgot-password" element={<Navigate to="/login" replace />} />
+            <Route path="/reset-password" element={<Navigate to="/login" replace />} />
 
             {/* App routes */}
             <Route element={<AppLayout />}>

@@ -1,13 +1,13 @@
 /* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 */
 /* Hallmark · macrostructure: Split Studio · tone: calm-focused · anchor hue: orange */
-import { useState } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import { api, setAuthToken, saveUser } from '../utils/auth';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useData } from '../store/dataStore';
-import { Loader2, ArrowLeft, Activity, BarChart3 } from 'lucide-react';
+import { Loader2, ArrowLeft, Activity, BarChart3, Mail } from 'lucide-react';
 import { trackEvent } from '../utils/analytics';
 
 function GoogleIcon() {
@@ -21,54 +21,143 @@ function GoogleIcon() {
   );
 }
 
+// Safely extracts the server's error message from an Axios error.
+function getErrorMessage(error: unknown, fallback: string) {
+  return (
+    (error as { response?: { data?: { message?: string } } }).response?.data?.message ||
+    fallback
+  );
+}
+
 export function LoginPage() {
   const navigate = useNavigate();
   const { refreshAll } = useData();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [code, setCode] = useState('');
+  const [step, setStep] = useState<'email' | 'code'>('email');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const googleErrorHandled = useRef(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // The backend redirects here with ?error=google when OAuth is cancelled or
+  // fails. Show it once, then remove the parameter so a refresh stays clean.
+  useEffect(() => {
+    if (googleErrorHandled.current || searchParams.get('error') !== 'google') return;
+
+    googleErrorHandled.current = true;
+    toast.error('Google sign-in was cancelled or failed. Please try again.');
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete('error');
+    setSearchParams(nextParams, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  /**
+   * OTP step 1: ask the server to email a short-lived code.
+   * The server intentionally returns the same message for every valid email,
+   * so this page never learns whether an account already exists.
+   */
+  const requestCode = async () => {
+    if (loading) return;
+
+    if (!email.trim()) {
+      toast.error('Enter your email address first.');
+      return;
+    }
+
     setLoading(true);
-    const idToast = toast.loading('Loading...');
-    try {
-      const response = await api.post('/api/auth/login', {
-        email,
-        password,
-      });
-      setAuthToken(response.data.token);
-      saveUser(response.data.user);
-      await refreshAll();
-      trackEvent('login', { method: 'email' });
+    const toastId = toast.loading('Sending a login code...');
 
-      toast.update(idToast, {
-        render: `${response.data.message}`,
+    try {
+      const response = await api.post('/api/auth/request-code', {
+        email: email.trim(),
+      });
+
+      toast.update(toastId, {
+        render: response.data.message,
         type: 'success',
         isLoading: false,
-        autoClose: 2000,
+        autoClose: 4000,
       });
 
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
-    } catch (error: unknown) {
-      toast.update(idToast, {
-        render: `${(error as { response?: { data?: { message?: string } } }).response?.data?.message || 'An unexpected error occurred'}`,
+      setStep('code');
+      setCode('');
+    } catch (error) {
+      toast.update(toastId, {
+        render: getErrorMessage(error, 'Could not send the login code.'),
         type: 'error',
         isLoading: false,
-        autoClose: 2000,
+        autoClose: 4000,
       });
     } finally {
       setLoading(false);
     }
   };
 
+  /** OTP step 2: exchange the emailed code for the app JWT. */
+  const handleVerifyCode = async (event: FormEvent) => {
+    event.preventDefault();
+
+    if (code.length !== 6) {
+      toast.error('Enter the 6-digit code from your email.');
+      return;
+    }
+
+    setLoading(true);
+    const toastId = toast.loading('Verifying your code...');
+
+    try {
+      const response = await api.post('/api/auth/verify-code', {
+        email: email.trim(),
+        code,
+      });
+
+      setAuthToken(response.data.token);
+      saveUser(response.data.user);
+
+      // Data can also load on the dashboard; a failed prefetch must not block
+      // a successful login.
+      await refreshAll().catch(() => {});
+
+      trackEvent(response.data.isNewUser ? 'sign_up' : 'login', {
+        method: 'email_otp',
+      });
+
+      toast.update(toastId, {
+        render: response.data.message,
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      navigate('/dashboard', { replace: true });
+    } catch (error) {
+      toast.update(toastId, {
+        render: getErrorMessage(error, 'That code is invalid or has expired.'),
+        type: 'error',
+        isLoading: false,
+        autoClose: 4000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRequestCode = (event: FormEvent) => {
+    event.preventDefault();
+    void requestCode();
+  };
+
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
     const apiBaseUrl = import.meta.env.VITE_API_URL;
     window.location.assign(`${apiBaseUrl}/api/auth/google`);
+  };
+
+  const handleChangeEmail = () => {
+    setStep('email');
+    setCode('');
   };
 
   return (
@@ -83,7 +172,7 @@ export function LoginPage() {
 
           <div className="mt-16 space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-surface text-xs font-mono font-medium text-muted">
-              <span>SYSTEM LOGIN</span>
+              <span>PASSWORDLESS ACCESS</span>
             </div>
 
             <h2 className="text-3xl font-bold tracking-tight text-foreground leading-snug">
@@ -91,7 +180,7 @@ export function LoginPage() {
             </h2>
 
             <p className="text-sm text-muted leading-relaxed">
-              Log into your Trackly account to access your personal dashboard, update category targets, and observe your activity heatmaps.
+              Sign in with a one-time code sent to your email, or continue with Google. No password to remember.
             </p>
 
             <div className="pt-4 space-y-4">
@@ -142,54 +231,107 @@ export function LoginPage() {
 
         <div className="my-auto mx-auto w-full max-w-sm">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">Sign in</h1>
-            <p className="mt-1.5 text-sm text-muted">Welcome back. Enter your credentials to continue.</p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              {step === 'email' ? 'Sign in or create account' : 'Check your email'}
+            </h1>
+            <p className="mt-1.5 text-sm text-muted">
+              {step === 'email'
+                ? 'Use a one-time email code or continue with Google. No password needed.'
+                : `We sent a 6-digit code to ${email}. It expires in 10 minutes.`}
+            </p>
           </div>
 
-          <form id="form-login" onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              id="input-email"
-              label="Email address"
-              type="email"
-              disabled={loading}
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="input-password" className="text-xs font-medium text-foreground">
-                  Password
-                </label>
-                <Link to="/forgot-password" className="text-xs text-accent hover:underline font-medium">
-                  Forgot password?
-                </Link>
-              </div>
+          <form
+            id={step === 'email' ? 'form-request-code' : 'form-verify-code'}
+            onSubmit={step === 'email' ? handleRequestCode : handleVerifyCode}
+            className="space-y-4"
+          >
+            {step === 'email' ? (
               <Input
-                id="input-password"
-                type="password"
+                id="input-email"
+                label="Email address"
+                type="email"
                 disabled={loading}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 required
-                autoComplete="current-password"
+                autoComplete="email"
               />
-            </div>
+            ) : (
+              <>
+                {/* Keep the chosen email visible, with a quick way to correct it. */}
+                <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface px-3.5 py-2.5">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <Mail className="h-4 w-4 shrink-0 text-muted" />
+                    <span className="truncate text-sm text-foreground">{email}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleChangeEmail}
+                    className="shrink-0 text-xs font-medium text-accent hover:underline focus-visible:ring-2 focus-visible:ring-border rounded"
+                  >
+                    Change
+                  </button>
+                </div>
 
-            <Button disabled={loading} id="btn-login-submit" type="submit" variant="primary" size="md" className="w-full mt-2">
+                <Input
+                  id="input-code"
+                  label="6-digit code"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  autoComplete="one-time-code"
+                  autoFocus
+                  disabled={loading}
+                  placeholder="000000"
+                  value={code}
+                  onChange={(event) =>
+                    setCode(event.target.value.replace(/\D/g, '').slice(0, 6))
+                  }
+                  className="text-center font-mono text-lg tracking-[0.35em]"
+                  required
+                />
+              </>
+            )}
+
+            <Button
+              disabled={loading}
+              id={step === 'email' ? 'btn-request-code' : 'btn-verify-code'}
+              type="submit"
+              variant="primary"
+              size="md"
+              className="w-full mt-2"
+            >
               {loading ? (
                 <>
                   <Loader2 size={14} className="animate-spin" />
-                  <span>Signing in...</span>
+                  <span>{step === 'email' ? 'Sending code...' : 'Verifying...'}</span>
                 </>
+              ) : step === 'email' ? (
+                'Email me a login code'
               ) : (
-                'Sign in'
+                'Verify code'
               )}
             </Button>
+
+            {step === 'code' && (
+              <div className="space-y-1 pt-1 text-xs text-muted">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span>Didn't get it? Check spam, then</span>
+                  <button
+                    type="button"
+                    onClick={() => void requestCode()}
+                    disabled={loading}
+                    className="font-medium text-accent hover:underline disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-border rounded"
+                  >
+                    resend the code
+                  </button>
+                </div>
+                <p className="text-[11px] text-muted/80">Codes can be resent once per minute.</p>
+              </div>
+            )}
           </form>
 
           {/* Divider */}
@@ -204,23 +346,22 @@ export function LoginPage() {
             type="button"
             id="btn-google-login"
             onClick={handleGoogleLogin}
-            disabled={googleLoading}
+            disabled={googleLoading || loading}
             className="w-full flex items-center justify-center gap-2.5 h-10 rounded-xl border border-border bg-card text-sm font-medium text-foreground hover:bg-surface active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus-visible:ring-2 focus-visible:ring-border"
           >
             <GoogleIcon />
-            <span>{googleLoading ? 'Connecting...' : 'Sign in with Google'}</span>
+            <span>{googleLoading ? 'Connecting...' : 'Continue with Google'}</span>
           </button>
 
           <p className="text-xs text-muted text-center mt-6">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-accent hover:underline font-semibold">
-              Create an account
-            </Link>
+            {step === 'email'
+              ? 'New here? Just enter your email — we will create your account automatically.'
+              : 'No password to remember. Your email is your account.'}
           </p>
         </div>
 
         <div className="hidden lg:block text-center text-xs text-muted py-4">
-          Protected by Trackly Auth · Privacy First
+          Protected by Trackly Auth · Passwordless
         </div>
       </div>
     </div>

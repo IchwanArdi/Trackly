@@ -106,12 +106,12 @@ function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
               Sign in
             </Link>
             <Link
-              to="/register"
-              id="nav-register"
-              onClick={() => trackEvent('cta_click', { cta_id: 'nav_register', location: 'navbar' })}
+              to="/login"
+              id="nav-start"
+              onClick={() => trackEvent('cta_click', { cta_id: 'nav_start', location: 'navbar' })}
               className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-medium text-foreground border border-border rounded-full transition hover:bg-surface focus-visible:ring-2 focus-visible:ring-border"
             >
-              Create account
+              Get started
             </Link>
             <button
               onClick={() => {
@@ -200,12 +200,12 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
               <ArrowRight className="h-4 w-4" />
             </button>
             <Link
-              to="/register"
+              to="/login"
               id="hero-cta-secondary"
-              onClick={() => trackEvent('cta_click', { cta_id: 'hero_register', location: 'hero' })}
+              onClick={() => trackEvent('cta_click', { cta_id: 'hero_start', location: 'hero' })}
               className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-medium text-foreground transition hover:bg-surface focus-visible:ring-2 focus-visible:ring-border"
             >
-              Create Account
+              Get started
             </Link>
             <Link
               to="/login"
@@ -284,7 +284,7 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
               <p className="text-sm text-muted leading-relaxed">{screenshots[activeTab].desc}</p>
               <div className="pt-2">
                 <Link
-                  to="/register"
+                  to="/login"
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
                 >
                   <span>Try this view in Trackly</span>
@@ -445,7 +445,7 @@ const LANDING_FAQ = [
     },
     {
       q: 'Can I sign in with Google?',
-      a: 'Yes. You can create an account with an email and password, or sign in instantly with your Google account.',
+      a: 'Yes. Sign in with a one-time code sent to your email, or continue instantly with your Google account. New accounts are created after the email code is verified.',
     },
     {
       q: 'Can I use Trackly on multiple devices?',
@@ -537,12 +537,12 @@ function CallToAction({ onInstallClick }: InstallButtonProps) {
                 <span>Download App</span>
               </button>
               <Link
-                to="/register"
-                id="cta-register"
-                onClick={() => trackEvent('cta_click', { cta_id: 'cta_register', location: 'footer_cta' })}
+                to="/login"
+                id="cta-start"
+                onClick={() => trackEvent('cta_click', { cta_id: 'cta_start', location: 'footer_cta' })}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/40 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70"
               >
-                Create Account
+                Get started
               </Link>
             </div>
           </div>
@@ -573,12 +573,12 @@ function MastheadFooter() {
               Sign in
             </Link>
             <Link
-              to="/register"
-              id="footer-register"
-              onClick={() => trackEvent('cta_click', { cta_id: 'footer_register', location: 'footer' })}
+              to="/login"
+              id="footer-start"
+              onClick={() => trackEvent('cta_click', { cta_id: 'footer_start', location: 'footer' })}
               className="hover:text-foreground transition"
             >
-              Create account
+              Get started
             </Link>
             <a
               href="#download"
@@ -864,8 +864,8 @@ function LiveHeatmapDemo() {
               </p>
               <div className="mt-6">
                 <Link
-                  to="/register"
-                  onClick={() => trackEvent('cta_click', { cta_id: 'heatmap_register', location: 'live_heatmap' })}
+                  to="/login"
+                  onClick={() => trackEvent('cta_click', { cta_id: 'heatmap_start', location: 'live_heatmap' })}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
                 >
                   <span>Start your own map</span>

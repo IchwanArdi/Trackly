@@ -1,5 +1,22 @@
 {
   "buildCommand": "npm run build:seo",
+  "redirects": [
+    {
+      "source": "/register",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/forgot-password",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/login",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
@@ -38,18 +55,6 @@
     },
     {
       "source": "/login",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
-    },
-    {
-      "source": "/register",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
-    },
-    {
-      "source": "/forgot-password",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
-    },
-    {
-      "source": "/reset-password",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {

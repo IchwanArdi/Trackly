@@ -72,14 +72,14 @@ export const AccountPage = ({ onClose }: AccountPageProps) => {
                   <ShieldCheck size={18} className="text-accent" />
                   <h3 className="text-base font-semibold text-foreground">Account Security</h3>
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">Your account is protected with a secure login session and user data stored locally in your browser.</p>
+                <p className="mt-2 text-sm text-muted-foreground">Your account is protected by Google OAuth or a one-time email code. Your session token is stored in your browser.</p>
               </div>
 
               <div className="rounded-xl border border-border p-4">
                 <div className="space-y-3 text-sm text-foreground">
                   <div className="flex items-start gap-2">
                     <KeyRound size={16} className="mt-0.5 text-accent" />
-                    <span>Ensure your password is strong and do not share login credentials with anyone.</span>
+                    <span>Trackly does not use passwords to sign in. Use a one-time email code or Google, and never share your login code with anyone.</span>
                   </div>
 
                   <div className="flex items-start gap-2">

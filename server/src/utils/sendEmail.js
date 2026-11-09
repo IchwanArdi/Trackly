@@ -5,17 +5,34 @@ dotenv.config();
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
-export const sendResetPasswordEmail = async (toEmail, resetLink) => {
+// Keep the sender configurable so a verified Resend domain can be swapped
+// without editing code. The default matches the production domain.
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Trackly <noreply@trackly.web.id>';
+
+// Used by reminder links. Normalize it once so a trailing slash cannot create
+// an accidental double slash in the email URL.
+const frontendURL = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, '');
+
+/**
+ * Sends the passwordless login code. The raw code only exists in memory and
+ * in this email; the database stores an HMAC hash instead.
+ */
+export const sendLoginCodeEmail = async (toEmail, code) => {
   if (!resend) {
-    console.warn('RESEND_API_KEY is not configured. Skipping email send.');
+    console.warn('RESEND_API_KEY is not configured. Skipping login code email.');
     return { ok: false, skipped: true, reason: 'Missing RESEND_API_KEY' };
   }
 
   try {
-    await resend.emails.send({
-      from: 'Trackly <noreply@trackly.web.id>',
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: toEmail,
-      subject: 'Reset Password Trackly',
+      subject: 'Your Trackly login code',
+      text: [
+        `Your Trackly login code is ${code}.`,
+        'It expires in 10 minutes and can only be used once.',
+        'If you did not request this code, you can safely ignore this email.',
+      ].join('\n\n'),
       html: `
         <!DOCTYPE html>
         <html>
@@ -24,8 +41,6 @@ export const sendResetPasswordEmail = async (toEmail, resetLink) => {
               <tr>
                 <td align="center">
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:440px; background-color:#ffffff; border-radius:12px; border:1px solid #e5e5e5; overflow:hidden;">
-
-                    <!-- Header / Logo -->
                     <tr>
                       <td style="padding:32px 32px 0 32px;">
                         <table role="presentation" cellpadding="0" cellspacing="0">
@@ -38,53 +53,31 @@ export const sendResetPasswordEmail = async (toEmail, resetLink) => {
                         </table>
                       </td>
                     </tr>
-
-                    <!-- Body -->
                     <tr>
                       <td style="padding:24px 32px 8px 32px;">
                         <h1 style="margin:0 0 12px 0; font-size:18px; font-weight:600; color:#0a0a0a;">
-                          Reset password kamu
+                          Your login code
                         </h1>
-                        <p style="margin:0 0 24px 0; font-size:14px; line-height:22px; color:#525252;">
-                          Kami menerima permintaan untuk reset password akun Trackly kamu. Klik tombol di bawah untuk membuat password baru. Link ini berlaku selama <strong>1 jam</strong>.
+                        <p style="margin:0 0 20px 0; font-size:14px; line-height:22px; color:#525252;">
+                          Enter this code to sign in to Trackly. It expires in <strong>10 minutes</strong>.
+                        </p>
+                        <div style="padding:18px 20px; background-color:#fff7f3; border:1px solid #ffd9cc; border-radius:10px; text-align:center;">
+                          <span style="font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:30px; font-weight:700; letter-spacing:8px; color:#0a0a0a;">
+                            ${code}
+                          </span>
+                        </div>
+                        <p style="margin:20px 0 0 0; font-size:13px; line-height:20px; color:#737373;">
+                          This code can only be used once. If you did not request it, you can safely ignore this email.
                         </p>
                       </td>
                     </tr>
-
-                    <!-- CTA Button -->
                     <tr>
-                      <td style="padding:0 32px 28px 32px;">
-                        <table role="presentation" cellpadding="0" cellspacing="0">
-                          <tr>
-                            <td style="background-color:#F0653E; border-radius:8px;">
-                              <a href="${resetLink}" target="_blank" style="display:inline-block; padding:11px 22px; font-size:14px; font-weight:600; color:#ffffff; text-decoration:none;">
-                                Reset Password
-                              </a>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-
-                    <!-- Fallback link -->
-                    <tr>
-                      <td style="padding:0 32px 28px 32px; border-bottom:1px solid #e5e5e5;">
-                        <p style="margin:0; font-size:12px; line-height:18px; color:#a3a3a3; word-break:break-all;">
-                          Kalau tombolnya gak berfungsi, copy-paste link ini ke browser kamu:<br/>
-                          <a href="${resetLink}" style="color:#F0653E; text-decoration:underline;">${resetLink}</a>
-                        </p>
-                      </td>
-                    </tr>
-
-                    <!-- Footer -->
-                    <tr>
-                      <td style="padding:20px 32px 28px 32px;">
+                      <td style="padding:20px 32px 28px 32px; border-top:1px solid #e5e5e5;">
                         <p style="margin:0; font-size:12px; line-height:18px; color:#a3a3a3;">
-                          Kalau kamu tidak meminta reset password ini, abaikan saja email ini — password kamu tidak akan berubah.
+                          Trackly will never ask you for this code outside the sign-in page.
                         </p>
                       </td>
                     </tr>
-
                   </table>
                 </td>
               </tr>
@@ -93,9 +86,16 @@ export const sendResetPasswordEmail = async (toEmail, resetLink) => {
         </html>
       `,
     });
+
+    if (error) {
+      throw new Error(error.message || 'Resend rejected the login code email');
+    }
+
+    return { ok: true };
   } catch (error) {
-    console.error('Detail Error Resend:', JSON.stringify(error, null, 2));
-    throw new Error('Failed to send reset password email');
+    console.error('Detail Error Resend (login code):', JSON.stringify(error, null, 2));
+    // The route deletes the unusable code when this throws, so the user can retry.
+    throw new Error('Failed to send login code email');
   }
 };
 
@@ -106,8 +106,8 @@ export const sendReminderEmail = async (toEmail, userName) => {
   }
 
   try {
-    await resend.emails.send({
-      from: 'Trackly <noreply@trackly.web.id>',
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: toEmail,
       subject: 'Jangan lupa log aktivitasmu hari ini!',
       html: `
@@ -145,7 +145,7 @@ export const sendReminderEmail = async (toEmail, userName) => {
                         <table role="presentation" cellpadding="0" cellspacing="0">
                           <tr>
                             <td style="background-color:#F0653E; border-radius:8px;">
-                              <a href="${process.env.CLIENT_URL}/log" target="_blank" style="display:inline-block; padding:11px 22px; font-size:14px; font-weight:600; color:#ffffff; text-decoration:none;">
+                              <a href="${frontendURL}/log" target="_blank" style="display:inline-block; padding:11px 22px; font-size:14px; font-weight:600; color:#ffffff; text-decoration:none;">
                                 Catat Sekarang
                               </a>
                             </td>
@@ -168,6 +168,11 @@ export const sendReminderEmail = async (toEmail, userName) => {
         </html>
       `,
     });
+
+    if (error) {
+      throw new Error(error.message || 'Resend rejected the reminder email');
+    }
+
     return { ok: true };
   } catch (error) {
     console.error('Detail Error Resend (reminder):', JSON.stringify(error, null, 2));

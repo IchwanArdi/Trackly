@@ -36,9 +36,10 @@ export async function subscribeToPush(): Promise<{ ok: boolean; reason?: string 
 
         await api.post('/api/push/subscribe', subscription.toJSON());
         return { ok: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Subscription push error:', error);
-        return { ok: false, reason: error.message || 'Gagal mengaktifkan push notification' };
+        const message = error instanceof Error ? error.message : '';
+        return { ok: false, reason: message || 'Gagal mengaktifkan push notification' };
     }
 }
 

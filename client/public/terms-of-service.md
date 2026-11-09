@@ -1,6 +1,6 @@
 # Trackly Terms of Service
 
-Last updated: August 2026 · User Agreement
+Last updated: November 2026 · User Agreement
 
 Welcome to Trackly. Please review these Terms of Service governing your access to and use of our web application and services.
 
@@ -14,7 +14,7 @@ Trackly provides personal habit tracking, streak analytics, and visual activity 
 
 ## 03. Account Responsibilities
 
-You are responsible for safeguarding your credentials and for all activities conducted under your account. Promptly notify us of any security compromise.
+You are responsible for keeping access to your email inbox secure and for all activities conducted under your account. Promptly notify us of any security compromise.
 
 ## 04. Ownership of User Content
 
@@ -24,9 +24,9 @@ All categories, numeric logs, notes, and custom entries remain strictly your pro
 
 You agree not to reverse engineer, disrupt service availability, or attempt unauthorized access to infrastructure hosting Trackly.
 
-## 06. Third-Party Integration (Google OAuth)
+## 06. Third-Party Authentication
 
-Google Sign-In is provided for authentication convenience. We fetch basic account attributes (name and email) strictly to match your user profile.
+Email one-time codes are delivered through Resend. Google Sign-In is provided for authentication convenience. We fetch basic account attributes (name and email) strictly to match your user profile.
 
 ## 07. Service Modifications
 
