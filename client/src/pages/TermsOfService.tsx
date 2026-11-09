@@ -18,7 +18,7 @@ const SECTIONS = [
   {
     num: '03',
     title: 'Account Responsibilities',
-    body: 'You are responsible for safeguarding your credentials and for all activities conducted under your account. Promptly notify us of any security compromise.',
+    body: 'You are responsible for keeping access to your email inbox secure and for all activities conducted under your account. Promptly notify us of any security compromise.',
   },
   {
     num: '04',
@@ -32,8 +32,8 @@ const SECTIONS = [
   },
   {
     num: '06',
-    title: 'Third-Party Integration (Google OAuth)',
-    body: 'Google Sign-In is provided for authentication convenience. We fetch basic account attributes (name and email) strictly to match your user profile.',
+    title: 'Third-Party Authentication',
+    body: 'Email one-time codes are delivered through Resend. Google Sign-In is provided for authentication convenience. We fetch basic account attributes (name and email) strictly to match your user profile.',
   },
   {
     num: '07',
@@ -74,7 +74,7 @@ export function TermsOfService() {
             <span>LEGAL TERMS · TOS-2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Terms of Service</h1>
-          <p className="mt-2 text-sm text-muted">Last updated: August 2026 · User Agreement</p>
+          <p className="mt-2 text-sm text-muted">Last updated: November 2026 · User Agreement</p>
         </div>
 
         <p className="text-sm sm:text-base leading-relaxed text-foreground/90 mb-10 pb-8 border-b border-border">

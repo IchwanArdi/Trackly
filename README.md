@@ -25,15 +25,14 @@ The public site is also built to be discoverable: every marketing page is preren
 
 ## ✨ Key Features
 
-- **🔐 Dual Authentication**: Email/password login (Bcrypt + JWT) and Google OAuth 2.0 via Passport.js.
-- **📧 Password Recovery**: Transactional reset flow through the Resend API.
+- **🔐 Passwordless Authentication**: One-time email codes plus Google OAuth 2.0 via Passport.js, with JWT sessions.
 - **🏷️ Custom Categories**: Personalized units, colors, and icons for each routine.
 - **⚡ Rapid Daily Logging**: Quick increments, notes, and date selection.
 - **📊 Analytics & Heatmaps**: Annual activity trends, totals, streaks, and contribution heatmaps with Recharts.
 - **📸 Share Cards**: Generate downloadable progress images with `html-to-image`.
 - **📱 Installable PWA**: Installable app shell with a custom service worker and push reminders.
 - **🔎 SEO & AI Discoverability**: Prerendered public pages, canonical URLs, Open Graph, Twitter Cards, FAQ/SoftwareApplication JSON-LD, `robots.txt`, `sitemap.xml`, `llms.txt`, and Markdown page versions.
-- **📈 Privacy-Friendly Measurement**: Optional GA4 events and real-user Core Web Vitals reporting.
+- **📈 Privacy-Conscious Measurement**: Optional GA4 events with query strings stripped, plus real-user Core Web Vitals reporting.
 - **🛡️ Security**: Helmet headers, rate limiting, Zod validation, and JWT-protected API routes.
 
 ---
@@ -52,7 +51,7 @@ The public site is also built to be discoverable: every marketing page is preren
 ### Backend & Database
 - **Runtime**: Node.js (ES Modules), Express 5
 - **Database ORM**: Prisma 7 with PostgreSQL (`@prisma/adapter-pg`)
-- **Authentication**: Passport.js (Google OAuth 2.0), JSON Web Tokens, Bcrypt
+- **Authentication**: Passport.js (Google OAuth 2.0), passwordless email OTP, JSON Web Tokens
 - **Email**: Resend
 - **Security & Validation**: Helmet, Express Rate Limit, Zod
 
@@ -79,12 +78,19 @@ DIRECT_URL=
 PORT=5000
 NODE_ENV=development
 JWT_SECRET=
+OTP_SECRET=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GOOGLE_CALLBACK_URL=
 RESEND_API_KEY=
+RESEND_FROM_EMAIL=Trackly <noreply@trackly.web.id>
 CLIENT_URL=http://localhost:5173
 ```
+
+`OTP_SECRET` is optional; when omitted, the server falls back to `JWT_SECRET`. Set a separate random value in production.
+`RESEND_FROM_EMAIL` must use a sender domain that is verified in Resend.
+
+The server's `vercel-build` runs `prisma migrate deploy` before `prisma generate`, so production schema changes are applied automatically. Keep `DIRECT_URL` available during the Vercel build.
 
 #### Frontend (`client/.env`)
 ```env
@@ -109,7 +115,7 @@ VITE_VAPID_PUBLIC_KEY=
    cd server
    npm install
    npx prisma generate
-   npx prisma db push
+   npx prisma migrate dev
    npm start
    ```
 
@@ -145,7 +151,7 @@ VITE_VAPID_PUBLIC_KEY=
 The public pages are prerendered, so search engines and AI crawlers receive complete HTML without executing JavaScript.
 
 1. **Set the production origin** in Vercel: `VITE_SITE_URL=https://tracklyid.vercel.app`.
-2. **Create a GA4 property** and set `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` in Vercel. Events tracked include `page_view`, `sign_up`, `login`, `create_category`, `log_entry`, `share_card`, `install_pwa`, `cta_click`, `password_reset_request`, and `web_vitals`.
+2. **Create a GA4 property** and set `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` in Vercel. Events tracked include `page_view`, `sign_up`, `login` (`email_otp` or `google`), `create_category`, `log_entry`, `share_card`, `install_pwa`, `cta_click`, and `web_vitals`.
 3. **Verify the site in Google Search Console** using the DNS or HTML tag method, then submit `https://tracklyid.vercel.app/sitemap.xml`.
 4. Optionally submit the sitemap to Bing Webmaster Tools.
 5. Run `npx lhci autorun` inside `client/` to check performance, accessibility, best practices, and SEO locally.

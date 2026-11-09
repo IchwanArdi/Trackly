@@ -25,7 +25,7 @@ Trackly is a distraction-free workspace designed to record daily habits, observe
 
 ### How it works
 
-1. Create an account with email and password or Google Sign-In.
+1. Sign in with a one-time code sent to your email, or continue with Google.
 2. Add the routines you want to track, each with its own unit and color.
 3. Log an entry whenever you complete an activity.
 4. Review streaks, heatmaps, and progress summaries in the dashboard.
@@ -46,7 +46,7 @@ Yes. Every category can be customized with specific target units (e.g. Minutes, 
 
 #### Can I sign in with Google?
 
-Yes. You can create an account with an email and password, or sign in instantly with your Google account.
+Yes. Sign in with a one-time code sent to your email, or continue instantly with your Google account. New accounts are created after the email code is verified.
 
 #### Can I use Trackly on multiple devices?
 
@@ -54,7 +54,7 @@ Yes. Your data is tied to your account, so you can log activities on your phone 
 
 #### Is my activity data private?
 
-Your entries are only accessible when signed in with your account credentials. Your personal data is never sold or shared.
+Your entries are only accessible when signed in to your account. Your personal data is never sold or shared.
 
 #### Can I delete my data?
 
@@ -75,6 +75,14 @@ Search common questions or contact support directly.
 ### How do I add a new activity entry?
 
 Click the "Log Entry" button in the sidebar or bottom navigation, select a category, enter the numeric value for that habit (e.g. minutes, pages, cups), and save.
+
+### How do I sign in without a password?
+
+Enter your email on the sign-in page and we will send a six-digit code. The code expires after 10 minutes and can be used once. You can also continue with Google.
+
+### Are email login codes secure?
+
+Yes. Codes are single-use, expire after 10 minutes, and are stored as keyed hashes. Never share a code with anyone; Trackly will never ask for it outside the sign-in page.
 
 ### How do I create a new custom category?
 
@@ -100,7 +108,7 @@ Yes! Trackly is a Progressive Web App (PWA). Click "Download App" or select "Add
 
 ## Privacy Policy
 
-Last updated: August 2026 · Trackly Data Governance
+Last updated: November 2026 · Trackly Data Governance
 
 Trackly is committed to providing a calm, private activity-tracking environment. This Privacy Policy outlines what information we store, how it is secured, and your rights over your personal history.
 
@@ -108,26 +116,37 @@ Trackly is committed to providing a calm, private activity-tracking environment.
 
 We collect the minimum necessary information to provide personal habit tracking:
 
-- Account credentials: Name and email address (via registration or Google Sign-In).
-- Activity history: Categories, entries, numeric values, completion logs, and personal notes.
+- Account identifiers: your name and email address. Email sign-in is verified with a one-time code; Google Sign-In provides your basic profile.
+- Activity history: categories, entries, numeric values, completion logs, and personal notes.
+- Technical data: aggregate analytics about how the website is used, described in section 04.
 
 ### 02. How We Use Your Information
 
-We use your data solely to calculate statistics, streaks, and heatmap charts for your personal workspace. We never sell, rent, or trade personal data to third parties or advertising networks.
+We use your data solely to calculate statistics, streaks, and heatmap charts for your personal workspace, to authenticate you, and to keep the service reliable. We never sell, rent, or trade personal data to third parties or advertising networks.
 
-### 03. Google Sign-In Scope
+### 03. Passwordless Sign-In & Google OAuth
 
-When logging in via Google OAuth, we strictly read your basic profile (name and email) to authorize your account. We request zero additional Google scopes or access permissions.
+Trackly does not use passwords for authentication. You can sign in with a six-digit code sent to your email or with Google OAuth. Email codes expire after 10 minutes, can be used once, and are stored only as a keyed hash.
 
-### 04. Data Storage & Security
+When you use Google Sign-In, we receive your basic profile (name and email) to authorize your account. We request no additional Google scopes. A Google account is linked to an existing Trackly account only when Google confirms that the email address is verified.
 
-Data is stored in encrypted PostgreSQL database instances hosted via Supabase, served securely through Vercel over TLS. Passwords are salted and hashed using industry-standard cryptography.
+### 04. Analytics & Cookies
 
-### 05. Data Retention & Control
+We use Google Analytics 4 to understand aggregate usage and improve the product. It may set first-party cookies such as `_ga` and collect the page path, device/browser information, approximate region, and interaction events such as calls-to-action.
+
+Query strings are removed before analytics events are sent, so sign-in codes and email addresses do not appear in Google Analytics. We do not send habit entries, notes, or account identifiers to Google Analytics.
+
+You can limit analytics with browser privacy settings or the Google Analytics Opt-out Browser Add-on: https://tools.google.com/dlpage/gaoptout
+
+### 05. Data Storage & Security
+
+Data is stored in PostgreSQL database instances hosted via Supabase, served securely through Vercel over TLS. Passwords are not used for authentication; password hashes from before the passwordless migration are retained only for rollback and are never used to sign in. One-time login codes are stored only as HMAC hashes with a short expiry, and session tokens expire after seven days.
+
+### 06. Data Retention & Control
 
 Your records remain active for as long as your account exists. You maintain full rights to export your data or delete your account permanently at any time.
 
-### 06. Your Rights & Data Deletion
+### 07. Your Rights & Data Deletion
 
 You have full rights to request complete deletion of your account and logs. Visit the Data Deletion Instructions for step-by-step guidance.
 
@@ -139,7 +158,7 @@ For any questions regarding privacy or data handling, contact ichwanpwt22@gmail.
 
 ## Terms of Service
 
-Last updated: August 2026 · User Agreement
+Last updated: November 2026 · User Agreement
 
 Welcome to Trackly. Please review these Terms of Service governing your access to and use of our web application and services.
 
@@ -153,7 +172,7 @@ Trackly provides personal habit tracking, streak analytics, and visual activity 
 
 ### 03. Account Responsibilities
 
-You are responsible for safeguarding your credentials and for all activities conducted under your account. Promptly notify us of any security compromise.
+You are responsible for keeping access to your email inbox secure and for all activities conducted under your account. Promptly notify us of any security compromise.
 
 ### 04. Ownership of User Content
 
@@ -163,9 +182,9 @@ All categories, numeric logs, notes, and custom entries remain strictly your pro
 
 You agree not to reverse engineer, disrupt service availability, or attempt unauthorized access to infrastructure hosting Trackly.
 
-### 06. Third-Party Integration (Google OAuth)
+### 06. Third-Party Authentication
 
-Google Sign-In is provided for authentication convenience. We fetch basic account attributes (name and email) strictly to match your user profile.
+Email one-time codes are delivered through Resend. Google Sign-In is provided for authentication convenience. We fetch basic account attributes (name and email) strictly to match your user profile.
 
 ### 07. Service Modifications
 

@@ -12,9 +12,23 @@ router.delete('/me', authenticateToken, async (req, res) => {
 
   const userId = req.user.id;
   try {
-    await prisma.user.delete({
+    // LoginCode is keyed by email, not userId. Remove pending codes too so a
+    // deleted account cannot be immediately recreated with a still-valid OTP.
+    const user = await prisma.user.findUnique({
       where: { id: userId },
+      select: { email: true },
     });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    await prisma.$transaction([
+      // Login codes are stored normalized (lowercase), so normalize the legacy
+      // email value before deleting any pending code for this account.
+      prisma.loginCode.deleteMany({ where: { email: user.email.toLowerCase() } }),
+      prisma.user.delete({ where: { id: userId } }),
+    ]);
 
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {

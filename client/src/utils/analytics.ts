@@ -18,6 +18,18 @@ declare global {
 
 let initialized = false;
 
+/**
+ * Returns a URL that is safe to send to Google Analytics.
+ *
+ * Query strings and hashes can contain OAuth one-time codes, email addresses,
+ * or legacy reset tokens. Analytics only needs the path, so strip everything
+ * after the pathname before any event leaves the browser.
+ */
+function getSafePageLocation(): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  return `${window.location.origin}${window.location.pathname}`;
+}
+
 export function isAnalyticsEnabled() {
   return Boolean(GA_MEASUREMENT_ID);
 }
@@ -51,7 +63,11 @@ export function initAnalytics() {
 
 export function trackEvent(name: string, params: AnalyticsParams = {}) {
   if (!GA_MEASUREMENT_ID || typeof window === 'undefined' || !window.gtag) return;
-  window.gtag('event', name, params);
+  window.gtag('event', name, {
+    ...params,
+    // Force the sanitized value even if a caller passes its own page_location.
+    page_location: getSafePageLocation(),
+  });
 }
 
 export function trackPageView(path: string, title?: string) {
@@ -59,5 +75,6 @@ export function trackPageView(path: string, title?: string) {
   window.gtag('event', 'page_view', {
     page_path: path,
     page_title: title ?? document.title,
+    page_location: getSafePageLocation(),
   });
 }

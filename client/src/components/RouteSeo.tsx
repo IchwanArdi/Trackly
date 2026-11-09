@@ -2,10 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useAppSeo } from '../lib/seo';
 
 const PRIVATE_ROUTES: Record<string, { title: string; description?: string }> = {
-  '/login': { title: 'Sign in | Trackly' },
-  '/register': { title: 'Create your account | Trackly' },
-  '/forgot-password': { title: 'Reset your password | Trackly' },
-  '/reset-password': { title: 'Choose a new password | Trackly' },
+  '/login': { title: 'Sign in or create account | Trackly' },
   '/auth/success': { title: 'Signing you in | Trackly' },
   '/dashboard': { title: 'Dashboard | Trackly' },
   '/log': { title: 'Log an entry | Trackly' },

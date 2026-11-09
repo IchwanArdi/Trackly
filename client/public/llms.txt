@@ -2,7 +2,7 @@
 
 > Trackly is a free, privacy-first habit and activity tracker for building calm routines with custom categories, numeric logs, streak analytics, and visual heatmaps. No ads, no gamification, no data selling.
 
-Trackly is a live web app at https://tracklyid.vercel.app. It is installable as a Progressive Web App (PWA) on desktop and mobile. Users can sign up with email and password or Google Sign-In.
+Trackly is a live web app at https://tracklyid.vercel.app. It is installable as a Progressive Web App (PWA) on desktop and mobile. Users can sign in with a one-time code sent to their email or with Google Sign-In; no password is required.
 
 ## Core features
 

@@ -19,7 +19,7 @@ Trackly is a free, privacy-first habit and activity tracker for recording daily 
 
 ## How it works
 
-1. Create an account with email and password, or sign in with Google.
+1. Sign in with a one-time code sent to your email, or continue with Google.
 2. Add the routines you want to track, each with its own unit and color.
 3. Log an entry whenever you complete an activity.
 4. Review streaks, heatmaps, and progress summaries in the dashboard.
@@ -40,7 +40,7 @@ Yes. Every category can be customized with specific target units (e.g. Minutes, 
 
 ### Can I sign in with Google?
 
-Yes. You can create an account with an email and password, or sign in instantly with your Google account.
+Yes. Sign in with a one-time code sent to your email, or continue instantly with your Google account. New accounts are created after the email code is verified.
 
 ### Can I use Trackly on multiple devices?
 
@@ -48,7 +48,7 @@ Yes. Your data is tied to your account, so you can log activities on your phone 
 
 ### Is my activity data private?
 
-Your entries are only accessible when signed in with your account credentials. Your personal data is never sold or shared.
+Your entries are only accessible when signed in to your account. Your personal data is never sold or shared.
 
 ### Can I delete my data?
 

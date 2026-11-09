@@ -43,10 +43,16 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     }, []);
 
     useEffect(() => {
-        refresh();
+        // Defer the first fetch out of the effect body. refresh() updates state
+        // after its request resolves, and running it through a timer avoids a
+        // synchronous state update during the initial render.
+        const initialFetch = window.setTimeout(refresh, 0);
         // Poll tiap 60 detik supaya notifikasi baru (misal dari cron) muncul tanpa reload manual
         const interval = setInterval(refresh, 60_000);
-        return () => clearInterval(interval);
+        return () => {
+            window.clearTimeout(initialFetch);
+            clearInterval(interval);
+        };
     }, [refresh]);
 
     const unreadCount = notifications.filter((n) => !n.isRead).length;
