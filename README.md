@@ -163,8 +163,11 @@ Static discovery files live in `client/public/`:
 - `llms.txt` — short site guide for AI agents and tooling
 - `llms-full.txt` — all public content in one plain-text file
 - `*.md` — Markdown versions of each public page
+- `favicon.ico` + `favicon-48x48.png`, `favicon-96x96.png`, `favicon-144x144.png` — Google Search favicon set. Google supports ICO/PNG (not SVG), so keep these PNG links stable and at least 48px.
 
 > `llms.txt` is an emerging convention, not a Google ranking factor. The real SEO wins come from prerendered HTML, canonical URLs, structured data, and a valid sitemap.
+>
+> Google can take days to weeks to refresh a favicon. `WebSite` structured data plus `og:site_name` and `alternateName` help Google choose the brand name instead of the hosting-provider fallback.
 
 Private routes (`/dashboard`, `/log`, `/history`, `/categories`, `/profile`, and auth pages) send `noindex` meta tags and `X-Robots-Tag` headers, and are excluded from the sitemap.
 

@@ -489,6 +489,18 @@ function ConversationalFAQ() {
             </Reveal>
           ))}
         </div>
+
+        {/* Internal link to the Help Center: gives Google a contextual path
+            from the homepage to the standalone /help page, not just the footer. */}
+        <Reveal>
+          <p className="mt-8 rounded-2xl border border-border bg-card p-5 text-sm text-muted">
+            Still have questions?{' '}
+            <Link to="/help" className="font-medium text-accent hover:underline">
+              Visit the Help Center
+            </Link>{' '}
+            for setup, privacy, and troubleshooting answers.
+          </p>
+        </Reveal>
       </div>
     </section>
   );
