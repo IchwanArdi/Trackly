@@ -12,6 +12,11 @@ export const SITE_DESCRIPTION =
   'Trackly is a free, privacy-first habit and activity tracker for building calm routines with heatmaps, streaks, and daily progress logs.';
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
+// Google uses the hostname as a fallback when it cannot confidently select a
+// preferred site name. Keeping it here makes the fallback work on both the
+// current vercel.app hostname and a future custom domain.
+export const SITE_HOST = new URL(SITE_URL).hostname;
+
 export interface SeoOptions {
   title: string;
   description: string;
@@ -53,6 +58,7 @@ export function useSeo({
     description,
     ogTitle: title,
     ogDescription: description,
+    ogSiteName: SITE_NAME,
     ogUrl: url,
     ogType: type,
     ogImage: image,
@@ -98,6 +104,10 @@ export function useTracklySchema({ pageName, pagePath = '/', faq }: SchemaOption
   const nodes: Array<Record<string, unknown>> = [
     defineWebSite({
       name: SITE_NAME,
+      // Prefer the brand name, then offer a recognisable alternate and the
+      // exact hostname. This prevents Google from falling back to a generic
+      // hosting-provider name when it is unsure about the brand.
+      alternateName: ['Trackly ID', SITE_HOST],
       url: `${SITE_URL}/`,
       description: SITE_DESCRIPTION,
       inLanguage: 'en',

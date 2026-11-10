@@ -12,7 +12,7 @@ Disallow: /categories
 Disallow: /profile
 Disallow: /auth/
 
-# Auth pages are crawlable so their noindex meta tags can be read.
-# They are intentionally excluded from the sitemap.
+# /login stays crawlable so Google can read its noindex meta tag.
+# /auth/ is only the OAuth callback flow, so it is excluded from crawling.
 
 Sitemap: https://tracklyid.vercel.app/sitemap.xml

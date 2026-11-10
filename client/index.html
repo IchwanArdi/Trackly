@@ -22,11 +22,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Favicons & App Icons -->
-  <link rel="icon" type="image/svg+xml" href="/icon-512.png" />
-  <link rel="alternate icon" href="/icon-192.png" />
+  <!--
+    Favicons & App Icons
+    Google Search supports ICO/PNG favicons (not SVG), so the primary links
+    below point to real PNG files at stable URLs. Keep `/favicon.ico` as a
+    multi-size fallback for browsers that request it automatically.
+  -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="144x144" href="/favicon-144x144.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="mask-icon" href="/icon-512.png" color="#e85d04" />
+  <!-- Safari pinned-tab icon; Google Search intentionally ignores SVG favicons. -->
+  <link rel="mask-icon" href="/trackly-icon-favicon.svg" color="#e85d04" />
   <link rel="manifest" href="/manifest.webmanifest" />
 
   <!-- Machine-readable site description for AI agents and tooling -->
