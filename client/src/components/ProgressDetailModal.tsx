@@ -183,7 +183,7 @@ export function ProgressDetailModal({ isOpen, onClose, onOpenShare, category, en
                   periodLabel: `Logged ${monthValue || totalValue} ${cleanUnit || ''} across ${totalCount} sessions`,
                 });
               }}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold text-white bg-accent hover:bg-accent/90 cursor-pointer active:scale-95 transition-all shadow-md shadow-accent/20"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold text-on-accent bg-accent hover:bg-accent/90 cursor-pointer active:scale-95 transition-all shadow-md shadow-accent/20"
             >
               <Share2 size={14} />
               Share Strava-Style Story Card

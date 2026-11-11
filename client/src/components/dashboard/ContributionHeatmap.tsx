@@ -2,7 +2,7 @@ import { useMemo, useRef, useEffect } from 'react';
 import {
   eachDayOfInterval, subDays, format, startOfWeek, getMonth
 } from 'date-fns';
-import { type Entry } from '../../store/dataStore';
+import type { Entry } from '../../types/models';
 import { buildDayMap, intensityLevel } from '../../utils/stats';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

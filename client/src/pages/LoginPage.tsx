@@ -9,6 +9,7 @@ import { Button } from '../components/ui/Button';
 import { useData } from '../store/dataStore';
 import { Loader2, ArrowLeft, Activity, BarChart3, Mail } from 'lucide-react';
 import { trackEvent } from '../utils/analytics';
+import { ToastHost } from '../components/layout/ToastHost';
 
 function GoogleIcon() {
   return (
@@ -23,10 +24,7 @@ function GoogleIcon() {
 
 // Safely extracts the server's error message from an Axios error.
 function getErrorMessage(error: unknown, fallback: string) {
-  return (
-    (error as { response?: { data?: { message?: string } } }).response?.data?.message ||
-    fallback
-  );
+  return (error as { response?: { data?: { message?: string } } }).response?.data?.message || fallback;
 }
 
 export function LoginPage() {
@@ -162,8 +160,9 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col lg:flex-row font-sans selection:bg-accent/20 selection:text-accent">
+      <ToastHost />
       {/* Left Feature & Identity Panel (Desktop) */}
-      <div className="hidden lg:flex w-[420px] xl:w-[480px] bg-card border-r border-border flex-col justify-between p-10 shrink-0">
+      <div className="hidden lg:flex w-105 xl:w-120 bg-card border-r border-border flex-col justify-between p-10 shrink-0">
         <div>
           <Link to="/" className="inline-flex items-center gap-2.5 group">
             <img src="/trackly-icon.webp" alt="Trackly Icon" className="h-8 w-8 rounded-lg" />
@@ -175,13 +174,9 @@ export function LoginPage() {
               <span>PASSWORDLESS ACCESS</span>
             </div>
 
-            <h2 className="text-3xl font-bold tracking-tight text-foreground leading-snug">
-              Daily routines, recorded without friction.
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground leading-snug">Daily routines, recorded without friction.</h2>
 
-            <p className="text-sm text-muted leading-relaxed">
-              Sign in with a one-time code sent to your email, or continue with Google. No password to remember.
-            </p>
+            <p className="text-sm text-muted leading-relaxed">Sign in with a one-time code sent to your email, or continue with Google. No password to remember.</p>
 
             <div className="pt-4 space-y-4">
               <div className="flex items-start gap-3">
@@ -231,33 +226,13 @@ export function LoginPage() {
 
         <div className="my-auto mx-auto w-full max-w-sm">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              {step === 'email' ? 'Sign in or create account' : 'Check your email'}
-            </h1>
-            <p className="mt-1.5 text-sm text-muted">
-              {step === 'email'
-                ? 'Use a one-time email code or continue with Google. No password needed.'
-                : `We sent a 6-digit code to ${email}. It expires in 10 minutes.`}
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{step === 'email' ? 'Sign in or create account' : 'Check your email'}</h1>
+            <p className="mt-1.5 text-sm text-muted">{step === 'email' ? 'Use a one-time email code or continue with Google. No password needed.' : `We sent a 6-digit code to ${email}. It expires in 10 minutes.`}</p>
           </div>
 
-          <form
-            id={step === 'email' ? 'form-request-code' : 'form-verify-code'}
-            onSubmit={step === 'email' ? handleRequestCode : handleVerifyCode}
-            className="space-y-4"
-          >
+          <form id={step === 'email' ? 'form-request-code' : 'form-verify-code'} onSubmit={step === 'email' ? handleRequestCode : handleVerifyCode} className="space-y-4">
             {step === 'email' ? (
-              <Input
-                id="input-email"
-                label="Email address"
-                type="email"
-                disabled={loading}
-                placeholder="you@example.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-                autoComplete="email"
-              />
+              <Input id="input-email" label="Email address" type="email" disabled={loading} placeholder="you@example.com" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
             ) : (
               <>
                 {/* Keep the chosen email visible, with a quick way to correct it. */}
@@ -266,11 +241,7 @@ export function LoginPage() {
                     <Mail className="h-4 w-4 shrink-0 text-muted" />
                     <span className="truncate text-sm text-foreground">{email}</span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleChangeEmail}
-                    className="shrink-0 text-xs font-medium text-accent hover:underline focus-visible:ring-2 focus-visible:ring-border rounded"
-                  >
+                  <button type="button" onClick={handleChangeEmail} className="shrink-0 text-xs font-medium text-accent hover:underline focus-visible:ring-2 focus-visible:ring-border rounded">
                     Change
                   </button>
                 </div>
@@ -287,23 +258,14 @@ export function LoginPage() {
                   disabled={loading}
                   placeholder="000000"
                   value={code}
-                  onChange={(event) =>
-                    setCode(event.target.value.replace(/\D/g, '').slice(0, 6))
-                  }
+                  onChange={(event) => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
                   className="text-center font-mono text-lg tracking-[0.35em]"
                   required
                 />
               </>
             )}
 
-            <Button
-              disabled={loading}
-              id={step === 'email' ? 'btn-request-code' : 'btn-verify-code'}
-              type="submit"
-              variant="primary"
-              size="md"
-              className="w-full mt-2"
-            >
+            <Button disabled={loading} id={step === 'email' ? 'btn-request-code' : 'btn-verify-code'} type="submit" variant="primary" size="md" className="w-full mt-2">
               {loading ? (
                 <>
                   <Loader2 size={14} className="animate-spin" />
@@ -320,12 +282,7 @@ export function LoginPage() {
               <div className="space-y-1 pt-1 text-xs text-muted">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span>Didn't get it? Check spam, then</span>
-                  <button
-                    type="button"
-                    onClick={() => void requestCode()}
-                    disabled={loading}
-                    className="font-medium text-accent hover:underline disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-border rounded"
-                  >
+                  <button type="button" onClick={() => void requestCode()} disabled={loading} className="font-medium text-accent hover:underline disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-border rounded">
                     resend the code
                   </button>
                 </div>
@@ -353,16 +310,10 @@ export function LoginPage() {
             <span>{googleLoading ? 'Connecting...' : 'Continue with Google'}</span>
           </button>
 
-          <p className="text-xs text-muted text-center mt-6">
-            {step === 'email'
-              ? 'New here? Just enter your email — we will create your account automatically.'
-              : 'No password to remember. Your email is your account.'}
-          </p>
+          <p className="text-xs text-muted text-center mt-6">{step === 'email' ? 'New here? Just enter your email — we will create your account automatically.' : 'No password to remember. Your email is your account.'}</p>
         </div>
 
-        <div className="hidden lg:block text-center text-xs text-muted py-4">
-          Protected by Trackly Auth · Passwordless
-        </div>
+        <div className="hidden lg:block text-center text-xs text-muted py-4">Protected by Trackly Auth · Passwordless</div>
       </div>
     </div>
   );

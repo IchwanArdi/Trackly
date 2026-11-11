@@ -1,5 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
+
+/*
+ * Font di-host sendiri supaya tidak ada request CSS eksternal yang
+ * render-blocking. Satu file variable font per family (subset Latin) sudah
+ * mencakup weight yang dipakai aplikasi, jadi lebih ringan daripada memuat
+ * Google Fonts per weight.
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2');
+}
 
 /* ── Design tokens ──────────────────────────────────────────── */
 :root {
@@ -9,8 +30,13 @@
   --color-surface: #1e1e21;
   --color-border: #2a2a2e;
   --color-foreground: #e8e8ea;
-  --color-muted: #6b6b72;
+  /* #8a8a93 memberi kontras ±5.5:1 di atas background gelap (sebelumnya
+     #6b6b72 hanya ±3.6:1 dan gagal audit kontras teks kecil). */
+  --color-muted: #8a8a93;
   --color-accent: #e85d04;
+  /* Teks di atas accent dibuat gelap agar kontrasnya lolos WCAG (teks putih
+     di atas #e85d04 hanya ±3.5:1). */
+  --color-on-accent: #1a0a00;
 
   /* Font */
   --font-sans: 'Inter', system-ui, sans-serif;
@@ -58,6 +84,7 @@ body {
   --color-foreground: var(--color-foreground);
   --color-muted: var(--color-muted);
   --color-accent: var(--color-accent);
+  --color-on-accent: var(--color-on-accent);
 }
 
 /* ── Scrollbar styling ──────────────────────────────────────── */

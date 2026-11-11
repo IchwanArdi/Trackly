@@ -82,7 +82,7 @@ export function LogEntryPage() {
               setNote('');
               setDate(today);
             }}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-accent text-white cursor-pointer active:scale-[0.97] transition-transform"
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-accent text-on-accent cursor-pointer active:scale-[0.97] transition-transform"
           >
             Log another
           </button>
@@ -208,7 +208,7 @@ export function LogEntryPage() {
           id="btn-submit-entry"
           type="submit"
           disabled={saving || categories.length === 0}
-          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-accent hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-[0.98] cursor-pointer"
+          className="w-full py-3 rounded-xl text-sm font-semibold text-on-accent bg-accent hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-[0.98] cursor-pointer"
         >
           {saving ? 'Saving…' : 'Save'}
         </button>

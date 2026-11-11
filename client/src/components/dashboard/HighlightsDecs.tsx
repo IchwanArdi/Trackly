@@ -108,7 +108,7 @@ export default function HighlightsDeck({
                                     e.stopPropagation();
                                     navigate('/log');
                                 }}
-                                className="text-xs font-semibold text-white bg-accent/90 hover:bg-accent px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
+                                className="text-xs font-semibold text-on-accent bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
                             >
                                 Log now
                             </button>
