@@ -51,13 +51,32 @@ export function initAnalytics() {
   window.gtag('js', new Date());
   window.gtag('config', GA_MEASUREMENT_ID, { send_page_view: false });
 
-  // Pre-rendered pages already contain the gtag script tag. Avoid loading it
-  // twice while still injecting it for client-only development builds.
-  if (!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+  // gtag.js adalah third-party script yang cukup besar. Perintah config di atas
+  // sudah masuk ke dataLayer, jadi script bisa dimuat belakangan tanpa
+  // kehilangan page_view. Ini menjauhkan pekerjaan GA dari LCP/TBT.
+  const loadGtagScript = () => {
+    // Pre-rendered pages might already contain the script tag. Avoid loading
+    // it twice while still injecting it for client-only development builds.
+    if (document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) return;
+
     const script = document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
     document.head.appendChild(script);
+  };
+
+  const requestIdle = (
+    window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => void;
+    }
+  ).requestIdleCallback;
+
+  if (requestIdle) {
+    // Panggil dengan window sebagai receiver; sebagian browser menolak
+    // requestIdleCallback yang dipanggil tanpa context.
+    requestIdle.call(window, loadGtagScript, { timeout: 4000 });
+  } else {
+    window.setTimeout(loadGtagScript, 2500);
   }
 }
 

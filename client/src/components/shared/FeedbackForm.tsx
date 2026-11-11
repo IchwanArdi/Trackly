@@ -91,7 +91,7 @@ export default function FeedbackForm({ onSuccess, className = '' }: FeedbackForm
                     <button
                         disabled={isSubmitting || !category || message.trim().length < 3}
                         type="submit"
-                        className="rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white hover:bg-accent/90 transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="rounded-lg bg-accent px-4 py-2 text-xs font-medium text-on-accent hover:bg-accent/90 transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         {isSubmitting ? (
                             <>

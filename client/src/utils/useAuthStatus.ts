@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { AUTH_CHANGE_EVENT, isAuthenticated } from './auth';
+import { AUTH_CHANGE_EVENT, isAuthenticated } from './session';
 
 // Status login disimpan di luar React (localStorage), jadi UI harus berlangganan
 // perubahan supaya ikut re-render saat token ditambah/dihapus.

@@ -6,16 +6,12 @@ import { trackEvent } from '../utils/analytics';
 
 
 // ── Types ────────────────────────────────────────────────────────
+import type { Category, Entry } from '../types/models';
+
+export type { Category, Entry } from '../types/models';
+
 export interface ApiResponse {
   message: string;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  unit: string;
-  color: string;
-  icon: string;
 }
 
 interface CategoryResponse {
@@ -26,14 +22,6 @@ interface CategoryResponse {
     limit: number;
     totalPages: number;
   };
-}
-
-export interface Entry {
-  id: string;
-  categoryId: string;
-  date: string; // YYYY-MM-DD
-  value: number;
-  note?: string;
 }
 
 // Tambahkan interface untuk mencocokkan format paginated dari backend Express

@@ -1,16 +1,14 @@
 /* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 */
 /* Hallmark · macrostructure: Workbench · tone: calm-focused · anchor hue: orange · nav: N5 · footer: Ft1 */
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, BarChart3, ShieldCheck, Activity, Download, Layers, ChevronRight } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import pic1 from '../assets/pic1.webp';
-import pic2 from '../assets/pic2.webp';
 import pic3 from '../assets/pic3.webp';
-import { clearAuthToken, api } from '../utils/auth';
+import { clearAuthToken } from '../utils/session';
 import { useAuthStatus } from '../utils/useAuthStatus';
-import { useData, type Entry } from '../store/dataStore';
+import type { Entry } from '../types/models';
 import { ContributionHeatmap } from '../components/dashboard/ContributionHeatmap';
 import { useSeo, useTracklySchema } from '../lib/seo';
 import { trackEvent } from '../utils/analytics';
@@ -31,32 +29,88 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 };
 
+/**
+ * IntersectionObserver kecil untuk animasi yang hanya perlu dipicu sekali.
+ * Dulu ini memakai framer-motion + useInView; menggantinya dengan API browser
+ * membuat bundle landing lebih ringan tanpa mengubah perilaku visual.
+ */
+function useInViewOnce<T extends HTMLElement>(ref: RefObject<T | null>, rootMargin = '-60px 0px') {
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || PREFERS_REDUCED_MOTION || typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setInView(true);
+        observer.disconnect();
+      },
+      { rootMargin },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, rootMargin]);
+
+  return inView;
+}
+
 function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px 0px' });
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || PREFERS_REDUCED_MOTION || typeof IntersectionObserver === 'undefined') return;
+
+    // Elemen yang sudah terlihat saat mount tidak perlu disembunyikan dulu.
+    // Ini juga menjaga konten tetap tampil di HTML hasil prerender.
+    if (element.getBoundingClientRect().top < window.innerHeight - 60) return;
+
+    setVisible(false);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setVisible(true);
+        observer.disconnect();
+      },
+      { rootMargin: '-60px 0px' },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 18 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(18px)',
+        transition: `opacity 500ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 500ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
   const [scrolled, setScrolled] = useState(false);
   const isLoggedIn = useAuthStatus();
-  const { clearData } = useData();
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // DataProvider hanya hidup di area aplikasi (AppLayout). Di landing page
+    // cukup hapus token dan user; state in-memory ikut hilang saat layout
+    // dashboard di-unmount.
     clearAuthToken();
-    clearData();
     navigate('/');
   };
 
@@ -83,7 +137,7 @@ function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
               to="/dashboard"
               id="nav-dashboard"
               onClick={() => trackEvent('cta_click', { cta_id: 'nav_dashboard', location: 'navbar' })}
-              className="rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
+              className="rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
             >
               Dashboard
             </Link>
@@ -119,7 +173,7 @@ function FloatingNavbar({ onInstallClick }: InstallButtonProps) {
                 onInstallClick();
               }}
               id="nav-download"
-              className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-xs font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
+              className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
             >
               <Download className="h-3.5 w-3.5" />
               <span>Get App</span>
@@ -150,19 +204,28 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
 
   const screenshots = {
     dashboard: {
-      img: pic2,
+      // File hero sengaja ditempatkan di public agar URL-nya stabil dan bisa
+      // di-preload dari index.html. Import Vite akan menghasilkan hash baru
+      // setiap build, sehingga preload tidak bisa ditulis dengan aman.
+      img: '/images/hero-dashboard.webp',
+      width: 805,
+      height: 1600,
       alt: 'Trackly Dashboard Overview',
       title: 'Daily Heatmaps & Progress',
       desc: 'View consistent completion trends across all your daily habit categories at a glance.',
     },
     categories: {
       img: pic3,
+      width: 809,
+      height: 1600,
       alt: 'Trackly Category System',
       title: 'Custom Habit Categories',
       desc: 'Organize routines with tailored icons, color schemes, and target numeric increments.',
     },
     log: {
       img: pic1,
+      width: 869,
+      height: 1600,
       alt: 'Trackly Rapid Activity Log',
       title: 'Rapid Frictionless Logging',
       desc: 'Log activities in seconds with quick increment controls and optional notes.',
@@ -194,7 +257,7 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
                 onInstallClick();
               }}
               id="hero-cta-primary"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-medium text-on-accent transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent"
             >
               <span>Download App</span>
               <ArrowRight className="h-4 w-4" />
@@ -271,6 +334,10 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
                 <img
                   src={screenshots[activeTab].img}
                   alt={screenshots[activeTab].alt}
+                  width={screenshots[activeTab].width}
+                  height={screenshots[activeTab].height}
+                  fetchPriority={activeTab === 'dashboard' ? 'high' : 'auto'}
+                  decoding="async"
                   className="w-full h-auto rounded-xl object-cover object-top max-h-[520px]"
                 />
               </figure>
@@ -280,7 +347,7 @@ function WorkbenchHero({ onInstallClick }: InstallButtonProps) {
               <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface text-foreground font-mono text-xs font-bold">
                 {activeTab === 'dashboard' ? '01' : activeTab === 'categories' ? '02' : '03'}
               </div>
-              <h3 className="text-xl font-bold tracking-tight text-foreground">{screenshots[activeTab].title}</h3>
+              <h2 className="text-xl font-bold tracking-tight text-foreground">{screenshots[activeTab].title}</h2>
               <p className="text-sm text-muted leading-relaxed">{screenshots[activeTab].desc}</p>
               <div className="pt-2">
                 <Link
@@ -322,7 +389,7 @@ function SystemPrinciples() {
     <section className="border-t border-border bg-card/40 py-16 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         <Reveal>
-          <div className="mb-8 text-xs font-mono font-medium text-muted uppercase tracking-wider">Design Principles</div>
+          <h2 className="mb-8 text-xs font-mono font-medium text-muted uppercase tracking-wider">Design Principles</h2>
         </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -543,7 +610,7 @@ function CallToAction({ onInstallClick }: InstallButtonProps) {
                   onInstallClick();
                 }}
                 id="cta-download"
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-accent transition hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/70"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-on-accent transition hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 <Download className="h-4 w-4" />
                 <span>Download App</span>
@@ -694,19 +761,27 @@ function useCountUp(target: number, active: boolean, duration = 1300) {
 
 function LiveStatsBand() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px 0px' });
+  const inView = useInViewOnce(ref, '-40px 0px');
   const [stats, setStats] = useState<PublicStats | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    api
-      .get<{ data: PublicStats }>('/api/stats/public')
-      .then((res) => {
-        if (!cancelled) setStats(res.data?.data ?? null);
+    const apiBase = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
+
+    // Pakai fetch native, bukan instance axios, supaya axios tidak ikut bundle
+    // landing. Endpoint ini hanya statistik publik dan tidak butuh interceptor.
+    fetch(`${apiBase}/api/stats/public`)
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Stats request failed: ${response.status}`);
+        return (await response.json()) as { data: PublicStats };
+      })
+      .then((payload) => {
+        if (!cancelled) setStats(payload.data ?? null);
       })
       .catch(() => {
         // Endpoint belum tersedia / offline — versi fallback di bawah yang tampil
       });
+
     return () => {
       cancelled = true;
     };
@@ -839,7 +914,7 @@ function buildDemoEntries(): Entry[] {
 
 function LiveHeatmapDemo() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px 0px' });
+  const inView = useInViewOnce(ref, '-60px 0px');
   const demoEntries = useMemo(() => buildDemoEntries(), []);
   const [visibleCount, setVisibleCount] = useState(0);
 
@@ -891,7 +966,7 @@ function LiveHeatmapDemo() {
             <div ref={ref} className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-[10px] sm:text-xs font-mono text-muted uppercase tracking-wider">Last 90 days</span>
-                <span className="text-[10px] font-mono text-muted/70 uppercase tracking-wider">Demo data</span>
+                <span className="text-[10px] font-mono text-muted uppercase tracking-wider">Demo data</span>
               </div>
               <ContributionHeatmap entries={displayEntries} />
             </div>

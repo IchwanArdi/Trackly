@@ -1,4 +1,4 @@
-import { useState, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { lazy, Suspense, useState, useMemo, type Dispatch, type SetStateAction } from 'react';
 import { startOfMonth, endOfMonth, parseISO, isWithinInterval } from 'date-fns';
 import { Plus, Pencil, Trash2, Check, X, BarChart2, Folder } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -8,8 +8,14 @@ import { getUnit, UNIT_OPTIONS } from '../utils/format';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
-import { ProgressDetailModal } from '../components/ProgressDetailModal';
-import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
+import type { ShareCategoryData } from '../components/ShareProgressModal';
+
+const ProgressDetailModal = lazy(() =>
+  import('../components/ProgressDetailModal').then((module) => ({ default: module.ProgressDetailModal })),
+);
+const ShareProgressModal = lazy(() =>
+  import('../components/ShareProgressModal').then((module) => ({ default: module.ShareProgressModal })),
+);
 
 const PRESET_COLORS = ['#e85d04', '#f97316', '#eab308', '#22c55e', '#0ea5e9', '#6366f1', '#a855f7', '#ec4899', '#14b8a6', '#64748b'];
 const CUSTOM_UNIT_VALUE = '__custom__';
@@ -339,44 +345,50 @@ export function CategoriesPage() {
 
       {/* Progress Detail Modal */}
       {selectedCatDetail && (
-        <ProgressDetailModal
-          isOpen={Boolean(selectedCatDetail)}
-          onClose={() => setSelectedCatDetail(null)}
-          onOpenShare={(cat) => {
-            setSelectedCatDetail(null);
-            setShareCategory(cat);
-            setShareModalOpen(true);
-          }}
-          category={selectedCatDetail}
-          entries={entries}
-        />
+        <Suspense fallback={null}>
+          <ProgressDetailModal
+            isOpen={Boolean(selectedCatDetail)}
+            onClose={() => setSelectedCatDetail(null)}
+            onOpenShare={(cat) => {
+              setSelectedCatDetail(null);
+              setShareCategory(cat);
+              setShareModalOpen(true);
+            }}
+            category={selectedCatDetail}
+            entries={entries}
+          />
+        </Suspense>
       )}
 
       {/* Share Progress Modal */}
-      <ShareProgressModal
-        isOpen={shareModalOpen}
-        onClose={() => {
-          setShareModalOpen(false);
-          setShareCategory(null);
-        }}
-        title="Category Highlights"
-        category={shareCategory}
-        stats={
-          shareCategory
-            ? {
-              totalValue: entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
-              totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
-              streakDays: 7,
-              periodLabel: `Logged on Trackly`,
+      {shareModalOpen && (
+        <Suspense fallback={null}>
+          <ShareProgressModal
+            isOpen={shareModalOpen}
+            onClose={() => {
+              setShareModalOpen(false);
+              setShareCategory(null);
+            }}
+            title="Category Highlights"
+            category={shareCategory}
+            stats={
+              shareCategory
+                ? {
+                  totalValue: entries.filter((e) => e.categoryId === shareCategory.id).reduce((sum, e) => sum + e.value, 0),
+                  totalLogs: entries.filter((e) => e.categoryId === shareCategory.id).length,
+                  streakDays: 7,
+                  periodLabel: `Logged on Trackly`,
+                }
+                : {
+                  totalLogs: entries.length,
+                  streakDays: 7,
+                  periodLabel: 'Category Highlights Overview',
+                  categoriesCount: categories.length,
+                }
             }
-            : {
-              totalLogs: entries.length,
-              streakDays: 7,
-              periodLabel: 'Category Highlights Overview',
-              categoriesCount: categories.length,
-            }
-        }
-      />
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

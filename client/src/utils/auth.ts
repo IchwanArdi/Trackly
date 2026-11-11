@@ -1,5 +1,19 @@
 import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { clearAuthToken } from './session';
+
+// Re-export supaya import lama tetap bekerja. Modul yang hanya butuh token
+// (mis. landing page) sebaiknya mengimpor dari './session' agar axios dan
+// react-toastify tidak ikut dimuat.
+export {
+  AUTH_CHANGE_EVENT,
+  clearAuthToken,
+  getUser,
+  isAuthenticated,
+  saveUser,
+  setAuthToken,
+} from './session';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const api = axios.create({
@@ -53,45 +67,3 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-// 3. Event internal: dipakai hook useAuthStatus supaya komponen React
-// (mis. navbar homepage) ikut re-render saat token ditambah/dihapus.
-export const AUTH_CHANGE_EVENT = 'trackly:auth-change';
-
-const notifyAuthChange = (): void => {
-  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
-};
-
-// 4. Fungsi Manajemen Token
-export const setAuthToken = (token: string | null): void => {
-  if (token) {
-    localStorage.setItem('token', token);
-  } else {
-    localStorage.removeItem('token');
-  }
-  notifyAuthChange();
-};
-
-// 5. Fungsi Hapus Token
-export const clearAuthToken = (): void => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user'); // Ikut bersihkan user saat logout manual
-  notifyAuthChange();
-};
-
-// 6. Fungsi Cek Token
-export const isAuthenticated = (): boolean => {
-  const token = localStorage.getItem('token');
-  return !!token;
-};
-
-// 7. Simpan User Ke Local Storage
-export const saveUser = (user: { id: string; name: string; email: string }): void => {
-  localStorage.setItem('user', JSON.stringify(user));
-};
-
-// 8. Ambil User Dari Local Storage
-export const getUser = (): { id: string; name: string; email: string } | null => {
-  const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
-};

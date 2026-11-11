@@ -1,5 +1,4 @@
 import { useMemo, useRef, useState } from 'react';
-import { toPng } from 'html-to-image';
 import { X, Download, Share2, Sparkles, Flame, TrendingUp, Layers, Award } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { getUser } from '../utils/auth';
@@ -38,6 +37,15 @@ export interface ShareProgressModalProps {
   };
 }
 
+/**
+ * html-to-image cukup berat dan hanya dibutuhkan saat tombol download/share
+ * ditekan. Dynamic import memastikan library ini tidak ikut chunk awal.
+ */
+async function renderShareCard(node: HTMLElement) {
+  const { toPng } = await import('html-to-image');
+  return toPng(node, { cacheBust: true, pixelRatio: 2 });
+}
+
 export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream Summary', category, topCategory, stats }: ShareProgressModalProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
@@ -61,7 +69,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
     if (!cardRef.current) return;
     setDownloading(true);
     try {
-      const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2 });
+      const dataUrl = await renderShareCard(cardRef.current);
       const link = document.createElement('a');
       link.download = `trackly-progress-${format(new Date(), 'yyyy-MM-dd')}.png`;
       link.href = dataUrl;
@@ -80,7 +88,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
     if (!cardRef.current) return;
     setDownloading(true);
     try {
-      const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2 });
+      const dataUrl = await renderShareCard(cardRef.current);
       const blob = await (await fetch(dataUrl)).blob();
       const file = new File([blob], 'trackly-progress.png', { type: 'image/png' });
 
@@ -241,7 +249,7 @@ export function ShareProgressModal({ isOpen, onClose, title = 'Activity Stream S
             <button
               onClick={handleNativeShare}
               disabled={downloading}
-              className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold bg-accent text-white hover:bg-accent/90 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold bg-accent text-on-accent hover:bg-accent/90 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
             >
               <Share2 size={14} />
               Share Card

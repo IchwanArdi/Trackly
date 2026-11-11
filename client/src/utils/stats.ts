@@ -1,5 +1,5 @@
 import { format, parseISO, differenceInDays, subDays } from 'date-fns';
-import { type Entry } from '../store/dataStore';
+import type { Entry } from '../types/models';
 
 /** Map of date string → total entries on that day */
 export function buildDayMap(entries: Entry[]): Record<string, number> {

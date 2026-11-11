@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { lazy, Suspense, useState, useMemo } from 'react';
 import { format, parseISO, subDays, isWithinInterval } from 'date-fns';
 import { Trash2, FileText, Search, Calendar, Activity, Sparkles, ChevronRight } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -6,8 +6,14 @@ import { useData } from '../store/dataStore';
 import { computeStreaks } from '../utils/stats';
 import { getIcon } from '../utils/icons';
 import { getUnit } from '../utils/format';
-import { ProgressDetailModal } from '../components/ProgressDetailModal';
-import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
+import type { ShareCategoryData } from '../components/ShareProgressModal';
+
+const ProgressDetailModal = lazy(() =>
+  import('../components/ProgressDetailModal').then((module) => ({ default: module.ProgressDetailModal })),
+);
+const ShareProgressModal = lazy(() =>
+  import('../components/ShareProgressModal').then((module) => ({ default: module.ShareProgressModal })),
+);
 
 type DateRange = '7d' | '30d' | 'all';
 
@@ -126,7 +132,7 @@ export function HistoryPage() {
             <Activity size={11} className="text-accent" />
             Activity Log
           </span>
-          <button onClick={() => setShareModalOpen(true)} className="text-[10px] font-semibold text-white/90 bg-accent/80 hover:bg-accent px-2.5 py-1 rounded-full flex items-center gap-1 transition-colors cursor-pointer">
+          <button onClick={() => setShareModalOpen(true)} className="text-[10px] font-semibold text-on-accent bg-accent hover:bg-accent/90 px-2.5 py-1 rounded-full flex items-center gap-1 transition-colors cursor-pointer">
             <Sparkles size={11} /> Share Log
           </button>
         </div>
@@ -270,30 +276,36 @@ export function HistoryPage() {
 
       {/* Progress Detail Modal */}
       {selectedCatDetail && (
-        <ProgressDetailModal
-          isOpen={Boolean(selectedCatDetail)}
-          onClose={() => setSelectedCatDetail(null)}
-          onOpenShare={(cat) => {
-            setSelectedCatDetail(null);
-            setShareCategory(cat);
-            setShareModalOpen(true);
-          }}
-          category={selectedCatDetail}
-          entries={entries}
-        />
+        <Suspense fallback={null}>
+          <ProgressDetailModal
+            isOpen={Boolean(selectedCatDetail)}
+            onClose={() => setSelectedCatDetail(null)}
+            onOpenShare={(cat) => {
+              setSelectedCatDetail(null);
+              setShareCategory(cat);
+              setShareModalOpen(true);
+            }}
+            category={selectedCatDetail}
+            entries={entries}
+          />
+        </Suspense>
       )}
 
       {/* Share Progress Modal */}
-      <ShareProgressModal
-        isOpen={shareModalOpen}
-        onClose={() => {
-          setShareModalOpen(false);
-          setShareCategory(null);
-        }}
-        title="Activity Stream History"
-        category={shareCategory}
-        stats={shareStats}
-      />
+      {shareModalOpen && (
+        <Suspense fallback={null}>
+          <ShareProgressModal
+            isOpen={shareModalOpen}
+            onClose={() => {
+              setShareModalOpen(false);
+              setShareCategory(null);
+            }}
+            title="Activity Stream History"
+            category={shareCategory}
+            stats={shareStats}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

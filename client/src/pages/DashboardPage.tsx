@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, subDays, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
 import { Plus, Check, Share2, BarChart2 } from 'lucide-react';
@@ -7,10 +7,18 @@ import { computeStreaks } from '../utils/stats';
 import { getIcon } from '../utils/icons';
 import { getUser } from '../utils/auth';
 import { getUnit } from '../utils/format';
-import { ShareProgressModal, type ShareCategoryData } from '../components/ShareProgressModal';
-import { ProgressDetailModal } from '../components/ProgressDetailModal';
+import type { ShareCategoryData } from '../components/ShareProgressModal';
 import WeekDots from '../components/dashboard/WeekDots';
 import HighlightsDeck from '../components/dashboard/HighlightsDecs';
+
+// Recharts dan html-to-image tidak perlu ikut chunk dashboard. Modal baru
+// dimuat saat pengguna benar-benar membuka detail atau share card.
+const ShareProgressModal = lazy(() =>
+  import('../components/ShareProgressModal').then((module) => ({ default: module.ShareProgressModal })),
+);
+const ProgressDetailModal = lazy(() =>
+  import('../components/ProgressDetailModal').then((module) => ({ default: module.ProgressDetailModal })),
+);
 
 function getFirstName(fullName?: string) {
   return fullName?.split(' ')[0] ?? '';
@@ -161,7 +169,7 @@ export function DashboardPage() {
             <Share2 size={13} className="text-accent" />
             Share
           </button>
-          <button onClick={() => navigate('/log')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-accent text-white text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
+          <button onClick={() => navigate('/log')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-accent text-on-accent text-xs font-semibold cursor-pointer active:scale-95 transition-transform">
             <Plus size={13} />
             Log
           </button>
@@ -287,31 +295,37 @@ export function DashboardPage() {
       )}
 
       {/* Share Progress Card Modal */}
-      <ShareProgressModal
-        isOpen={shareModalOpen}
-        onClose={() => {
-          setShareModalOpen(false);
-          setShareCategory(null);
-        }}
-        title="Monthly Activity Stream"
-        category={shareCategory}
-        topCategory={topCategory ? { name: topCategory.name, value: topCategory.totalValue, unit: topCategory.unit, color: topCategory.color } : null}
-        stats={shareStats}
-      />
+      {shareModalOpen && (
+        <Suspense fallback={null}>
+          <ShareProgressModal
+            isOpen={shareModalOpen}
+            onClose={() => {
+              setShareModalOpen(false);
+              setShareCategory(null);
+            }}
+            title="Monthly Activity Stream"
+            category={shareCategory}
+            topCategory={topCategory ? { name: topCategory.name, value: topCategory.totalValue, unit: topCategory.unit, color: topCategory.color } : null}
+            stats={shareStats}
+          />
+        </Suspense>
+      )}
 
       {/* Progress Detail Modal */}
       {selectedCategoryDetail && (
-        <ProgressDetailModal
-          isOpen={Boolean(selectedCategoryDetail)}
-          onClose={() => setSelectedCategoryDetail(null)}
-          onOpenShare={(cat) => {
-            setSelectedCategoryDetail(null);
-            setShareCategory(cat);
-            setShareModalOpen(true);
-          }}
-          category={selectedCategoryDetail}
-          entries={entries}
-        />
+        <Suspense fallback={null}>
+          <ProgressDetailModal
+            isOpen={Boolean(selectedCategoryDetail)}
+            onClose={() => setSelectedCategoryDetail(null)}
+            onOpenShare={(cat) => {
+              setSelectedCategoryDetail(null);
+              setShareCategory(cat);
+              setShareModalOpen(true);
+            }}
+            category={selectedCategoryDetail}
+            entries={entries}
+          />
+        </Suspense>
       )}
     </div>
   );

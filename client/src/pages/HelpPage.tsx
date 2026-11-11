@@ -130,11 +130,11 @@ export function HelpPage() {
 
         {/* Contact Support Banner */}
         <div className="mb-10 rounded-2xl border border-border bg-card p-6 text-center">
-          <h3 className="text-base font-bold text-foreground mb-1">Still need assistance?</h3>
+          <h2 className="text-base font-bold text-foreground mb-1">Still need assistance?</h2>
           <p className="text-xs text-muted mb-4">Send an email to our support team and we will respond promptly.</p>
           <a
             href="mailto:ichwanpwt22@gmail.com"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-white text-xs font-medium hover:opacity-90 transition focus-visible:ring-2 focus-visible:ring-accent"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-on-accent text-xs font-medium hover:opacity-90 transition focus-visible:ring-2 focus-visible:ring-accent"
           >
             <Mail size={14} />
             <span>Contact Support</span>

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { api, saveUser, setAuthToken } from '../utils/auth';
 import { useData } from '../store/dataStore';
 import { trackEvent } from '../utils/analytics';
+import { ToastHost } from '../components/layout/ToastHost';
 
 export function AuthSuccessPage() {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ export function AuthSuccessPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <ToastHost />
       <div className="text-center">
         <p className="text-lg font-medium">Connecting your account...</p>
         <p className="text-sm text-muted mt-2">Please wait a moment.</p>
